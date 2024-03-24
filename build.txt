@@ -1,0 +1,5 @@
+displayName = Spiky's Lib
+author = Spiky
+version = 0.1
+side = Client
+
