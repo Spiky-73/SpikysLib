@@ -1,1 +1,15 @@
+UI: {
+    None: None
+    Change: Change to {0}
+    Up: Move Up
+    Down: Move Down
+}
 
+Wrapper: {
+	SaveBeforeEdit: {
+		Label: Save the config to edit this value
+		Tooltip: ""
+	}
+
+	Tooltip: ""
+}

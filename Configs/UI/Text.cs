@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using MonoMod.Cil;
 using Newtonsoft.Json;
+using SpikysLib.Extensions;
 using SpikysLib.UI;
 using Terraria;
 using Terraria.GameContent;

@@ -3,3 +3,4 @@ author = Spiky
 version = 0.1
 side = Client
 
+weakReferences = MagicStorage@0.6.0.1

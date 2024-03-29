@@ -3,9 +3,9 @@ using System.Reflection;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 
-namespace SpikysLib;
+namespace SpikysLib.Extensions;
 
-public static class IlHelper {
+public static class IlExtensions {
 
     public static bool SaferMatchCall(this Instruction inst, MethodInfo method) {
         try {

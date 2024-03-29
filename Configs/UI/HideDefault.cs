@@ -65,9 +65,8 @@ public sealed class HideDefaultElement : ConfigElement<object> {
 
         foreach (PropertyFieldWrapper variable in ConfigManager.GetFieldsAndProperties(data)) {
             if (Attribute.IsDefined(variable.MemberInfo, typeof(JsonIgnoreAttribute)) || Equals(variable.GetValue(data), Activator.CreateInstance(variable.Type))) continue;
-            
             _entries.Add(new(new(new StringLine(Reflection.ConfigManager.GetLocalizedLabel.Invoke(variable)), new StringLine(Reflection.ConfigManager.GetLocalizedTooltip.Invoke(variable)))));
-            (UIElement container, UIElement element) = ConfigManager.WrapIt(_dataList, ref top, new(Wrapper<Text>.Member), _entries[^1], 0);
+            (UIElement container, UIElement element) = ConfigManager.WrapIt(_dataList, ref top, _entries[^1].Member, _entries[^1], 0);
         }
     }
 
@@ -82,14 +81,4 @@ public sealed class HideDefaultElement : ConfigElement<object> {
     private HoverImage _expandButton = null!;
     private readonly UIList _dataList = new();
     private readonly List<Wrapper<Text>> _entries = new();
-}
-
-public class Wrapper<T> where T : new() {
-    public Wrapper() => Value = new();
-    public Wrapper(T value) => Value = value;
-
-    [JsonIgnore] public T Value { get; set; }
-
-    public static implicit operator T(Wrapper<T> wrapper) => wrapper.Value;
-    [JsonIgnore] public static Reflection.Property<Wrapper<T>, T> Member => new(nameof(Value));
 }

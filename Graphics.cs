@@ -6,7 +6,7 @@ using Terraria.ObjectData;
 
 namespace SpikysLib;
 
-public static class GraphicsHelper {
+public static class Graphics {
 
     public static void DrawTileFrame(SpriteBatch spriteBatch, int tile, Vector2 position, Vector2 origin, float scale) {
         Main.instance.LoadTiles(tile);
@@ -21,11 +21,4 @@ public static class GraphicsHelper {
             }
         }
     }
-
-    public static void ApplyRGB(ref this Color color, float mult) {
-        color.R = (byte)(color.R * mult);
-        color.G = (byte)(color.G * mult);
-        color.B = (byte)(color.B * mult);
-    }
-
 }

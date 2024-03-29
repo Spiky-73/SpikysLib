@@ -15,11 +15,12 @@ public static class MathX {
         Both = Min | Max
     }
 
-    public static bool InRange<T>(this T self, T min, T max, InclusionFlag flags = InclusionFlag.Both) where T : IComparable<T> => InRange(Comparer<T>.Default, self, min, max, flags);
-    public static bool InRange<T>(this IComparer<T> comparer, T value, T min, T max, InclusionFlag flags = InclusionFlag.Both) {
+    public static bool InRange<T>(T self, T min, T max, InclusionFlag flags = InclusionFlag.Both) where T : IComparable<T> => InRange(Comparer<T>.Default, self, min, max, flags);
+    public static bool InRange<T>(IComparer<T> comparer, T value, T min, T max, InclusionFlag flags = InclusionFlag.Both) {
         int l = comparer.Compare(value, min);
         int r = comparer.Compare(value, max);
         return (l > 0 || (flags.HasFlag(InclusionFlag.Min) && l == 0)) && (r < 0 || (flags.HasFlag(InclusionFlag.Max) && r == 0));
     }
 
+    public static int GCD(int x, int y) => x == 0 ? y : GCD(y % x, x);
 }

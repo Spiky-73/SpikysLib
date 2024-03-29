@@ -1,69 +1,9 @@
 ﻿using System.Collections.Generic;
-
 using Terraria.ModLoader;
 
-namespace SpikysLib;
+namespace SpikysLib.Extensions;
 
-public enum TooltipLineID {
-    ItemName,
-    Favorite,
-    FavoriteDesc,
-    NoTransfer,
-    Social,
-    SocialDesc,
-    Damage,
-    CritChance,
-    Speed,
-    Knockback,
-    FishingPower,
-    NeedsBait,
-    BaitPower,
-    Equipable,
-    WandConsumes,
-    Quest,
-    Vanity,
-    VanityLegal,
-    Defense,
-    PickPower,
-    AxePower,
-    HammerPower,
-    TileBoost,
-    HealLife,
-    HealMana,
-    UseMana,
-    Placeable,
-    Ammo,
-    Consumable,
-    Material,
-    Tooltip,
-    EtherianManaWarning,
-    WellFedExpert,
-    BuffTime,
-    OneDropLogo,
-    PrefixDamage,
-    PrefixSpeed,
-    PrefixCritChance,
-    PrefixUseMana,
-    PrefixSize,
-    PrefixShootSpeed,
-    PrefixKnockback,
-    PrefixAccDefense,
-    PrefixAccMaxMana,
-    PrefixAccCritChance,
-    PrefixAccDamage,
-    PrefixAccMoveSpeed,
-    PrefixAccMeleeSpeed,
-    SetBonus,
-    Expert,
-    Master,
-    JourneyResearch,
-    BestiaryNotes,
-    SpecialPrice,
-    Price,
-    Modded
-}
-
-public static class TooltipHelper {
+public static class TooltipsExtensions {
 
     public static TooltipLineID FromString(string? value) {
         if(value is null) return TooltipLineID.Modded;
