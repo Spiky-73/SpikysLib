@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using SpikysLib.Extensions;
 
 namespace SpikysLib.DataStructures;
 
@@ -84,13 +85,13 @@ public readonly record struct Joined<TList, T> : IList<T>, IReadOnlyList<T> wher
 public readonly record struct ListIndices<T> : IList<T>, IReadOnlyList<T> {
 
     public IList<T> List { get; }
-    public IList<int> Indices { get; }
+    public IReadOnlyList<int> Indices { get; }
     public bool ExcludeIndices { get; }
 
     public ListIndices(IList<T> list) : this(list, Array.Empty<int>(), true) { }
-    public ListIndices(IList<T> list, params int[] indices) : this(list, (IList<int>)indices) { }
+    public ListIndices(IList<T> list, params int[] indices) : this(list, (IReadOnlyList<int>)indices) { }
     public ListIndices(IList<T> list, bool excludeIndices, params int[] indices) : this (list, indices, excludeIndices) { }
-    public ListIndices(IList<T> list, IList<int> indices, bool excludeIndices = false) {
+    public ListIndices(IList<T> list, IReadOnlyList<int> indices, bool excludeIndices = false) {
         List = list;
         Indices = indices;
         ExcludeIndices = excludeIndices;
@@ -110,7 +111,7 @@ public readonly record struct ListIndices<T> : IList<T>, IReadOnlyList<T> {
     }
 
     public int FromInnerIndex(int index) {
-        if (!ExcludeIndices) return Indices.IndexOf(index);
+        if (!ExcludeIndices) return Indices.FindIndex(i => i == index);
         int i = 0;
         while (i < Indices.Count && Indices[i] <= index) i++;
         return index - i;
