@@ -1,8 +1,8 @@
 UI: {
-    None: None
-    Change: Change to {0}
-    Up: Move Up
-    Down: Move Down
+	None: None
+	Change: Change to {0}
+	Up: Move Up
+	Down: Move Down
 }
 
 Wrapper: {

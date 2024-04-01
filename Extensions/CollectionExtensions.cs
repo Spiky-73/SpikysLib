@@ -43,9 +43,9 @@ public static class CollectionExtensions {
     }
 
     public static IEnumerable<(object key, object? value)> Items(this IDictionary dict) => dict.Items<object, object?>();
-    public static IEnumerable<(Tkey key, TValue? value)> Items<Tkey, TValue>(this IDictionary dict) where Tkey : notnull {
+    public static IEnumerable<(Tkey key, TValue value)> Items<Tkey, TValue>(this IDictionary dict) where Tkey : notnull {
         foreach (DictionaryEntry entry in dict) {
-            yield return new((Tkey)entry.Key, (TValue?)entry.Value);
+            yield return new((Tkey)entry.Key, (TValue)entry.Value!);
         }
     }
 }
