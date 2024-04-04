@@ -7,7 +7,7 @@ namespace SpikysLib;
 public class SpikysLib : Mod {
 
     public override void Load() {
-		MonoModHooks.Modify(Reflection.ConfigElement.DrawSelf, Text.ILTextColors);
+		MonoModHooks.Modify(Reflection.ConfigElement.DrawSelf, TextElement.ILTextColors);
 		Currencies.GetCurrencies();
 	}
 

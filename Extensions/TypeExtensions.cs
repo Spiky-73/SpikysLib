@@ -9,6 +9,7 @@ public static class TypeExtensions {
 
     public static bool ImplementsInterface(this Type type, Type iType, [NotNullWhen(true)] out Type? impl)
         => (impl = Array.Find(type.GetInterfaces(), i => iType.IsGenericType ? i.IsGenericType && i.GetGenericTypeDefinition() == iType : iType == i)) != null;
+    
     public static bool IsSubclassOfGeneric(this Type? type, Type generic, [NotNullWhen(true)] out Type? impl) {
         while (type != null && type != typeof(object)) {
             Type cur = type.IsGenericType ? type.GetGenericTypeDefinition() : type;
@@ -22,7 +23,7 @@ public static class TypeExtensions {
         return false;
     }
 
-    public static (PropertyFieldWrapper, object?) GetMember(this Type host, object? obj, Span<string> members) {
+    public static (PropertyFieldWrapper, object?) GetMember(this Type host, object? obj, params string[] members) {
         MemberInfo member = host.GetMember(members[0], BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy)[0];
         if (member is PropertyInfo property) {
             if (members.Length == 1) return (new(property), obj);
