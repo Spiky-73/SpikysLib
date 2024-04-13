@@ -29,9 +29,9 @@ public sealed class NestedValueElement : ConfigElement<INestedValue> {
         _uiParent.OnLeftDoubleClick += (_, _) => Expand();
 
         DrawLabel = false;
+        Reflection.ConfigElement.DrawLabel.SetValue(_uiParent, false);
         Func<string> parentText = Reflection.ConfigElement.TextDisplayFunction.GetValue(_uiParent);
-        Reflection.ConfigElement.TextDisplayFunction.SetValue(_uiParent, () => $"{TextDisplayFunction()}{parentText()[nameof(INestedValue.Parent).Length..]}");
-        Reflection.ConfigElement.TextDisplayFunction.SetValue(_uiValue, TextDisplayFunction);
+        Reflection.ConfigElement.TextDisplayFunction.SetValue(_uiValue, () => $"{TextDisplayFunction()}{parentText()[nameof(INestedValue.Parent).Length..]}");
 
         Reflection.ConfigElement.TooltipFunction.SetValue(_uiParent, TooltipFunction);
         Reflection.ConfigElement.TooltipFunction.SetValue(_uiValue, TooltipFunction);
