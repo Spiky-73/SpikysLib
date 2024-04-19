@@ -1,0 +1,7 @@
+Just a small library used by most of my mods.   
+
+It includes:
+- Loads of utility methods
+- Custom UI elements
+- Custom data structures
+- A generic reflection wrapper

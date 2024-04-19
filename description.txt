@@ -1,1 +1,7 @@
-Spiky's Lib is a pretty cool mod, it does...this. Modify this file with a description of your mod.
+Just a small library used by most of my mods.
+
+It includes: 
+- A generic reflection wrapper
+- Loads of utility methods
+- Custom UI elements
+- Custom data structures 
