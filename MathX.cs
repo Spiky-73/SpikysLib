@@ -33,7 +33,7 @@ public static class MathX {
         }
     }
 
-    [Obsolete("use MathX.GCD<T>(T, T) instead", true)]
+    [Obsolete("use MathX.GCD<T> instead", true)]
     public static int GCD(int x, int y) => GCD<int>(y % x, x);
     public static T GCD<T>(T x, T y) where T : INumber<T> => T.IsZero(x) ? y : GCD(y % x, x);
 }

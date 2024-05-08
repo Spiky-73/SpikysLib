@@ -9,5 +9,10 @@ It includes:
 
 # Changelog
 
+### v1.0.1
+- Fixed mod not loading on the server
+- Made MathX generic
+- Added MathX.Snap
+
 ### v1.0
 - Initial release on tML

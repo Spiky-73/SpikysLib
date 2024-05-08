@@ -16,7 +16,7 @@ public static class Currencies {
     public static int LowestValueType(int currency) {
         if (currency == None) return ItemID.None;
         if (currency == Coins) return ItemID.CopperCoin;
-        
+
         int minType = 0;
         int minValue = 0;
         foreach ((int key, int value) in CurrencySystems(currency).Values) {
