@@ -1,6 +1,6 @@
 displayName = Spiky's Lib
 author = Spiky
 version = 1.0.1
+homepage = https://github.com/Spiky-73/SpikysLib/tree/master
 side = NoSync
-
 weakReferences = MagicStorage@0.6.0.3
