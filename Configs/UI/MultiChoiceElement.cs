@@ -50,10 +50,10 @@ public sealed class MultiChoiceElement : ConfigElement<MultiChoice> {
         int count = value.Choices.Count;
         UIImage swapButton;
         if (count == 2) {
-            swapButton = new HoverImage(PlayTexture, Language.GetTextValue("Mods.SpikysLib.UI.Change", value.Choices[(value.ChoiceIndex + 1) % count].Name));
+            swapButton = new HoverImage(PlayTexture, Language.GetTextValue($"{Localization.Keys.UI}.Change", value.Choices[(value.ChoiceIndex + 1) % count].Name));
             swapButton.OnLeftClick += (UIMouseEvent a, UIElement b) => ChangeChoice(value.ChoiceIndex + 1);
         } else {
-            swapButton = new HoverImageSplit(UpDownTexture, Language.GetTextValue("Mods.SpikysLib.UI.Change", value.Choices[(value.ChoiceIndex + 1) % count].Name), Language.GetTextValue("Mods.SpikysLib.UI.Change", value.Choices[(value.ChoiceIndex - 1 + count) % count].Name));
+            swapButton = new HoverImageSplit(UpDownTexture, Language.GetTextValue($"{Localization.Keys.UI}.Change", value.Choices[(value.ChoiceIndex + 1) % count].Name), Language.GetTextValue($"{Localization.Keys.UI}.Change", value.Choices[(value.ChoiceIndex - 1 + count) % count].Name));
             swapButton.OnLeftClick += (UIMouseEvent a, UIElement b) => ChangeChoice(value.ChoiceIndex + (((HoverImageSplit)swapButton).HoveringUp ? 1 : -1));
         }
         swapButton.VAlign = 0.5f;

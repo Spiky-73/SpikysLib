@@ -23,7 +23,7 @@ public sealed class HideDefaultElement : ConfigElement<object> {
             JsonConvert.PopulateObject(jsonDefaultValueAttribute2?.Json ?? "{}", obj, ConfigManager.serializerSettings);
             Value = obj;
         }
-        
+
         _dataList.Top = new(30f, 0f);
         _dataList.Left = new(14f, 0f);
         _dataList.Height = new(-30f, 1f);
@@ -43,13 +43,12 @@ public sealed class HideDefaultElement : ConfigElement<object> {
         Recalculate();
     }
 
-    public void Expand(){
+    public void Expand() {
         if (_expanded) {
             RemoveChild(_dataList);
             _expandButton.HoverText = Language.GetTextValue("tModLoader.ModConfigExpand");
             _expandButton.SetImage(CollapsedTexture);
-        }
-        else {
+        } else {
             Append(_dataList);
             _expandButton.HoverText = Language.GetTextValue("tModLoader.ModConfigCollapse");
             _expandButton.SetImage(ExpandedTexture);
@@ -58,7 +57,7 @@ public sealed class HideDefaultElement : ConfigElement<object> {
         Recalculate();
     }
 
-    public void SetupList(){
+    public void SetupList() {
         _dataList.Clear();
         object data = Value;
         int top = 0;

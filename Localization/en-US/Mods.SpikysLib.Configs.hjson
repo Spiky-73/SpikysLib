@@ -6,7 +6,7 @@ UI: {
 }
 
 Wrapper: {
-	SaveBeforeEdit: {
+	SaveToEdit: {
 		Label: Save the config to edit this value
 		Tooltip: ""
 	}

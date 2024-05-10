@@ -11,7 +11,7 @@ using System;
 namespace SpikysLib.Configs;
 
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
-public sealed class ChoiceAttribute : Attribute {} 
+public sealed class ChoiceAttribute : Attribute { }
 
 [JsonConverter(typeof(IO.MultiChoiceConverter))]
 [CustomModConfigItem(typeof(UI.MultiChoiceElement))]
@@ -33,8 +33,8 @@ public abstract class MultiChoice {
         }
     }
 
-    public bool TryGet<T>(string name, [MaybeNullWhen(false)] out T? value){
-        if(Choice == name) {
+    public bool TryGet<T>(string name, [MaybeNullWhen(false)] out T? value) {
+        if (Choice == name) {
             value = (T?)Data;
             return true;
         }
@@ -47,7 +47,7 @@ public abstract class MultiChoice {
         set => Choices[ChoiceIndex].SetValue(this, value);
     }
 
-    public MultiChoice(){
+    public MultiChoice() {
         List<PropertyFieldWrapper> choices = new();
         choices.AddRange(GetType().GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(prop => prop.GetCustomAttribute<ChoiceAttribute>() != null).Select(p => new PropertyFieldWrapper(p)));
         choices.AddRange(GetType().GetFields(BindingFlags.Instance | BindingFlags.Public).Where(field => field.GetCustomAttribute<ChoiceAttribute>() != null).Select(f => new PropertyFieldWrapper(f)));
@@ -58,7 +58,7 @@ public abstract class MultiChoice {
 }
 
 public abstract class MultiChoice<T> : MultiChoice {
-    public MultiChoice() : base() {}
+    public MultiChoice() : base() { }
     public MultiChoice(T value) : base() => Value = value;
     internal override object? Data { get => Value; set => Value = (T?)value; }
     [JsonIgnore] public abstract T? Value { get; set; }

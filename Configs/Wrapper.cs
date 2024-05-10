@@ -16,10 +16,10 @@ public class Wrapper {
     public Wrapper(object? value) => Value = value;
 
 
-    [JsonIgnore] public virtual PropertyFieldWrapper Member => new(GetType().GetProperty(GetType() == typeof(Wrapper) ? nameof(SaveBeforeEdit) : nameof(Value), BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+    [JsonIgnore] public virtual PropertyFieldWrapper Member => new(GetType().GetProperty(GetType() == typeof(Wrapper) ? nameof(SaveToEdit) : nameof(Value), BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly));
     [JsonIgnore] public object? Value { get; set; }
 
-    public Text SaveBeforeEdit { get; set; } = new();
+    public Text SaveToEdit { get; set; } = new();
 
     public Wrapper ChangeType(Type type) {
         Type genericType = typeof(Wrapper<>).MakeGenericType(type);

@@ -7,9 +7,6 @@ using SpikysLib.Configs;
 
 namespace SpikysLib.IO;
 
-[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = false)]
-public sealed class ChoiceAttribute : Attribute { }
-
 public sealed class MultiChoiceConverter : JsonConverter<MultiChoice> {
     public override MultiChoice ReadJson(JsonReader reader, Type objectType, [AllowNull] MultiChoice existingValue, bool hasExistingValue, JsonSerializer serializer) {
         existingValue ??= (MultiChoice)Activator.CreateInstance(objectType)!;
