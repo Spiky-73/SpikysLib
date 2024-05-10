@@ -15,15 +15,17 @@ using Terraria.ID;
 
 namespace SpikysLib.Configs.UI;
 
-// TODO ValueWrapperAttribute
-// public class CustomWrapper<TKey, TValue> : ValueWrapper<TKey, TValue> where TKey : notnull {
-//     [Expand(false, false), ColorNoAlpha, ColorHSLSlider]
-//     new public TValue Value { get => base.Value; set => base.Value = value; }
-// 
-//     public override void OnBind(ConfigElement element) {
-//         if (Key is InfinityDefinition inf) SpikysLib.Reflection.ConfigElement.backgroundColor.SetValue(element, InfinityManager.GetInfinity(inf.Mod, inf.Name)!.Color);
-//     }
-// }
+[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Class | AttributeTargets.Enum)]
+public sealed class ValueWrapperAttribute : Attribute {
+    public ValueWrapperAttribute(Type type) {
+        if (!type.IsSubclassOfGeneric(typeof(ValueWrapper<,>), out _)) throw new ArgumentException($"The type {type} does derive from {typeof(ValueWrapper<,>)}");
+        if (type.GetGenericArguments().Length > 2) throw new ArgumentException($"The type {type} can have at most 2 generic arguments");
+        Type = type;
+    }
+
+    public Type Type { get; }
+}
+
 
 public class ValueWrapper<TKey, TValue> where TKey : notnull {
     public TValue Value { get => (TValue)Dict[Key]!; set => Dict[Key] = value; }
@@ -40,6 +42,9 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
         base.OnBind();
 
         if (Value is null) throw new ArgumentNullException("This config element only supports IDictionaries");
+
+        ValueWrapperAttribute? customWrapper = ConfigManager.GetCustomAttributeFromMemberThenMemberType<ValueWrapperAttribute>(MemberInfo, Item, List);
+        if (customWrapper is not null) _wrapperType = customWrapper.Type;
 
         _dataList.Top = new(0, 0f);
         _dataList.Left = new(0, 0f);
@@ -68,7 +73,10 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
                 unloaded++;
                 continue;
             }
-            object wrapper = Activator.CreateInstance(typeof(ValueWrapper<,>).MakeGenericType(key.GetType(), value.GetType()))!;
+            List<Type> args = new(2);
+            if (_wrapperType.GetGenericArguments().Length > 1) args.Add(key.GetType());
+            if (_wrapperType.GetGenericArguments().Length > 0) args.Add(value.GetType());
+            object wrapper = Activator.CreateInstance(_wrapperType.MakeGenericType([.. args]))!;
             wrapper.Call(nameof(ValueWrapper<object, object>.Bind), dict, key);
             _dictWrappers.Add(wrapper);
             (UIElement container, UIElement e) = ConfigManager.WrapIt(_dataList, ref top, new(wrapper.GetType().GetProperty(nameof(ValueWrapper<object, object>.Value), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.DeclaredOnly)), wrapper, i);
@@ -120,6 +128,7 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
 
     private Text _unloaded = null!;
 
-    private readonly List<object> _dictWrappers = new();
-    private readonly UIList _dataList = new();
+    private readonly List<object> _dictWrappers = [];
+    private Type _wrapperType = typeof(ValueWrapper<,>);
+    private readonly UIList _dataList = [];
 }
