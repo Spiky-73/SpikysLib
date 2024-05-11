@@ -7,7 +7,7 @@ public interface INestedValue {
 }
 
 [CustomModConfigItem(typeof(UI.NestedValueElement))]
-public class NestedValue<TParent, TValue> : INestedValue where TParent: struct where TValue: class, new() {
+public class NestedValue<TParent, TValue> : INestedValue where TParent: struct where TValue: class, new() { // TODO custom args for Parent
     public NestedValue() : this(default) { } 
     public NestedValue(TParent parent = default, TValue? value = default) {
         Parent = parent;

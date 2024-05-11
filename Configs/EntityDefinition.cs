@@ -17,7 +17,6 @@ public interface IEntityDefinition {
 }
 
 [CustomModConfigItem(typeof(EntityDefinitionElement))]
-[TypeConverter("SPIC.IO.ToFromStringConverterFix")]
 public abstract class EntityDefinition<TDefinition> : EntityDefinition, IEntityDefinition where TDefinition : EntityDefinition<TDefinition> {
     public EntityDefinition() : base() { }
     public EntityDefinition(string key) : base(key) { }
