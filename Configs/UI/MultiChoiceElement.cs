@@ -14,6 +14,9 @@ public sealed class MultiChoiceElement : ConfigElement<MultiChoice> {
 
     public override void OnBind() {
         base.OnBind();
+        _tooltip = TooltipFunction;
+        DrawLabel = false;
+        TooltipFunction = null;
         SetupMember();
     }
 
@@ -28,10 +31,6 @@ public sealed class MultiChoiceElement : ConfigElement<MultiChoice> {
         _selectedElement = (ConfigElement)element;
         container.Left.Pixels -= 20;
         container.Width.Pixels -= 7;
-
-        _tooltip = TooltipFunction;
-        DrawLabel = false;
-        TooltipFunction = null;
 
         MaxHeight.Pixels = int.MaxValue;
         Reflection.ConfigElement.backgroundColor.SetValue(_selectedElement, Color.Transparent);

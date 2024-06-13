@@ -16,6 +16,8 @@ It includes:
 - Moved ReflectionHelper members to TypeExtensions
 - Renamed TypeExtensions.GetMember to GetPropertyFieldValue
 - Removed GetMember, GetField and GetProperty from ReflectionHelper
+- Fixed a bug with MultiChoice tooltip
+
 ### v1.0.1
 - Fixed mod not loading on the server
 - Made MathX generic
