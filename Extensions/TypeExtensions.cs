@@ -25,12 +25,9 @@ public static class TypeExtensions {
 
     [Obsolete($"use {nameof(GetPropertyFieldValue)} instead", true)]
     public static (PropertyFieldWrapper, object?) GetMember(this Type host, object? obj, params string[] members) => host.GetPropertyFieldValue(obj, members);
-    public static (PropertyFieldWrapper, object?) GetPropertyFieldValue(this Type host, object? obj, params string[] members) {
+    public static (PropertyFieldWrapper member, object? value) GetPropertyFieldValue(this Type host, object? obj, params string[] members) {
         PropertyFieldWrapper member = host.GetPropertyField(members[0], ReflectionFlags | BindingFlags.FlattenHierarchy) ?? throw new MissingMemberException(host.Name, members[0]);
-        if (members.Length == 1) return (member, obj);
-        obj = member.GetValue(obj);
-        host = member.Type;
-        return host.GetPropertyFieldValue(obj, members[1..]);
+        return members.Length == 1 ? (member, member.GetValue(obj)) : member.Type.GetPropertyFieldValue(member.GetValue(obj), members[1..]);
     }
 
     public static object Retrieve(this object self, string name) => Retrieve(self.GetType(), name, null);

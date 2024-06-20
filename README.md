@@ -14,7 +14,7 @@ It includes:
 - Added class EntityDefinition\<T>
 - Added class ToFromStringConverter
 - Added method GetPropertiesFields to TypeExtensions
-- Added interface IPortableConfig and method TryPortMember to ModConfigExtensions
+- Added interface IPortableConfig and methods TryPortMember to ModConfigExtensions
 - Updated icon
 - Moved ReflectionHelper members to TypeExtensions
 - Renamed method GetMember to GetPropertyFieldValue in TypeExtensions
