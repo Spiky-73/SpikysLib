@@ -10,14 +10,15 @@ It includes:
 # Changelog
 
 ### v1.1
-- Added DictionaryValuesElement class
-- Added EntityDefinition\<T> class
-- Added ToFromStringConverter
-- Added GetPropertiesFields
+- Added class DictionaryValuesElement
+- Added class EntityDefinition\<T>
+- Added class ToFromStringConverter
+- Added method GetPropertiesFields to TypeExtensions
+- Added interface IPortableConfig and method TryPortMember to ModConfigExtensions
 - Updated icon
 - Moved ReflectionHelper members to TypeExtensions
-- Renamed TypeExtensions.GetMember to GetPropertyFieldValue
-- Removed GetMember, GetField and GetProperty from ReflectionHelper
+- Renamed method GetMember to GetPropertyFieldValue in TypeExtensions
+- Removed methods GetMember, GetField and GetProperty from ReflectionHelper
 - Fixed a bug with MultiChoice tooltip
 - Fixed Multichoice swap button labels
 
