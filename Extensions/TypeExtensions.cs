@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Reflection;
 using Terraria.ModLoader.Config.UI;
 
@@ -48,6 +49,11 @@ public static class TypeExtensions {
         return (type.GetMethod(name, ReflectionFlags, types) ?? throw new MissingMethodException(type.Name, name)).Invoke(self, args);
     }
 
+    public static PropertyFieldWrapper[] GetPropertiesFields(this Type type, BindingFlags flags = BindingFlags.Default) {
+        PropertyInfo[] properties = type.GetProperties(flags);
+        FieldInfo[] fields = type.GetFields(flags);
+        return fields.Select(x => new PropertyFieldWrapper(x)).Concat(properties.Select(x => new PropertyFieldWrapper(x))).ToArray();
+    }
     public static PropertyFieldWrapper? GetPropertyField(this Type type, string name, BindingFlags flags = BindingFlags.Default) {
         FieldInfo? field = type.GetField(name, flags);
         if (field is not null) return new(field);

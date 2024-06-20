@@ -13,12 +13,13 @@ It includes:
 - Added DictionaryValuesElement class
 - Added EntityDefinition\<T> class
 - Added ToFromStringConverter
+- Added GetPropertiesFields
 - Updated icon
 - Moved ReflectionHelper members to TypeExtensions
 - Renamed TypeExtensions.GetMember to GetPropertyFieldValue
 - Removed GetMember, GetField and GetProperty from ReflectionHelper
 - Fixed a bug with MultiChoice tooltip
-- Fix Multichoice swap button labels
+- Fixed Multichoice swap button labels
 
 ### v1.0.1
 - Fixed mod not loading on the server

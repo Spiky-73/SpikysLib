@@ -81,7 +81,7 @@ public sealed class Method<TObject, T> : Member<MethodInfo> {
     public Method(MethodInfo? info) : base(info) { }
     public Method(string name, params Type[] argsType) : this(typeof(TObject).GetMethod(name, InstanceFlags, argsType)) { }
 
-    public T Invoke(TObject self, params object[] args) => (T)MemberInfo.Invoke(self, args)!;
+    public T Invoke(TObject self, params object?[] args) => (T)MemberInfo.Invoke(self, args)!;
 
     protected sealed override void ValidateMemberInfo(MethodInfo info) {
         if ((typeof(T) != typeof(object) || info.ReturnType != typeof(void)) && info.ReturnType != typeof(T)) throw new MissingMethodException(info.DeclaringType!.FullName, info.Name);
@@ -92,7 +92,7 @@ public sealed class StaticMethod<T> : Member<MethodInfo> {
     public StaticMethod(MethodInfo? info) : base(info) { }
     public StaticMethod(Type type, string name, params Type[] argsType) : this(type.GetMethod(name, StaticFlags, argsType)) { }
 
-    public T Invoke(params object[] args) => (T)MemberInfo.Invoke(null, args)!;
+    public T Invoke(params object?[] args) => (T)MemberInfo.Invoke(null, args)!;
 
     protected sealed override void ValidateMemberInfo(MethodInfo info) {
         if ((typeof(T) != typeof(object) || info.ReturnType != typeof(void)) && info.ReturnType != typeof(T)) throw new MissingMethodException(info.DeclaringType!.FullName, info.Name);
