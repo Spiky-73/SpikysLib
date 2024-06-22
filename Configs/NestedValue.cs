@@ -1,28 +1,34 @@
+using System;
+using Newtonsoft.Json;
 using Terraria.ModLoader.Config;
 namespace SpikysLib.Configs;
 
 public interface INestedValue {
-    public object Parent { get; set; }
-    public object Value { get; set; }
-}
+    [Obsolete($"use {nameof(Key)} instead", true)]
+    object Parent { get => Key; set => Key = value; }
 
+    object Key { get; set; }
+    object Value { get; set; }
+}
+[JsonConverter(typeof(IO.NestedValueConverter))]
 [CustomModConfigItem(typeof(UI.NestedValueElement))]
-public class NestedValue<TParent, TValue> : INestedValue where TParent: struct where TValue: class, new() { // TODO custom args for Parent
+public class NestedValue<TKey, TValue> : INestedValue where TKey: struct where TValue: class, new() { // TODO custom args for Key
     public NestedValue() : this(default) { } 
-    public NestedValue(TParent parent = default, TValue? value = default) {
-        Parent = parent;
+    public NestedValue(TKey key = default, TValue? value = default) {
+        Key = key;
         Value = value ?? new();
     }
 
-    public TParent Parent { get; set; }
+    [Obsolete($"use {nameof(Key)} instead", true)]
+    public TKey Parent { get => Key; set => Key = value; }
+    
+    public TKey Key { get; set; }
+    [Expand(false, false)] public TValue Value { get; set; }
 
-    [Expand(false, false)]
-    public TValue Value { get; set; }
-
-    object INestedValue.Parent { get => Parent; set => Parent = (TParent)value!; }
+    object INestedValue.Key { get => Key; set => Key = (TKey)value!; }
     object INestedValue.Value { get => Value; set => Value = (TValue)value!; }
 
-    public static implicit operator TParent(NestedValue<TParent, TValue> self) => self.Parent;
+    public static implicit operator TKey(NestedValue<TKey, TValue> self) => self.Key;
 }
 
 public sealed class Toggle<T> : NestedValue<bool, T> where T: class, new() {

@@ -14,21 +14,26 @@ public static class ModConfigExtensions {
     
     public static void MoveMember<TConfig>(bool cond, Action<TConfig> move) where TConfig: ModConfig => MoveMember(cond, c => move((TConfig)c));
     public static void MoveMember(bool cond, Action<ModConfig> move) {
-        if (cond && LoadingConfig is not null) _moves.Add(move);
+        if (cond && LoadingConfig) _moves.Add(move);
     }
 
     internal static void HookPort(Action<ModConfig> orig, ModConfig config) {
-        LoadingConfig = config;
+        LoadingConfig = true;
+        SaveLoadingConfig = false;
         _moves.Clear();
         orig(config);
-        LoadingConfig = null;
+        LoadingConfig = false;
 
-        if (_moves.Count == 0) return;
-        foreach (var m in _moves) m(config);
-        _moves.Clear();
-        config.Save();
+        if (_moves.Count != 0) {
+            foreach (var m in _moves) m(config);
+            _moves.Clear();
+            SaveLoadingConfig = true;
+        }
+        if (SaveLoadingConfig) config.Save();
+        SaveLoadingConfig = false;
     }
 
-    internal static ModConfig? LoadingConfig { get; private set; }
+    internal static bool LoadingConfig { get; private set; }
+    public static bool SaveLoadingConfig { get; set; }
     private static readonly List<Action<ModConfig>> _moves = [];
 }

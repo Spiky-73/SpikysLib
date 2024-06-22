@@ -28,12 +28,12 @@ public sealed class ValueWrapperAttribute : Attribute {
 
 
 public class ValueWrapper<TKey, TValue> where TKey : notnull {
+    public TKey Key { get; private set; } = default!;
     public TValue Value { get => (TValue)Dict[Key]!; set => Dict[Key] = value; }
     public virtual void OnBind(ConfigElement element) {}
 
     internal void Bind(IDictionary dict, TKey key) => (Dict, Key) = (dict, key);
     public IDictionary Dict { get; private set; } = null!;
-    public TKey Key { get; private set; } = default!;
 }
 
 public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {

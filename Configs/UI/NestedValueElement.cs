@@ -22,7 +22,7 @@ public sealed class NestedValueElement : ConfigElement<INestedValue> {
         ((UIImage)Reflection.ObjectElement.expandButton.GetValue(_uiValue)!).Left.Set(-25f, 1f);
 
         top = 0;
-        (UIElement conParent, UIElement uiParent) = ConfigManager.WrapIt(this, ref top, new(value.GetType().GetProperty(nameof(INestedValue.Parent))), value, 0);
+        (UIElement conParent, UIElement uiParent) = ConfigManager.WrapIt(this, ref top, new(value.GetType().GetProperty(nameof(INestedValue.Key))), value, 0);
         _uiParent = (ConfigElement)uiParent;
         conParent.Left.Pixels -= 20;
         conParent.Width.Pixels -= 5;
@@ -31,7 +31,7 @@ public sealed class NestedValueElement : ConfigElement<INestedValue> {
         DrawLabel = false;
         Reflection.ConfigElement.DrawLabel.SetValue(_uiParent, false);
         Func<string> parentText = Reflection.ConfigElement.TextDisplayFunction.GetValue(_uiParent);
-        Reflection.ConfigElement.TextDisplayFunction.SetValue(_uiValue, () => $"{TextDisplayFunction()}{parentText()[nameof(INestedValue.Parent).Length..]}");
+        Reflection.ConfigElement.TextDisplayFunction.SetValue(_uiValue, () => $"{TextDisplayFunction()}{parentText()[nameof(INestedValue.Key).Length..]}");
 
         Reflection.ConfigElement.TooltipFunction.SetValue(_uiParent, TooltipFunction);
         Reflection.ConfigElement.TooltipFunction.SetValue(_uiValue, TooltipFunction);
