@@ -35,12 +35,12 @@ public sealed class MultiChoiceConverter : JsonConverter<MultiChoice> {
             serializer.Serialize(writer, value?.Data);
         } else {
             JObject obj;
-            JObject val = JObject.FromObject(value, serializer);
-            if (value.Data is null || val.ContainsKey($".{ChoiceProperty}") || NeedsLegacyMode(val)) {
+            JObject? val = value.Data is null ? null : JObject.FromObject(value.Data, serializer);
+            if (val is null || val.ContainsKey($".{ChoiceProperty}") || NeedsLegacyMode(val)) {
                 obj = new() { { value.Choice, value.Data is null ? null : JToken.FromObject(value.Data, serializer) } };
             } else {
                 obj = new() { { $".{ChoiceProperty}", JToken.FromObject(value.Choice, serializer) } };
-                obj.Merge(JObject.FromObject(value.Data, serializer));
+                obj.Merge(JObject.FromObject(value.Data!, serializer));
             }
             serializer.Serialize(writer, obj);
         }
