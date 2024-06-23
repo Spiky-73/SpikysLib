@@ -158,8 +158,10 @@ public sealed class ListIndices<T> : IList<T>, IReadOnlyList<T> {
 
     public int FromInnerIndex(int index) {
         if (!ExcludeIndices) return Indices.FindIndex(i => i == index);
-        int i = 0;
-        while (i < Indices.Count && Indices[i] <= index) i++;
+        int i;
+        for (i = 0; i < Indices.Count && Indices[i] <= index; i++) {
+            if (Indices[i] == index) return -1;
+        }
         return index - i;
     }
 
