@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.GameContent.UI;
+using Terraria.ModLoader;
 
 namespace SpikysLib;
 
 public readonly record struct CustomCurrencyData(CustomCurrencySystem System, Dictionary<int, int> Values);
 
-public static class Currencies {
+public class Currencies : ILoadable {
 
     public const int None = -2;
     public const int Coins = -1;
@@ -74,15 +75,15 @@ public static class Currencies {
     public static CustomCurrencyData CurrencySystems(int currency) => _customCurrencies[currency];
     public static List<int> CustomCurrencies => new(_customCurrencies.Keys);
 
-
-    internal static void GetCurrencies() {
+    public void Load(Mod mod) {
         FieldInfo curField = typeof(CustomCurrencyManager).GetField("_currencies", BindingFlags.NonPublic | BindingFlags.Static)!;
         FieldInfo valuesField = typeof(CustomCurrencySystem).GetField("_valuePerUnit", BindingFlags.NonPublic | BindingFlags.Instance)!;
         Dictionary<int, CustomCurrencySystem> currencies = (Dictionary<int, CustomCurrencySystem>)curField.GetValue(null)!;
         _customCurrencies = new();
         foreach (var (key, system) in currencies) _customCurrencies[key] = new(system, (Dictionary<int, int>)valuesField.GetValue(system)!);
     }
-    internal static void ClearCurrencies() => _customCurrencies = null!;
+
+    public void Unload() => _customCurrencies = null!;
 
     private static Dictionary<int, CustomCurrencyData> _customCurrencies = null!;
 }

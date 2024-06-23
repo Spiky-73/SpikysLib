@@ -8,11 +8,8 @@ public class SpikysLib : Mod {
     public override void Load() {
 		MonoModHooks.Modify(Reflection.ConfigElement.DrawSelf, TextElement.ILTextColors);
 		MonoModHooks.Add(Reflection.ConfigManager.Load, PortConfig.HookPort);
-		Currencies.GetCurrencies();
 	}
 
-    public override void Unload() {
-		Currencies.ClearCurrencies();
-	}
+    public override void Unload() {}
 
 }

@@ -5,7 +5,7 @@ namespace SpikysLib.Reflection;
 
 public abstract class Member<TMemberInfo> where TMemberInfo : MemberInfo {
     internal Member(TMemberInfo? info) {
-        if (info is null) throw new ArgumentNullException(nameof(info));
+        ArgumentNullException.ThrowIfNull(info, nameof(info));
         ValidateMemberInfo(info);
         MemberInfo = info;
     }
