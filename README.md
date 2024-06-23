@@ -15,6 +15,7 @@ It includes:
 - Added class ToFromStringConverter
 - Added method GetPropertiesFields to TypeExtensions
 - Added MoveMember to ModConfigExtensions
+- Improved Serilization
 - Updated icon
 - Moved ReflectionHelper members to TypeExtensions
 - Renamed method GetMember to GetPropertyFieldValue in TypeExtensions
