@@ -11,11 +11,11 @@ public class JoinedLists<T> : IList<T>, IReadOnlyList<T> {
     public ReadOnlyCollection<IList<T>> Lists => new(_lists);
     public T this[int index] {
         get {
-            var i = InnerIndex(index);
+            var i = ToInnerIndex(index);
             return Lists[i.list][i.index];
         }
         set {
-            var i = InnerIndex(index);
+            var i = ToInnerIndex(index);
             Lists[i.list][i.index] = value;
         }
     }
@@ -54,7 +54,7 @@ public class JoinedLists<T> : IList<T>, IReadOnlyList<T> {
 
     public void Insert(int index, T item) => Insert(index, item, false);
     public void Insert(int index, T item, bool addIfJunction) {
-        var i = InnerIndex(index);
+        var i = ToInnerIndex(index);
         if (i.list > 0 && i.index == 0 && addIfJunction) Lists[i.list - 1].Add(item);
         else Lists[i.list].Insert(i.index, item);
     }
@@ -65,14 +65,14 @@ public class JoinedLists<T> : IList<T>, IReadOnlyList<T> {
         return false;
     }
     public void RemoveAt(int index) {
-        var i = InnerIndex(index);
+        var i = ToInnerIndex(index);
         Lists[i.list].RemoveAt(i.index);
     }
     public void Clear() {
         foreach (IList<T> list in Lists) list.Clear();
     }
 
-    public (int list, int index) InnerIndex(int index) {
+    public (int list, int index) ToInnerIndex(int index) {
         int l = 0;
         while (index >= Lists[l].Count) index -= Lists[l++].Count;
         return (l, index);
@@ -116,7 +116,7 @@ public readonly record struct Joined<TList, T> : IList<T>, IReadOnlyList<T> wher
     public void RemoveAt(int index) => _joinedLists.RemoveAt(index);
     public void Clear() => _joinedLists.Clear();
 
-    public (int list, int index) InnerIndex(int index) => _joinedLists.InnerIndex(index);
+    public (int list, int index) InnerIndex(int index) => _joinedLists.ToInnerIndex(index);
 
     public void CopyTo(T[] array, int arrayIndex) => _joinedLists.CopyTo(array, arrayIndex);
 
@@ -155,7 +155,6 @@ public sealed class ListIndices<T> : IList<T>, IReadOnlyList<T> {
         while (i < Indices.Count && Indices[i] <= index) i++;
         return index + i;
     }
-
     public int FromInnerIndex(int index) {
         if (!ExcludeIndices) return Indices.FindIndex(i => i == index);
         int i;
