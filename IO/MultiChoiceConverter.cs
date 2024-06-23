@@ -8,15 +8,23 @@ using SpikysLib.Configs;
 namespace SpikysLib.IO;
 
 public sealed class MultiChoiceConverter : JsonConverter<MultiChoice> {
+
+    public const string ChoiceProperty = "choice";
+
     public override MultiChoice ReadJson(JsonReader reader, Type objectType, [AllowNull] MultiChoice existingValue, bool hasExistingValue, JsonSerializer serializer) {
         existingValue ??= (MultiChoice)Activator.CreateInstance(objectType)!;
         if (objectType.IsSubclassOfGeneric(typeof(MultiChoice<>), out Type? type)) {
             existingValue.Data = serializer.Deserialize(reader, type.GenericTypeArguments[0]);
         } else {
-            JObject jObject = serializer.Deserialize<JObject>(reader)!;
-            JProperty property = (JProperty)jObject.First!;
-            existingValue.Choice = property.Name;
-            existingValue.Data = property.Value.ToObject(existingValue.Choices[existingValue.ChoiceIndex].Type);
+            JObject obj = serializer.Deserialize<JObject>(reader)!;
+            if (NeedsLegacyMode(obj)) {
+                JProperty property = (JProperty)obj.First!;
+                existingValue.Choice = property.Name;
+                existingValue.Data = property.Value.ToObject(existingValue.Choices[existingValue.ChoiceIndex].Type);
+            } else {
+                if (obj.TryGetValue($".{ChoiceProperty}", out JToken? choice) && obj.Remove($".{ChoiceProperty}")) existingValue.Choice = choice.ToObject<string>()!;
+                existingValue.Data = obj.ToObject(existingValue.Choices[existingValue.ChoiceIndex].Type)!;
+            }
         }
         return existingValue;
     }
@@ -26,10 +34,17 @@ public sealed class MultiChoiceConverter : JsonConverter<MultiChoice> {
         if (value.GetType().IsSubclassOfGeneric(typeof(MultiChoice<>), out _)) {
             serializer.Serialize(writer, value?.Data);
         } else {
-            writer.WriteStartObject();
-            writer.WritePropertyName(value.Choice);
-            serializer.Serialize(writer, value.Data);
-            writer.WriteEndObject();
+            JObject obj;
+            JObject val = JObject.FromObject(value, serializer);
+            if (value.Data is null || val.ContainsKey($".{ChoiceProperty}") || NeedsLegacyMode(val)) {
+                obj = new() { { value.Choice, value.Data is null ? null : JToken.FromObject(value.Data, serializer) } };
+            } else {
+                obj = new() { { $".{ChoiceProperty}", JToken.FromObject(value.Choice, serializer) } };
+                obj.Merge(JObject.FromObject(value.Data, serializer));
+            }
+            serializer.Serialize(writer, obj);
         }
     }
+
+    private static bool NeedsLegacyMode(JObject obj) => obj.Count == 1 && !obj.ContainsKey($".{ChoiceProperty}");
 }
