@@ -32,7 +32,7 @@ public class Wrapper {
     }
 
 
-    public override bool Equals(object? obj) => obj is Wrapper other && Value is not null && Value.Equals(other.Value);
+    public override bool Equals(object? obj) => Equals(Value, obj is Wrapper other ? other.Value : obj);
     public override int GetHashCode() => Value!.GetHashCode();
     public override string? ToString() => Value?.ToString();
 

@@ -19,9 +19,11 @@ public sealed class WrapperConverter : JsonConverter<Wrapper> {
 
 public sealed class WrapperStringConverter : TypeConverter {
     public WrapperStringConverter(Type type) => ParentType = type;
-    public override bool CanConvertTo(ITypeDescriptorContext? context, Type? destinationType) => destinationType != typeof(string) && InnerConvertor.CanConvertTo(context, destinationType);
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType) => (sourceType == typeof(string) && InnerConvertor.CanConvertFrom(context, sourceType)) || base.CanConvertFrom(context, sourceType);
-    public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value) => value is string ? base.ConvertFrom(context, culture, value) : Activator.CreateInstance(ParentType, InnerConvertor.ConvertFrom(context, culture, value));
+    public override bool CanConvertTo(ITypeDescriptorContext? context, Type? destinationType) => InnerConvertor.CanConvertTo(context, destinationType);
+    public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType) => InnerConvertor.ConvertTo(context, culture, ((Wrapper?)value)?.Value, destinationType);
+    
+    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType) => InnerConvertor.CanConvertFrom(context, sourceType);
+    public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value) => Activator.CreateInstance(ParentType, InnerConvertor.ConvertFrom(context, culture, value));
 
     public Type ParentType { get; }
     public TypeConverter InnerConvertor => TypeDescriptor.GetConverter(ParentType.GenericTypeArguments[0]);
