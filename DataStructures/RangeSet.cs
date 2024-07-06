@@ -8,14 +8,14 @@ using System.Linq;
 namespace SpikysLib.DataStructures;
 
 public readonly record struct Range(int Start, int End) : IReadOnlyList<int>, IReadOnlySet<int> {
-    public Range(int value) : this(value, value) {}
-    public static Range FromCount(int start, int count) => new(start, start + count - 1);
+    public Range(int value) : this(value, value+1) {}
+    public static Range FromCount(int start, int count) => new(start, start + count);
     
-    public readonly int Count => End - Start + 1;
+    public readonly int Count => End - Start;
 
     public int this[int index] => index < Count ? Start + index : throw new IndexOutOfRangeException();
 
-    public bool Contains(int item) => Start <= item && item <= End;
+    public bool Contains(int item) => Start <= item && item < End;
 
     public bool IsSubsetOf(IEnumerable<int> other) {
         if (other is Range range) return range.Start <= Start && End <= range.End;
@@ -38,7 +38,7 @@ public readonly record struct Range(int Start, int End) : IReadOnlyList<int>, IR
     }
 
     public bool Overlaps(IEnumerable<int> other) {
-        if (other is Range range) return (range.Start <= End && Start <= range.End) || (Start <= range.End && range.Start <= End);
+        if (other is Range range) return Start < range.End && range.Start < End;
         return other.Exist(Contains);
     }
 
@@ -68,13 +68,12 @@ public sealed class RangeSet : ISet<int>, IReadOnlySet<int>{
     public int Count { get; private set; }
 
     public void AddRange(IEnumerable<int> enumerable) { foreach (int i in enumerable) Add(i); }
-    public bool Add(int item) => Add(new Range(item, item));
+    public bool Add(int item) => Add(new Range(item));
     public bool Add(Range range) {
-        int i = FindInsertIndex(range.Start);
-        if (i != 0 && _ranges[i - 1].Start <= range.Start && range.End <= _ranges[i - 1].End) return false;
-        if (i == 0 || range.Start - _ranges[i - 1].End > 1) _ranges.Insert(i, range);
-        else if (range.End > _ranges[--i].End) {
-            Count -= _ranges[i].Count;
+        if (Contains(range, out int i)) return false;
+        if (i == 0 || _ranges[i - 1].End < range.Start) _ranges.Insert(i, range);
+        else {
+            Count -= _ranges[--i].Count;
             _ranges[i] = new(_ranges[i].Start, range.End);
         }
         
@@ -85,7 +84,7 @@ public sealed class RangeSet : ISet<int>, IReadOnlySet<int>{
         }
         _ranges.RemoveRange(i+1, j - i - 1);
 
-        if (i != _ranges.Count-1 && _ranges[i+1].Start - _ranges[i].End <= 1) {
+        if (i != _ranges.Count-1 && _ranges[i+1].Start < _ranges[i].End) {
             _ranges[i] = new(_ranges[i].Start, _ranges[i+1].End);
             Count -= _ranges[i + 1].Count;
             _ranges.RemoveAt(i+1);
@@ -99,8 +98,8 @@ public sealed class RangeSet : ISet<int>, IReadOnlySet<int>{
         if (_ranges[i - 1].Count == 1) _ranges.RemoveAt(i - 1);
         else if (item == _ranges[i - 1].Start) _ranges[i - 1] = new(item + 1, _ranges[i - 1].End);
         else {
-            if (item != _ranges[i - 1].End) _ranges.Insert(i, new(item + 1, _ranges[i - 1].End));
-            _ranges[i - 1] = new(_ranges[i - 1].Start, item - 1);
+            if (item + 1 != _ranges[i - 1].End) _ranges.Insert(i, new(item + 1, _ranges[i - 1].End));
+            _ranges[i - 1] = new(_ranges[i - 1].Start, item);
         }
         Count--;
         return true;
@@ -110,7 +109,7 @@ public sealed class RangeSet : ISet<int>, IReadOnlySet<int>{
     public bool Contains(Range range) => Contains(range, out _);
     private bool Contains(Range range, out int index) {
         index = FindInsertIndex(range.Start);
-        return index != 0 && range.End <= _ranges[index-1].End;
+        return index != 0 && _ranges[index - 1].IsSupersetOf(range);
     }
     private int FindInsertIndex(int item) {
         for (int i = 0; i < _ranges.Count; i++) if (item < _ranges[i].Start) return i;
