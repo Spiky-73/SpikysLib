@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using Newtonsoft.Json;
 using Terraria.Localization;
 using Terraria.ModLoader.Config;
@@ -16,6 +15,7 @@ public interface IEntityDefinition {
     IList<IEntityDefinition> GetValues();
 }
 
+// TODO test TypeConverter
 [CustomModConfigItem(typeof(EntityDefinitionElement))]
 public abstract class EntityDefinition<TDefinition> : EntityDefinition, IEntityDefinition where TDefinition : EntityDefinition<TDefinition> {
     public EntityDefinition() : base() { }
