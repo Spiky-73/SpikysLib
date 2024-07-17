@@ -4,6 +4,7 @@ using ReLogic.Content;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameInput;
+using Terraria.ModLoader;
 using Terraria.UI;
 using Terraria.UI.Chat;
 
@@ -11,7 +12,10 @@ namespace SpikysLib.UI;
 
 public class InGameNotification : IInGameNotification {
 
-    public InGameNotification(Asset<Texture2D> icon, params ITextLine[] lines) {
+    public InGameNotification(Mod mod, params ITextLine[] lines): this(new StringLine(mod.DisplayName), ModContent.Request<Texture2D>($"{mod.Name}/icon"), lines) { }
+    public InGameNotification(Asset<Texture2D> icon, params ITextLine[] lines): this(null, icon, lines) { }
+    public InGameNotification(ITextLine? tooltip, Asset<Texture2D> icon, params ITextLine[] lines) {
+        Tooltip = tooltip;
         Icon = icon;
         Lines = lines;
     }
@@ -50,7 +54,7 @@ public class InGameNotification : IInGameNotification {
         
         Vector2 position = panel.TopLeft() + Padding * Scale;
         for (int i = 0; i < lines.Length; i++) {
-            Vector2 size = Utils.DrawBorderString(spriteBatch, lines[i], position, Lines[i].Color ?? new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor / 5, Main.mouseTextColor) * Opacity, Scale, 0, -0.1f);
+            Vector2 size = Utils.DrawBorderString(spriteBatch, lines[i], position, Lines[i].Color ?? new Color(Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor, Main.mouseTextColor) * Opacity, Scale, 0, -0.1f);
             position.Y += size.Y;
         }
         if (hovering) OnMouseOver();
@@ -59,6 +63,8 @@ public class InGameNotification : IInGameNotification {
     private void OnMouseOver() {
         if (PlayerInput.IgnoreMouseInterface || timeLeft <= FadeTime) return;
         Main.LocalPlayer.mouseInterface = true;
+        if (Tooltip is not null && !Main.mouseText) Main.instance.MouseText(Tooltip.Value);
+
         if(timeLeft < 60 + FadeTime) timeLeft = 60 + FadeTime;
         
         if (!Main.mouseLeft || !Main.mouseLeftRelease) return;
@@ -80,6 +86,7 @@ public class InGameNotification : IInGameNotification {
 
     public ITextLine[] Lines { get; }
     public Asset<Texture2D> Icon { get; }
+    public ITextLine? Tooltip { get; }
 
     private Vector2 _panelSize;
     private int _fadeInTime = 0;

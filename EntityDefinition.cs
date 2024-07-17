@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using SpikysLib.Configs.UI;
 using Terraria.Localization;
+using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
 
-namespace SpikysLib.Configs.UI;
+namespace SpikysLib;
 
 public interface IEntityDefinition {
     bool IsUnloaded { get; }
@@ -15,7 +17,6 @@ public interface IEntityDefinition {
     IList<IEntityDefinition> GetValues();
 }
 
-// TODO test TypeConverter
 [CustomModConfigItem(typeof(EntityDefinitionElement))]
 public abstract class EntityDefinition<TDefinition> : EntityDefinition, IEntityDefinition where TDefinition : EntityDefinition<TDefinition> {
     public EntityDefinition() : base() { }
@@ -30,4 +31,17 @@ public abstract class EntityDefinition<TDefinition> : EntityDefinition, IEntityD
     IList<IEntityDefinition> IEntityDefinition.GetValues() => GetValues();
 
     public static TDefinition FromString(string s) => (TDefinition)Activator.CreateInstance(typeof(TDefinition), s)!;
+}
+
+public abstract class EntityDefinition<TDefinition, TEntity> : EntityDefinition<TDefinition>, IEntityDefinition where TDefinition : EntityDefinition<TDefinition, TEntity> where TEntity: notnull, ILocalizedModType {
+    public EntityDefinition() : base() { }
+    public EntityDefinition(string key) : base(key) { }
+    public EntityDefinition(string mod, string name) : base(mod, name) { }
+    public EntityDefinition(TEntity entity) : base(entity.Mod.Name, entity.Name) { }
+
+    [JsonIgnore] public abstract TEntity? Entity { get; }
+    public override int Type => Entity is null ? -1 : 1;
+
+    [JsonIgnore] public override string DisplayName => Entity?.GetLocalizedValue("DisplayName") ?? base.DisplayName;
+    [JsonIgnore] public override string? Tooltip => Entity?.GetLocalizedValue("Tooltip");
 }

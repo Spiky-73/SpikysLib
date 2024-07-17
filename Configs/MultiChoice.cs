@@ -3,7 +3,6 @@ using System.Reflection;
 using System.Diagnostics.CodeAnalysis;
 using Terraria.ModLoader.Config;
 using Newtonsoft.Json;
-using System.Collections.Generic;
 using Terraria.ModLoader.Config.UI;
 using System.Collections.ObjectModel;
 using System;

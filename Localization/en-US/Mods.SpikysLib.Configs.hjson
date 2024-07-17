@@ -3,6 +3,7 @@ UI: {
 	Change: Change to {0}
 	Up: Move Up
 	Down: Move Down
+	Unloaded: "{$Mods.ModLoader.Unloaded}: {0}"
 }
 
 Wrapper: {

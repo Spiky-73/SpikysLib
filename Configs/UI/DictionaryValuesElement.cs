@@ -29,11 +29,10 @@ public sealed class ValueWrapperAttribute : Attribute {
 
 public class ValueWrapper<TKey, TValue> where TKey : notnull {
     public TKey Key { get; private set; } = default!;
-    public TValue Value { get => (TValue)Dict[Key]!; set => Dict[Key] = value; }
+    public virtual TValue Value { get; set; } = default!;
     public virtual void OnBind(ConfigElement element) {}
 
-    internal void Bind(IDictionary dict, TKey key) => (Dict, Key) = (dict, key);
-    public IDictionary Dict { get; private set; } = null!;
+    internal void Bind(TKey key, TValue value) => (Key, Value) = (key, value);
 }
 
 public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
@@ -77,7 +76,7 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
             if (_wrapperType.GetGenericArguments().Length > 1) args.Add(key.GetType());
             if (_wrapperType.GetGenericArguments().Length > 0) args.Add(value.GetType());
             object wrapper = Activator.CreateInstance(_wrapperType.MakeGenericType([.. args]))!;
-            wrapper.Call(nameof(ValueWrapper<object, object>.Bind), dict, key);
+            wrapper.Call(nameof(ValueWrapper<object, object>.Bind), key, value);
             _dictWrappers.Add(wrapper);
             (UIElement container, UIElement e) = ConfigManager.WrapIt(_dataList, ref top, new(wrapper.GetType().GetProperty(nameof(ValueWrapper<object, object>.Value), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.DeclaredOnly)), wrapper, i);
             ConfigElement element = (ConfigElement)e;
@@ -100,16 +99,16 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
                 container.Append(moveButton);
             }
 
-            string name = key switch {
-                IEntityDefinition preset => preset.DisplayName,
-                ItemDefinition item => $"[i:{item.Type}] {item.Name}",
-                _ => key.ToString()!
-            };
-            Reflection.ConfigElement.TextDisplayFunction.SetValue(element, () => name);
+            (UIElement kContainer, UIElement k) = ConfigManager.WrapIt(this, ref top, new(wrapper.GetType().GetProperty(nameof(ValueWrapper<object, object>.Key), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)), wrapper, i);
+            Func<string> label = Reflection.ConfigElement.TextDisplayFunction.GetValue((ConfigElement)k);
+            Func<string> tooltip = Reflection.ConfigElement.TooltipFunction.GetValue((ConfigElement)k);
+            RemoveChild(kContainer);
+            Reflection.ConfigElement.TextDisplayFunction.SetValue(element, key is ItemDefinition item ? () => $"[i:{item.Type}] {item.Name}" : () => label()[(nameof(ValueWrapper<object, object>.Key).Length+2)..]);
+            Reflection.ConfigElement.TooltipFunction.SetValue(element, tooltip);
             wrapper.Call(nameof(ValueWrapper<object, object>.OnBind), element);
         }
         if (unloaded > 0) {
-            _unloaded = new(new LocalizedLine(Language.GetText("Mods.ModLoader.Unloaded"), Colors.RarityTrash, unloaded));
+            _unloaded = new(new LocalizedLine(Language.GetText($"{Localization.Keys.UI}.Unloaded"), Colors.RarityTrash, unloaded));
             (UIElement container, UIElement element) = ConfigManager.WrapIt(_dataList, ref top, new(Reflection.DictionaryValuesElement._unloaded), this, i);
         }
         MaxHeight.Pixels = int.MaxValue;

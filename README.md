@@ -23,6 +23,7 @@ Just a small library used by most of my mods.
 - Added method FindIndex to CollectionExtensions
 - Added methods GotoLoc and FindLoc to ILExtensions
 - Added method GetPropertiesFields to TypeExtensions
+- Added hover tooltit to InGameNotification
 - Moved ReflectionHelper members to TypeExtensions
 - Renamed method GetMember to GetPropertyFieldValue in TypeExtensions
 - Removed methods GetMember, GetField and GetProperty from ReflectionHelper
