@@ -27,7 +27,7 @@ public class JoinedLists<T> : IList<T>, IReadOnlyList<T> {
         }
     }
 
-    public bool IsReadOnly {
+    bool ICollection<T>.IsReadOnly {
         get {
             foreach (IList<T> list in Lists) {
                 if (!list.IsReadOnly) return false;
@@ -101,7 +101,7 @@ public readonly record struct Joined<TList, T> : IList<T>, IReadOnlyList<T> wher
     public T this[int index] { get => _joinedLists[index]; set => _joinedLists[index] = value; }
     public int Count => _joinedLists.Count;
     
-    public bool IsReadOnly => _joinedLists.IsReadOnly;
+    public bool IsReadOnly => ((ICollection<T>)_joinedLists).IsReadOnly;
     
     public Joined(params TList[] lists) => _joinedLists = new([..lists]);
 
@@ -147,7 +147,7 @@ public sealed class ListIndices<T> : IList<T>, IReadOnlyList<T> {
 
     public int Count => ExcludeIndices ? (List.Count - Indices.Count) : Indices.Count;
 
-    public bool IsReadOnly => List.IsReadOnly;
+    bool ICollection<T>.IsReadOnly => List.IsReadOnly;
 
     private int ToInnerIndex(int index) {
         if (!ExcludeIndices) return Indices[index];
@@ -174,6 +174,20 @@ public sealed class ListIndices<T> : IList<T>, IReadOnlyList<T> {
         return -1;
     }
 
+    void IList<T>.Insert(int index, T item) => throw new NotSupportedException();
+    void ICollection<T>.Add(T item) => throw new NotSupportedException();
+    
+    public void RemoveAt(int index) => List.RemoveAt(ToInnerIndex(index));
+    public bool Remove(T item) {
+        int i = IndexOf(item);
+        if (i == -1) return false;
+        RemoveAt(i);
+        return true;
+    }
+    public void Clear() {
+        for (int i = Indices.Count - 1; i >= 0 ; i--) RemoveAt(Indices[i]);
+    }
+
     public void CopyTo(T[] array, int arrayIndex) {
         foreach (T item in this) array[arrayIndex++] = item;
     }
@@ -191,14 +205,9 @@ public sealed class ListIndices<T> : IList<T>, IReadOnlyList<T> {
         }
     }
 
+
     public IEnumerator<T> GetEnumerator() {
         foreach (int i in GetIndices()) yield return List[i]; 
     }
     IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
-
-    void ICollection<T>.Clear() => throw new NotSupportedException();
-    void IList<T>.Insert(int index, T item) => throw new NotSupportedException();
-    void ICollection<T>.Add(T item) => throw new NotSupportedException();
-    bool ICollection<T>.Remove(T item) => throw new NotSupportedException();
-    void IList<T>.RemoveAt(int index) => throw new NotSupportedException();
 }

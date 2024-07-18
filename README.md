@@ -28,6 +28,8 @@ Just a small library used by most of my mods.
 - Renamed method GetMember to GetPropertyFieldValue in TypeExtensions
 - Removed methods GetMember, GetField and GetProperty from ReflectionHelper
 - Replaced Joined\<TList, T> by JoinedLists\<T>
+- Implemented new IList\<T> methods in ListIndices\<T>
+- Replaced Cache\<TKey, TValue> by GeneratedDictionary\<TKey, TValue>
 - Added class PortMember
 - Added ItemSlots constants
 - Added class ToFromStringConverter

@@ -4,10 +4,12 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace SpikysLib.DataStructures;
 
+[Obsolete($"use {nameof(IGeneratedDictionary<TItem,TValue>)} instead")]
 public interface ICache<TItem, TValue> : IDictionary<TItem, TValue> {
     TValue GetOrAdd(TItem key);
 }
 
+[Obsolete($"use {nameof(GeneratedDictionary<TKey, TValue>)} instead", true)]
 public sealed class Cache<TKey, TValue> : DictionaryWithStats<TKey, TValue>, ICache<TKey, TValue> where TKey : notnull{
 
     public Cache(Func<TKey, TValue> builder): base() {
@@ -22,7 +24,7 @@ public sealed class Cache<TKey, TValue> : DictionaryWithStats<TKey, TValue>, ICa
     public Func<TKey, TValue> Builder { get; }
 }
 
-
+[Obsolete($"use {nameof(GeneratedDictionary<TItem, TKey, TValue>)} instead", true)]
 public sealed class Cache<TItem, TKey, TValue> : DictionaryWithStats<TKey, TValue>, ICache<TItem, TValue> where TKey : notnull {
 
     public Cache(Func<TItem, TKey> indexer, Func<TItem, TValue> builder) {
