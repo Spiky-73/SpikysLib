@@ -5,7 +5,6 @@ using SpikysLib.Constants;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.UI;
 
 namespace SpikysLib.Extensions;
@@ -94,13 +93,12 @@ public static class PlayerExtensions {
     }
 
 
-    public static ReadOnlyDictionary<int, int> OwnedItems => Data.ownedItems;
+    public static ReadOnlyDictionary<int, int> OwnedItems => s_ownedItems;
 
-    public static readonly int[] InventoryContexts = new int[] { ItemSlot.Context.InventoryItem, ItemSlot.Context.InventoryAmmo, ItemSlot.Context.InventoryCoin };
+    public static readonly int[] InventoryContexts = [ItemSlot.Context.InventoryItem, ItemSlot.Context.InventoryAmmo, ItemSlot.Context.InventoryCoin];
 
-    private class Data : ILoadable {
-        public void Load(Mod mod) => ownedItems = new(Reflection.Recipe._ownedItems.GetValue());
-        public void Unload() => ownedItems = null!;
-        public static ReadOnlyDictionary<int, int> ownedItems = null!;
-    }
+    internal static void Load() => s_ownedItems = new(Reflection.Recipe._ownedItems.GetValue());
+    internal static void Unload() => s_ownedItems = null!;
+
+    private static ReadOnlyDictionary<int, int> s_ownedItems = null!;
 }

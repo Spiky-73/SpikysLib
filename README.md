@@ -10,6 +10,7 @@ Just a small library used by most of my mods.
 - Notification templates
 - Generic Math
 - Config Porting tools
+- An api for custom cursors
 
 # Changelog
 
@@ -30,6 +31,7 @@ Just a small library used by most of my mods.
 - Replaced Joined\<TList, T> by JoinedLists\<T>
 - Implemented new IList\<T> methods in ListIndices\<T>
 - Replaced Cache\<TKey, TValue> by GeneratedDictionary\<TKey, TValue>
+- Added CursorLoader class
 - Added class PortMember
 - Added ItemSlots constants
 - Added class ToFromStringConverter
