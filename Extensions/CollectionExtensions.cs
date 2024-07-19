@@ -14,7 +14,7 @@ public static class CollectionExtensions {
         }
         throw new IndexOutOfRangeException("The index was outside the bounds of the array");
     }
-    public static bool Exist<T>(this IEnumerable<T> enumerable, Predicate<T> predicate) => enumerable.Exist(predicate);
+    public static bool Exist<T>(this IEnumerable<T> enumerable, Predicate<T> predicate) => enumerable.Exist(predicate, out _);
     public static bool Exist<T>(this IEnumerable<T> enumerable, Predicate<T> predicate, [MaybeNullWhen(true)] out int count) {
         count = 0;
         foreach (T item in enumerable) {
