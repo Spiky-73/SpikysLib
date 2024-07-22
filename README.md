@@ -36,6 +36,7 @@ Just a small library used by most of my mods.
 - Added ItemSlots constants
 - Added class ToFromStringConverter
 - Improved Json Serilization
+- Loosened NestedValues conditions
 - Fixed a bug with MultiChoice tooltip
 - Fixed Multichoice swap button labels
 - Fixed bugs with Range and RangeSet

@@ -12,10 +12,10 @@ public interface INestedValue {
 }
 [JsonConverter(typeof(IO.NestedValueConverter))]
 [CustomModConfigItem(typeof(UI.NestedValueElement))]
-public class NestedValue<TKey, TValue> : INestedValue where TKey: struct where TValue: class, new() { // TODO custom args for Key
-    public NestedValue() : this(default) { } 
-    public NestedValue(TKey key = default, TValue? value = default) {
-        Key = key;
+public class NestedValue<TKey, TValue> : INestedValue where TKey: notnull, new() where TValue: class, new() { // TODO custom args for Key
+    public NestedValue() : this(new()) { } 
+    public NestedValue(TKey? key = default, TValue? value = default) {
+        Key = key ?? new();
         Value = value ?? new();
     }
 
