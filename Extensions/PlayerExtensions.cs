@@ -1,10 +1,10 @@
 using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using SpikysLib.Constants;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.UI;
 
 namespace SpikysLib.Extensions;
@@ -44,10 +44,10 @@ public static class PlayerExtensions {
     }
 
     public static Item? Pick(this Player player, Predicate<Item> predicate) {
-        for (int i = 54; i < 58; i++) {
+        foreach (int i in InventorySlots.Ammo) {
             if (!player.inventory[i].IsAir && predicate(player.inventory[i])) return player.inventory[i];
         }
-        for (int i = 0; i < 54; i++) {
+        for (int i = 0; i < InventorySlots.Coins.End; i++) {
             if (!player.inventory[i].IsAir && predicate(player.inventory[i])) return player.inventory[i];
         }
 
@@ -62,26 +62,26 @@ public static class PlayerExtensions {
         int c = chest ?? player.chest;
         return c switch {
             >= 0 => Main.chest[c].item,
-            -2 => player.bank.item,
-            -3 => player.bank2.item,
-            -4 => player.bank3.item,
-            -5 => player.bank4.item,
+            InventorySlots.PiggyBank => player.bank.item,
+            InventorySlots.Safe => player.bank2.item,
+            InventorySlots.DefendersForge => player.bank3.item,
+            InventorySlots.VoidBag => player.bank4.item,
             _ => null
         };
     }
 
     public static int CountItems(this Player player, int type, bool includeChest = false) {
-        int total = player.inventory.CountItems(type, 58) + new[] { Main.mouseItem }.CountItems(type) + new[] { Main.CreativeMenu.GetItemByIndex(0) }.CountItems(type);
+        int total = player.inventory.CountItems(type, InventorySlots.Mouse) + new[] { Main.mouseItem }.CountItems(type) + new[] { Main.CreativeMenu.GetItemByIndex(0) }.CountItems(type);
         if (includeChest) {
             if (CrossMod.MagicStorageIntegration.Enabled && CrossMod.MagicStorageIntegration.InMagicStorage) total += CrossMod.MagicStorageIntegration.CountItems(type);
             else if (player.InChest(out Item[]? chest)) total += chest.CountItems(type);
-            if (player.chest != -5 && player.useVoidBag()) total += player.bank4.item.CountItems(type);
+            if (player.chest != InventorySlots.VoidBag && player.useVoidBag()) total += player.bank4.item.CountItems(type);
         }
         return total;
     }
 
     public static long CountCurrency(this Player player, int currency, bool includeBanks = true, bool includeChest = false) {
-        long count = player.inventory.CountCurrency(currency, 58);
+        long count = player.inventory.CountCurrency(currency, InventorySlots.Mouse);
         count += new Item[] { Main.mouseItem }.CountCurrency(currency);
         if (includeBanks) count += player.bank.item.CountCurrency(currency)
                                 + player.bank2.item.CountCurrency(currency)
@@ -93,13 +93,12 @@ public static class PlayerExtensions {
     }
 
 
-    public static ReadOnlyDictionary<int, int> OwnedItems => Data.ownedItems;
+    public static ReadOnlyDictionary<int, int> OwnedItems => s_ownedItems;
 
-    public static readonly int[] InventoryContexts = new int[] { ItemSlot.Context.InventoryItem, ItemSlot.Context.InventoryAmmo, ItemSlot.Context.InventoryCoin };
+    public static readonly int[] InventoryContexts = [ItemSlot.Context.InventoryItem, ItemSlot.Context.InventoryAmmo, ItemSlot.Context.InventoryCoin];
 
-    private class Data : ILoadable {
-        public void Load(Mod mod) => ownedItems = new(Reflection.Recipe._ownedItems.GetValue());
-        public void Unload() => ownedItems = null!;
-        public static ReadOnlyDictionary<int, int> ownedItems = null!;
-    }
+    internal static void Load() => s_ownedItems = new(Reflection.Recipe._ownedItems.GetValue());
+    internal static void Unload() => s_ownedItems = null!;
+
+    private static ReadOnlyDictionary<int, int> s_ownedItems = null!;
 }

@@ -1,7 +1,11 @@
 Just a small library used by most of my mods.
 
-It includes: 
-- A generic reflection wrapper
-- Loads of utility methods
+Content:
 - Custom UI elements
-- Custom data structures 
+- Terraria contants
+- Custom data structures
+- Extension methods from Terraria classes
+- A generic reflection wrapper
+- Notification templates
+- Generic Math
+- Config Porting tools

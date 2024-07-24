@@ -5,6 +5,7 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.UI.States;
 using Terraria.Localization;
+using Terraria.ModLoader;
 using Terraria.ModLoader.Config.UI;
 using Terraria.UI.Chat;
 
@@ -30,7 +31,11 @@ public sealed class TextElement : ConfigElement<Text?> {
         Height.Pixels = size.Y + 30 - FontAssets.ItemStack.Value.LineSpacing;
         if (Parent != null && Parent is UISortableElement) Parent.Height.Set(Height.Pixels, 0f);
     }
-    internal static void ILTextColors(ILContext il) {
+
+    internal static void Load() => MonoModHooks.Modify(Reflection.ConfigElement.DrawSelf, ILTextColors);
+    internal static void Unload() { }
+
+    private static void ILTextColors(ILContext il) {
         ILCursor cursor = new(il);
 
         if (!cursor.TryGotoNext(i => i.SaferMatchCall(typeof(ChatManager), nameof(ChatManager.DrawColorCodedStringWithShadow))) || !cursor.TryGotoPrev(MoveType.After, i => i.MatchLdloc3())) return;

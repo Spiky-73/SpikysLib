@@ -14,7 +14,22 @@ public sealed class MultiChoiceElement : ConfigElement<MultiChoice> {
 
     public override void OnBind() {
         base.OnBind();
+        SetupSelf();
         SetupMember();
+    }
+
+    private void SetupSelf() {
+        _tooltip = TooltipFunction;
+        TooltipFunction = null;
+        DrawLabel = false;
+
+        MultiChoice value = Value ??= (MultiChoice)Activator.CreateInstance(MemberInfo.Type)!;
+        int top = 0;
+        foreach (var choice in value.Choices) {
+            (UIElement container, UIElement element) = ConfigManager.WrapIt(this, ref top, choice, value, 0);
+            _labels.Add(Reflection.ConfigElement.TextDisplayFunction.GetValue((ConfigElement)element));
+        }
+        RemoveAllChildren();
     }
 
     public void SetupMember() {
@@ -28,10 +43,6 @@ public sealed class MultiChoiceElement : ConfigElement<MultiChoice> {
         _selectedElement = (ConfigElement)element;
         container.Left.Pixels -= 20;
         container.Width.Pixels -= 7;
-
-        _tooltip = TooltipFunction;
-        DrawLabel = false;
-        TooltipFunction = null;
 
         MaxHeight.Pixels = int.MaxValue;
         Reflection.ConfigElement.backgroundColor.SetValue(_selectedElement, Color.Transparent);
@@ -50,10 +61,10 @@ public sealed class MultiChoiceElement : ConfigElement<MultiChoice> {
         int count = value.Choices.Count;
         UIImage swapButton;
         if (count == 2) {
-            swapButton = new HoverImage(PlayTexture, Language.GetTextValue("Mods.SpikysLib.UI.Change", value.Choices[(value.ChoiceIndex + 1) % count].Name));
+            swapButton = new HoverImage(PlayTexture, Language.GetTextValue($"{Localization.Keys.UI}.Change", _labels[(value.ChoiceIndex + 1) % count]()));
             swapButton.OnLeftClick += (UIMouseEvent a, UIElement b) => ChangeChoice(value.ChoiceIndex + 1);
         } else {
-            swapButton = new HoverImageSplit(UpDownTexture, Language.GetTextValue("Mods.SpikysLib.UI.Change", value.Choices[(value.ChoiceIndex + 1) % count].Name), Language.GetTextValue("Mods.SpikysLib.UI.Change", value.Choices[(value.ChoiceIndex - 1 + count) % count].Name));
+            swapButton = new HoverImageSplit(UpDownTexture, Language.GetTextValue($"{Localization.Keys.UI}.Change", _labels[(value.ChoiceIndex + 1) % count]()), Language.GetTextValue($"{Localization.Keys.UI}.Change", _labels[(value.ChoiceIndex - 1 + count) % count]()));
             swapButton.OnLeftClick += (UIMouseEvent a, UIElement b) => ChangeChoice(value.ChoiceIndex + (((HoverImageSplit)swapButton).HoveringUp ? 1 : -1));
         }
         swapButton.VAlign = 0.5f;
@@ -75,5 +86,6 @@ public sealed class MultiChoiceElement : ConfigElement<MultiChoice> {
     }
 
     private ConfigElement _selectedElement = null!;
+    private readonly List<Func<string>> _labels = [];
     private Func<string>? _tooltip = null;
 }

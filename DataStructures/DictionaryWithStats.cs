@@ -6,7 +6,7 @@ using Terraria;
 
 namespace SpikysLib.DataStructures;
 
-public abstract class DictionaryWithStats<TKey, TValue> : IDictionary<TKey, TValue> where TKey : notnull {
+public class DictionaryWithStats<TKey, TValue> : IDictionary<TKey, TValue> where TKey : notnull {
 
     public TValue this[TKey key] {
         get => TryGetValue(key, out TValue? value) ? value : throw new KeyNotFoundException();

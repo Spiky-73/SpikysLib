@@ -1,4 +1,3 @@
-using System.Reflection;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
@@ -74,15 +73,12 @@ public static class Currencies {
     public static CustomCurrencyData CurrencySystems(int currency) => _customCurrencies[currency];
     public static List<int> CustomCurrencies => new(_customCurrencies.Keys);
 
-
-    internal static void GetCurrencies() {
-        FieldInfo curField = typeof(CustomCurrencyManager).GetField("_currencies", BindingFlags.NonPublic | BindingFlags.Static)!;
-        FieldInfo valuesField = typeof(CustomCurrencySystem).GetField("_valuePerUnit", BindingFlags.NonPublic | BindingFlags.Instance)!;
-        Dictionary<int, CustomCurrencySystem> currencies = (Dictionary<int, CustomCurrencySystem>)curField.GetValue(null)!;
+    internal static void Load() {
         _customCurrencies = new();
-        foreach (var (key, system) in currencies) _customCurrencies[key] = new(system, (Dictionary<int, int>)valuesField.GetValue(system)!);
+        foreach (var (key, system) in Reflection.CustomCurrencyManager._currencies.GetValue()) _customCurrencies[key] = new(system, Reflection.CustomCurrencySystem._valuePerUnit.GetValue(system));
     }
-    internal static void ClearCurrencies() => _customCurrencies = null!;
+
+    internal static void Unload() => _customCurrencies = null!;
 
     private static Dictionary<int, CustomCurrencyData> _customCurrencies = null!;
 }

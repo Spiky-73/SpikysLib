@@ -1,14 +1,8 @@
-using System;
-using System.Reflection;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.ModLoader.Config;
-using Terraria.ModLoader.Config.UI;
-using TElement = Terraria.ModLoader.Config.UI.ConfigElement;
-using TManager = Terraria.ModLoader.Config.ConfigManager;
+using TText = SpikysLib.Configs.Text;
+using TDictionaryValuesElement = SpikysLib.Configs.UI.DictionaryValuesElement;
 
 namespace SpikysLib.Reflection;
 
-public static class Wrapper {
-    
+internal static class DictionaryValuesElement {
+    public static readonly Field<TDictionaryValuesElement, TText> _unloaded = new(nameof(_unloaded));
 }
