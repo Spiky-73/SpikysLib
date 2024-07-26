@@ -1,6 +1,6 @@
 displayName = Spiky's Lib
 author = Spiky
-version = 1.1
-homepage = https://github.com/Spiky-73/SpikysLib/tree/master
+version = 1.1.0.1
+homepage = https://github.com/Spiky-73/SpikysLib/blob/master/README.md
 side = NoSync
 weakReferences = MagicStorage@0.6.0.3
