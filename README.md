@@ -14,6 +14,9 @@ Just a small library used by most of my mods.
 
 # Changelog
 
+### v1.1.0.1
+- Fixed serialization bug
+
 ### v1.1
 - Updated icon
 - Added class DictionaryValuesElement and ValueWrapperAttribute
