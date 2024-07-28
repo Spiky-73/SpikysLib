@@ -31,7 +31,6 @@ public static class IlExtensions {
     }
     private delegate bool TryGoto(MoveType moveType = MoveType.Before, params Func<Instruction, bool>[] predicates);
 
-
     public static void FindPrevLoc(this ILCursor cursor, out ILCursor c, out int value, Predicate<Instruction> predicate, int def = -1) => FindLoc(cursor.TryFindPrev, out c, out value, predicate, def);
     public static void FindNextLoc(this ILCursor cursor, out ILCursor c, out int value, Predicate<Instruction> predicate, int def = -1) => FindLoc(cursor.TryFindNext, out c, out value, predicate, def);
     private static void FindLoc(TryFind finder, out ILCursor c, out int value, Predicate<Instruction> predicate, int def = -1) {

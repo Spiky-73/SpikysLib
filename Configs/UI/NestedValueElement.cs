@@ -33,8 +33,8 @@ public sealed class NestedValueElement : ConfigElement<INestedValue> {
         Reflection.ConfigElement.TextDisplayFunction.SetValue(_uiParent, () => $"{TextDisplayFunction()}{parentText()[nameof(INestedValue.Key).Length..]}");
         Reflection.ConfigElement.TextDisplayFunction.SetValue(_uiValue, () => string.Empty);
 
-        Reflection.ConfigElement.TooltipFunction.SetValue(_uiParent, TooltipFunction);
-        Reflection.ConfigElement.TooltipFunction.SetValue(_uiValue, TooltipFunction);
+        Reflection.ConfigElement.TooltipFunction.SetValue(_uiParent, () => TooltipFunction());
+        Reflection.ConfigElement.TooltipFunction.SetValue(_uiValue, () => TooltipFunction());
 
         Reflection.ConfigElement.backgroundColor.SetValue(_uiParent, Color.Transparent);
         Reflection.ConfigElement.backgroundColor.SetValue(_uiValue, Color.Transparent);

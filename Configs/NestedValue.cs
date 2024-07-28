@@ -1,12 +1,8 @@
-using System;
 using Newtonsoft.Json;
 using Terraria.ModLoader.Config;
 namespace SpikysLib.Configs;
 
 public interface INestedValue {
-    [Obsolete($"use {nameof(Key)} instead", true)]
-    object Parent { get => Key; set => Key = value; }
-
     object Key { get; set; }
     object Value { get; set; }
 }
@@ -21,9 +17,6 @@ public class NestedValue<TKey, TValue> : INestedValue where TKey: notnull, new()
         Key = key ?? new();
         Value = value ?? new();
     }
-
-    [Obsolete($"use {nameof(Key)} instead", true)]
-    public TKey Parent { get => Key; set => Key = value; }
     
     public TKey Key { get; set; }
     [Expand(false, false)] public TValue Value { get; set; }

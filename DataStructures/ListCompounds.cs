@@ -95,39 +95,6 @@ public class JoinedLists<T> : IList<T>, IReadOnlyList<T> {
     private readonly IList<T>[] _lists;
 }
 
-[Obsolete($"use {nameof(JoinedLists<object>)} instead", true)]
-public readonly record struct Joined<TList, T> : IList<T>, IReadOnlyList<T> where TList: IList<T> {
-    public TList[] Lists => _joinedLists.Lists.Select(l => (TList)l).ToArray();
-    public T this[int index] { get => _joinedLists[index]; set => _joinedLists[index] = value; }
-    public int Count => _joinedLists.Count;
-    
-    public bool IsReadOnly => ((ICollection<T>)_joinedLists).IsReadOnly;
-    
-    public Joined(params TList[] lists) => _joinedLists = new([..lists]);
-
-    public bool Contains(T item) => _joinedLists.Contains(item);
-    public int IndexOf(T item) => _joinedLists.IndexOf(item);
-
-    public void Insert(int index, T item) => _joinedLists.Insert(index, item);
-    public void Insert(int index, T item, bool addIfJunction) => _joinedLists.Insert(index, item, addIfJunction);
-    public void Add(T item) => _joinedLists.Add(item);
-    
-    public bool Remove(T item) => _joinedLists.Remove(item);
-    public void RemoveAt(int index) => _joinedLists.RemoveAt(index);
-    public void Clear() => _joinedLists.Clear();
-
-    public (int list, int index) InnerIndex(int index) => _joinedLists.ToInnerIndex(index);
-
-    public void CopyTo(T[] array, int arrayIndex) => _joinedLists.CopyTo(array, arrayIndex);
-
-    public IEnumerator<T> GetEnumerator() => _joinedLists.GetEnumerator();
-    IEnumerator IEnumerable.GetEnumerator() => _joinedLists.GetEnumerator();
-
-    private readonly JoinedLists<T> _joinedLists;
-
-    public static implicit operator Joined<TList, T>(TList list) => new(list);
-}
-
 public sealed class ListIndices<T> : IList<T>, IReadOnlyList<T> {
 
     public IList<T> List { get; }

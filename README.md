@@ -15,6 +15,9 @@ Just a small library used by most of my mods.
 # Changelog
 
 ### v1.1.0.1
+- Removed obsolete v1.0 items
+
+### v1.1.0.1
 - Fixed serialization bug
 
 ### v1.1
