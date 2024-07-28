@@ -22,7 +22,7 @@ public sealed class NestedValueConverter : JsonConverter<INestedValue> {
         || (obj.Count == 2 && obj.ContainsKey("Parent") && obj.ContainsKey("Value"))) {
             if (obj.TryGetValue("Parent", out JToken? parent)) existingValue.Key = raw ? parent : parent.ToObject(type!.GenericTypeArguments[0])!;
             if (obj.TryGetValue("Value", out JToken? value)) existingValue.Value = raw ? value : value.ToObject(type!.GenericTypeArguments[1])!;
-            PortConfig.SaveLoadingConfig = true;
+            ConfigHelper.SaveLoadingConfig();
             return existingValue;
         }
         if (!IsUpdated(obj)) {
