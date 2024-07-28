@@ -1,6 +1,6 @@
 using Microsoft.Xna.Framework;
 using MonoMod.Cil;
-using SpikysLib.Extensions;
+using SpikysLib.IL;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.UI.States;

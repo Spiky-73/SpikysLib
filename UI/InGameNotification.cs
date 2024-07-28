@@ -77,8 +77,8 @@ public class InGameNotification : IInGameNotification {
     public int timeLeft = 5 * 60;
 
     public float Scale { get {
-        if (timeLeft < FadeTime) return MathHelper.Lerp(0f, 1f, (float)timeLeft / FadeTime);
-        if (_fadeInTime < FadeTime/2) return MathHelper.Lerp(0f, 1f, _fadeInTime*2f / FadeTime);
+        if (timeLeft < FadeTime) return Microsoft.Xna.Framework.MathHelper.Lerp(0f, 1f, (float)timeLeft / FadeTime);
+        if (_fadeInTime < FadeTime/2) return Microsoft.Xna.Framework.MathHelper.Lerp(0f, 1f, _fadeInTime*2f / FadeTime);
         return 1;
     } }
     public float Opacity => Scale <= 0.2f ? 0f : (Scale - 0.2f) / 0.8f;

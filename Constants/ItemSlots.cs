@@ -2,8 +2,6 @@ using SpikysLib.DataStructures;
 
 namespace SpikysLib.Constants;
 
-public readonly record struct InventorySection(int Start, int Count);
-
 public static class InventorySlots {
     public const int Count = 58;
     public static readonly Range Hotbar = Range.FromCount(0, 10);

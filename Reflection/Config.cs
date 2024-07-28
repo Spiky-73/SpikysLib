@@ -14,6 +14,7 @@ public static class ConfigManager {
     public static readonly StaticMethod<object?> Load = new(typeof(TManager), nameof(Load), typeof(ModConfig));
     public static readonly StaticMethod<string> GetLocalizedLabel = new(typeof(TManager), nameof(GetLocalizedLabel), typeof(PropertyFieldWrapper));
     public static readonly StaticMethod<string> GetLocalizedTooltip = new(typeof(TManager), nameof(GetLocalizedTooltip), typeof(PropertyFieldWrapper));
+    public static readonly StaticMethod<object?> RegisterLocalizationKeysForMembers = new(typeof(TManager), nameof(RegisterLocalizationKeysForMembers), typeof(Type));
 }
 
 public static class ConfigElement {

@@ -2,7 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using SpikysLib.Extensions;
 using SpikysLib.Configs;
 
 namespace SpikysLib.IO;

@@ -9,7 +9,7 @@ using Terraria.GameContent.UI.Elements;
 using Terraria.ModLoader.Config;
 using Terraria.ModLoader.Config.UI;
 using Terraria.Localization;
-using SpikysLib.Extensions;
+using SpikysLib.Collections;
 using SpikysLib.UI;
 using Terraria.ID;
 

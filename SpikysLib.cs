@@ -1,5 +1,4 @@
 using Terraria.ModLoader;
-using SpikysLib.Extensions;
 using SpikysLib.Configs.UI;
 using SpikysLib.UI;
 using SpikysLib.Configs;
@@ -12,15 +11,13 @@ public class SpikysLib : Mod {
 		TextElement.Load();
 		ConfigHelper.Load();
 		CursorLoader.Load();
-		Currencies.Load();
-		PlayerExtensions.Load();
+		PlayerHelper.Load();
 	}
 
     public override void Unload() {
 		TextElement.Unload();
 		ConfigHelper.Unload();
 		CursorLoader.Unload();
-		Currencies.Unload();
-		PlayerExtensions.Unload();
+		PlayerHelper.Unload();
 	}
 }
