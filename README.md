@@ -15,6 +15,8 @@ Just a small library used by most of my mods.
 # Changelog
 
 ### v1.2
+- Added LanguageHelper class
+- Added IPreLoadMod interface
 - Merged ModConfigExtensions and PortConfig into ConfigHelper
 - Merged Graphics and GraphicsExtensions into GraphicsHelper
 - Renamed Extensions classes to Helper

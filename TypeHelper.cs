@@ -18,7 +18,7 @@ public static class TypeHelper {
                 impl = t;
                 return true;
             }
-            t = type.BaseType;
+            t = t.BaseType;
         }
         impl = null;
         return false;
