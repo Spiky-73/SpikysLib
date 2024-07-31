@@ -15,12 +15,14 @@ Just a small library used by most of my mods.
 # Changelog
 
 ### v1.2
+- Added Expand/Collapse button to EntityDefinitionElement
 - Added LanguageHelper class
 - Added IPreLoadMod interface
 - Merged ModConfigExtensions and PortConfig into ConfigHelper
 - Merged Graphics and GraphicsExtensions into GraphicsHelper
 - Renamed Extensions classes to Helper
 - Removed obsolete v1.0 items
+- Fixed a bug with ValueWrappers without generic args
 
 ### v1.1.0.1
 - Fixed serialization bugs

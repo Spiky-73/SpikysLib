@@ -75,7 +75,7 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
             List<Type> args = new(2);
             if (_wrapperType.GetGenericArguments().Length > 1) args.Add(key.GetType());
             if (_wrapperType.GetGenericArguments().Length > 0) args.Add(value.GetType());
-            object wrapper = Activator.CreateInstance(_wrapperType.MakeGenericType([.. args]))!;
+            object wrapper = Activator.CreateInstance(args.Count == 0 ? _wrapperType : _wrapperType.MakeGenericType([.. args]))!;
             wrapper.Call(nameof(ValueWrapper<object, object>.Bind), key, value);
             _dictWrappers.Add(wrapper);
             (UIElement container, UIElement e) = ConfigManager.WrapIt(_dataList, ref top, new(wrapper.GetType().GetProperty(nameof(ValueWrapper<object, object>.Value), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.DeclaredOnly)), wrapper, i);
