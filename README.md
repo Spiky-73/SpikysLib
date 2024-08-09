@@ -18,6 +18,7 @@ Just a small library used by most of my mods.
 - Added Expand/Collapse button to EntityDefinitionElement
 - Added LanguageHelper class
 - Added IPreLoadMod interface
+- Added ObjectMembersElement class
 - Merged ModConfigExtensions and PortConfig into ConfigHelper
 - Merged Graphics and GraphicsExtensions into GraphicsHelper
 - Renamed Extensions classes to Helper
