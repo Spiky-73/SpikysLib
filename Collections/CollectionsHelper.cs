@@ -33,15 +33,15 @@ public static class CollectionsHelper {
         return -1;
     }
 
-    public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, Func<TValue> builder) {
-        if (dict.TryGetValue(key, out TValue? value)) return value;
-        return dict[key] = builder();
-    }
+    public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, Func<TValue> builder) => dict.TryGetValue(key, out TValue? value) ? value : (dict[key] = builder());
+    public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value) => dict.GetOrAdd(key, () => value);
+    public static TItem GetOrAddRaw<TKey, TItem, TValue>(this IDictionary<TKey, TValue> dict, TKey key, Func<TItem> builder) where TItem : TValue => (TItem)dict.GetOrAdd(key, () => builder())!;
+    public static TItem GetOrAddRaw<TKey, TValue, TItem>(this IDictionary<TKey, TValue> dict, TKey key, TValue value) where TItem : TValue => (TItem)dict.GetOrAddRaw(key, () => value)!;
 
     public static IEnumerable<(object key, object? value)> Items(this IDictionary dict) => dict.Items<object, object?>();
-    public static IEnumerable<(Tkey key, TValue value)> Items<Tkey, TValue>(this IDictionary dict) where Tkey : notnull {
+    public static IEnumerable<(TKey key, TValue value)> Items<TKey, TValue>(this IDictionary dict) where TKey : notnull {
         foreach (DictionaryEntry entry in dict) {
-            yield return new((Tkey)entry.Key, (TValue)entry.Value!);
+            yield return new((TKey)entry.Key, (TValue)entry.Value!);
         }
     }
 

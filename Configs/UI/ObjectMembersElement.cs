@@ -1,16 +1,14 @@
 using System;
 using Microsoft.Xna.Framework.Graphics;
-using Terraria.UI;
 using Terraria.GameContent.UI.States;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ModLoader.Config;
 using Terraria.ModLoader.Config.UI;
 using Newtonsoft.Json;
-using Terraria.Localization;
 
 namespace SpikysLib.Configs.UI;
 
-public sealed class ObjectMembersElement : ConfigElement<object> {
+public sealed class ObjectMembersElement : ConfigElement<object?> {
 
     public override void OnBind() {
         base.OnBind();
@@ -23,49 +21,29 @@ public sealed class ObjectMembersElement : ConfigElement<object> {
             ListPadding = 5f,
             PaddingBottom = -5f
         };
+        Append(_dataList);
         SetupList();
-
-        _expandButton = new HoverImage(CollapsedTexture, Language.GetTextValue($"tModLoader.ModConfigExpand")) {
-            Left = new(-30 + 5, 1),
-            Top = new(4, 0)
-        };
-        _expandButton.OnLeftClick += (_, _) => Expanded = !Expanded;
-
-        ExpandAttribute? expandAttribute = ConfigManager.GetCustomAttributeFromMemberThenMemberType<ExpandAttribute>(MemberInfo, Item, List);
-        if (expandAttribute != null) Expanded = expandAttribute.Expand;
-    }
-
-    public bool Expanded {
-        get => _expanded;
-        set {
-            if(_expanded = value) {
-                _expandButton.HoverText = Language.GetTextValue($"tModLoader.ModConfigExpand");
-                _expandButton.SetImage(ExpandedTexture);
-                RemoveChild(_dataList);
-            } else {
-                _expandButton.HoverText = Language.GetTextValue($"tModLoader.ModConfigCollapse");
-                _expandButton.SetImage(CollapsedTexture);
-                Append(_dataList);
-            }
-            Recalculate();
-        }
     }
 
     public void SetupList() {
         _dataList.Clear();
 
-        object value = Value;
-        int order = 0;
-        foreach (PropertyFieldWrapper variable in ConfigManager.GetFieldsAndProperties(value)) {
-            if (!Attribute.IsDefined(variable.MemberInfo, typeof(JsonIgnoreAttribute))) {
-                int top = 0;
-                object[] args = [_dataList, top, order, variable];
-                Reflection.UIModConfig.HandleHeader.Invoke(args);
-                top = (int)args[1]; order = (int)args[2];
-                (UIElement container, UIElement e) = ConfigManager.WrapIt(_dataList, ref top, variable, value, order++);
-                container.Left.Pixels -= 20;
-                container.Width.Pixels += 20;
+        object? value = Value;
+        if (value is not null) {
+            int order = 0;
+            foreach (PropertyFieldWrapper variable in ConfigManager.GetFieldsAndProperties(value)) {
+                if (!Attribute.IsDefined(variable.MemberInfo, typeof(JsonIgnoreAttribute))) {
+                    int top = 0;
+                    object[] args = [_dataList, top, order, variable];
+                    Reflection.UIModConfig.HandleHeader.Invoke(args);
+                    top = (int)args[1]; order = (int)args[2];
+                    ConfigManager.WrapIt(_dataList, ref top, variable, value, order++);
+                }
             }
+        } else {
+            int top = 0;
+            int order = 0;
+            ConfigManager.WrapIt(_dataList, ref top, MemberInfo, this, order++);
         }
         MaxHeight.Pixels = int.MaxValue;
         Recalculate();
@@ -81,7 +59,5 @@ public sealed class ObjectMembersElement : ConfigElement<object> {
 
     public override void Draw(SpriteBatch spriteBatch) => DrawChildren(spriteBatch);
 
-    private bool _expanded;
-    private HoverImage _expandButton = null!;
     private UIList _dataList = null!;
 }

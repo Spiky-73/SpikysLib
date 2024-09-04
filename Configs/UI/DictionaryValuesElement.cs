@@ -15,26 +15,6 @@ using Terraria.ID;
 
 namespace SpikysLib.Configs.UI;
 
-[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Class | AttributeTargets.Enum)]
-public sealed class ValueWrapperAttribute : Attribute {
-    public ValueWrapperAttribute(Type type) {
-        if (!type.IsSubclassOfGeneric(typeof(ValueWrapper<,>), out _)) throw new ArgumentException($"The type {type} does derive from {typeof(ValueWrapper<,>)}");
-        if (type.GetGenericArguments().Length > 2) throw new ArgumentException($"The type {type} can have at most 2 generic arguments");
-        Type = type;
-    }
-
-    public Type Type { get; }
-}
-
-
-public class ValueWrapper<TKey, TValue> where TKey : notnull {
-    public TKey Key { get; private set; } = default!;
-    public virtual TValue Value { get; set; } = default!;
-    public virtual void OnBind(ConfigElement element) {}
-
-    internal void Bind(TKey key, TValue value) => (Key, Value) = (key, value);
-}
-
 public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
 
     public override void OnBind() {
@@ -43,7 +23,7 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
         if (Value is null) throw new ArgumentNullException("This config element only supports IDictionaries");
 
         ValueWrapperAttribute? customWrapper = ConfigManager.GetCustomAttributeFromMemberThenMemberType<ValueWrapperAttribute>(MemberInfo, Item, List);
-        if (customWrapper is not null) _wrapperType = customWrapper.Type;
+        _wrapperType = customWrapper?.Type ?? typeof(ValueWrapper<,>);
 
         _dataList.Top = new(0, 0f);
         _dataList.Left = new(0, 0f);
@@ -78,7 +58,7 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
             object wrapper = Activator.CreateInstance(args.Count == 0 ? _wrapperType : _wrapperType.MakeGenericType([.. args]))!;
             wrapper.Call(nameof(ValueWrapper<object, object>.Bind), key, value);
             _dictWrappers.Add(wrapper);
-            (UIElement container, UIElement e) = ConfigManager.WrapIt(_dataList, ref top, new(wrapper.GetType().GetProperty(nameof(ValueWrapper<object, object>.Value), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.DeclaredOnly)), wrapper, i);
+            (UIElement container, UIElement e) = ConfigManager.WrapIt(_dataList, ref top, ValueWrapper.GetValueWrapper(wrapper.GetType()), wrapper, i);
             ConfigElement element = (ConfigElement)e;
 
             if (dict is IOrderedDictionary) {
@@ -103,7 +83,13 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
             Func<string> label = Reflection.ConfigElement.TextDisplayFunction.GetValue((ConfigElement)k);
             Func<string> tooltip = Reflection.ConfigElement.TooltipFunction.GetValue((ConfigElement)k);
             RemoveChild(kContainer);
-            Reflection.ConfigElement.TextDisplayFunction.SetValue(element, key is ItemDefinition item ? () => $"[i:{item.Type}] {item.Name}" : () => label()[(nameof(ValueWrapper<object, object>.Key).Length+2)..]);
+            Reflection.ConfigElement.TextDisplayFunction.SetValue(element,
+                key is ItemDefinition item ? () => $"[i:{item.Type}] {item.Name}" :
+                () => {
+                    string l = label();
+                    return l.StartsWith("Key: ") ? l[(nameof(ValueWrapper<object, object>.Key).Length + 2)..] : key.ToString() ?? "";
+                    // 
+                });
             Reflection.ConfigElement.TooltipFunction.SetValue(element, tooltip);
             wrapper.Call(nameof(ValueWrapper<object, object>.OnBind), element);
         }
@@ -128,6 +114,6 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
     private Text _unloaded = null!;
 
     private readonly List<object> _dictWrappers = [];
-    private Type _wrapperType = typeof(ValueWrapper<,>);
+    private Type _wrapperType = null!;
     private readonly UIList _dataList = [];
 }

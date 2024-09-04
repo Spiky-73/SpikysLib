@@ -19,11 +19,17 @@ Just a small library used by most of my mods.
 - Added LanguageHelper class
 - Added IPreLoadMod interface
 - Added ObjectMembersElement class
+- Added ObjectElement class
+- Added methods To CollectionHelper
+- Added OrderedDictionary\<TKey, TValue>
 - Merged ModConfigExtensions and PortConfig into ConfigHelper
 - Merged Graphics and GraphicsExtensions into GraphicsHelper
 - Renamed Extensions classes to Helper
 - Removed obsolete v1.0 items
+- Removed loosened conditions on NestedValue
 - Fixed a bug with ValueWrappers without generic args
+- Fixed a bug with NestedValue serialization
+- Fixed typos
 
 ### v1.1.0.1
 - Fixed serialization bugs

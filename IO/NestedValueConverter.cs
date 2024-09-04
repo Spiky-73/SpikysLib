@@ -37,14 +37,15 @@ public sealed class NestedValueConverter : JsonConverter<INestedValue> {
     public override void WriteJson(JsonWriter writer, [AllowNull] INestedValue value, JsonSerializer serializer) {
         if (value is null) return;
         JObject obj;
-        JToken val = JToken.FromObject(value.Value, serializer);
-        if (val is not JObject jobj || IsUpdated(jobj)) {
+        JToken? key = value.Key is not null ? JToken.FromObject(value.Key, serializer) : null;
+        JToken? val = value.Value is not null ? JToken.FromObject(value.Value, serializer) : null;
+        if (val is null || val is not JObject jobj || IsUpdated(jobj)) {
             obj = new() {
-                { KeyProperty, JToken.FromObject(value.Key, serializer) },
-                { ValueProperty, JObject.FromObject(value.Value, serializer) }
+                { KeyProperty, key },
+                { ValueProperty, val }
             };
         } else {
-            obj = new() { { $".{KeyProperty}", JToken.FromObject(value.Key, serializer) } };
+            obj = new() { { $".{KeyProperty}", key } };
             obj.Merge(val);
         }
         serializer.Serialize(writer, obj);

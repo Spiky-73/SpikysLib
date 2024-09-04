@@ -61,14 +61,14 @@ public class DictionaryWithStats<TKey, TValue> : IDictionary<TKey, TValue> where
     public ICollection<TValue> Values => _dict.Values;
     public int Count => _dict.Count;
 
-
     public string Stats() => $"{Hits} hits ({(Get * Hits == 0 ? 100 : Hits * 100f / Get):F2}%), {Count} values {(EstimateValueSize is not null ? $" (~{EstimatedSize}B)" : string.Empty)} in {Main.GlobalTimeWrappedHourly - LastClearTime:F0}s";
+    
+    public void CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) => ((ICollection<KeyValuePair<TKey, TValue>>)this).CopyTo(array, arrayIndex);
 
     bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly => ((ICollection<KeyValuePair<TKey, TValue>>)this).IsReadOnly;
     public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator() => _dict.GetEnumerator();
     void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item) => ((ICollection<KeyValuePair<TKey, TValue>>)this).Add(item);
     bool ICollection<KeyValuePair<TKey, TValue>>.Contains(KeyValuePair<TKey, TValue> item) => ((ICollection<KeyValuePair<TKey, TValue>>)this).Contains(item);
-    void ICollection<KeyValuePair<TKey, TValue>>.CopyTo(KeyValuePair<TKey, TValue>[] array, int arrayIndex) => ((ICollection<KeyValuePair<TKey, TValue>>)this).CopyTo(array, arrayIndex);
     bool ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> item) => ((ICollection<KeyValuePair<TKey, TValue>>)this).Remove(item);
     IEnumerator IEnumerable.GetEnumerator() => ((IEnumerable)this).GetEnumerator();
 

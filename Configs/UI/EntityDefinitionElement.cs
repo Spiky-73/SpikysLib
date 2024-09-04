@@ -79,13 +79,13 @@ public sealed class EntityDefinitionElement : ConfigElement<IEntityDefinition> {
         get => _expanded;
         set {
             if (_expanded = value) {
-                _expandButton.HoverText = Language.GetTextValue($"tModLoader.ModConfigExpand");
-                _expandButton.SetImage(ExpandedTexture);
-                RemoveChild(_dataList);
-            } else {
                 _expandButton.HoverText = Language.GetTextValue($"tModLoader.ModConfigCollapse");
                 _expandButton.SetImage(CollapsedTexture);
                 Append(_dataList);
+            } else {
+                _expandButton.HoverText = Language.GetTextValue($"tModLoader.ModConfigExpand");
+                _expandButton.SetImage(ExpandedTexture);
+                RemoveChild(_dataList);
             }
             Recalculate();
         }
