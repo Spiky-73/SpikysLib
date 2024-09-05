@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using Microsoft.Xna.Framework;
 using Terraria.GameContent.UI.Elements;
 using Terraria.GameContent.UI.States;
@@ -11,27 +9,21 @@ using Terraria.UI;
 
 namespace SpikysLib.Configs.UI;
 
-public sealed class NestedValueElement : ConfigElement<INestedValue> {
+public sealed class NestedValueElement : ConfigElement<IKeyValuePair> {
     public override void OnBind() {
         base.OnBind();
 
-        INestedValue value = Value;
+        IKeyValuePair value = Value;
 
-        if (!value.GetType().IsSubclassOfGeneric(typeof(NestedValue<,>), out Type? nestedValueType))
-            throw new ArgumentException("This config element only supports NestedValue<,>"); ;
 
-        ValueWrapperAttribute? customWrapper = ConfigManager.GetCustomAttributeFromMemberThenMemberType<ValueWrapperAttribute>(MemberInfo, Item, List);
-        _wrapperType = customWrapper?.Type ?? typeof(ValueWrapper<,>);
-
-        List<Type> args = new(2);
-        if (_wrapperType.GetGenericArguments().Length > 1) args.Add(value.Key?.GetType() ?? nestedValueType.GenericTypeArguments[0]);
-        if (_wrapperType.GetGenericArguments().Length > 0) args.Add(value.Value?.GetType() ?? nestedValueType.GenericTypeArguments[1]);
-        _wrapper = Activator.CreateInstance(args.Count == 0 ? _wrapperType : _wrapperType.MakeGenericType([.. args]))!;
-        _wrapper.Call(nameof(ValueWrapper<object, object>.Bind), value.Key!, value.Value!);
-
+        KeyValueWrapperAttribute? customWrapperAttribute = ConfigManager.GetCustomAttributeFromMemberThenMemberType<KeyValueWrapperAttribute>(MemberInfo, Item, List);
+        _wrapper = KeyValueWrapper.CreateWrapper(
+            new(() => value.Key, v => value.Key = v), new(() => value.Value, v => value.Value = v),
+            customWrapperAttribute?.Type
+        );
 
         int top = 0;
-        (_containerValue, UIElement uiValue) = ConfigManager.WrapIt(this, ref top, ValueWrapper.GetValueWrapper(_wrapper.GetType()), _wrapper, 0);
+        (_containerValue, UIElement uiValue) = ConfigManager.WrapIt(this, ref top, KeyValueWrapper.GetValueWrapper(_wrapper.GetType()), _wrapper, 0);
         _uiValue = (ConfigElement)uiValue;
         _isObjectElement = uiValue.GetType() == Reflection.ObjectElement.Type;
         if (_isObjectElement) {
@@ -41,7 +33,7 @@ public sealed class NestedValueElement : ConfigElement<INestedValue> {
         } else _expanded = true;
 
         top = 0;
-        (UIElement conParent, UIElement uiParent) = ConfigManager.WrapIt(this, ref top, new(value.GetType().GetProperty(nameof(INestedValue.Key))), value, 0);
+        (UIElement conParent, UIElement uiParent) = ConfigManager.WrapIt(this, ref top, KeyValueWrapper.GetKeyWrapper(_wrapper.GetType()), _wrapper, 0);
         _uiParent = (ConfigElement)uiParent;
         conParent.Left.Pixels -= 20;
         conParent.Width.Pixels -= 5;
@@ -58,7 +50,7 @@ public sealed class NestedValueElement : ConfigElement<INestedValue> {
 
         DrawLabel = false;
         Func<string> parentText = Reflection.ConfigElement.TextDisplayFunction.GetValue(_uiParent);
-        Reflection.ConfigElement.TextDisplayFunction.SetValue(_uiParent, () => $"{TextDisplayFunction()}{parentText()[nameof(INestedValue.Key).Length..]}");
+        Reflection.ConfigElement.TextDisplayFunction.SetValue(_uiParent, () => $"{TextDisplayFunction()}{parentText()[nameof(IKeyValuePair.Key).Length..]}");
         Reflection.ConfigElement.TextDisplayFunction.SetValue(_uiValue, () => string.Empty);
 
         Reflection.ConfigElement.TooltipFunction.SetValue(_uiParent, () => TooltipFunction());
@@ -66,6 +58,9 @@ public sealed class NestedValueElement : ConfigElement<INestedValue> {
 
         Reflection.ConfigElement.backgroundColor.SetValue(_uiParent, Color.Transparent);
         Reflection.ConfigElement.backgroundColor.SetValue(_uiValue, Color.Transparent);
+
+        _wrapper.OnBindKey(_uiValue);
+        _wrapper.OnBind(_uiValue);
 
         Expanded = false;
     }
@@ -75,10 +70,7 @@ public sealed class NestedValueElement : ConfigElement<INestedValue> {
         if (_isObjectElement) Height = _uiValue.Height;
         else {
             Height = _uiParent.Height;
-            if (_expanded) {
-                Height.Pixels += _uiValue.Height.Pixels;
-                Height.Pixels += 5;
-            }
+            if (_expanded) Height.Pixels += _uiValue.Height.Pixels + 5;
         }
         if (Parent != null && Parent is UISortableElement) Parent.Height.Set(Height.Pixels, 0f);
     }
@@ -113,6 +105,5 @@ public sealed class NestedValueElement : ConfigElement<INestedValue> {
     private ConfigElement _uiParent = null!;
     private ConfigElement _uiValue = null!;
 
-    private Type _wrapperType = null!;
-    private object _wrapper = null!;
+    private IKeyValueWrapper _wrapper = null!;
 }

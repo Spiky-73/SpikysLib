@@ -20,11 +20,6 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
     public override void OnBind() {
         base.OnBind();
 
-        if (Value is null) throw new ArgumentNullException("This config element only supports IDictionaries");
-
-        ValueWrapperAttribute? customWrapper = ConfigManager.GetCustomAttributeFromMemberThenMemberType<ValueWrapperAttribute>(MemberInfo, Item, List);
-        _wrapperType = customWrapper?.Type ?? typeof(ValueWrapper<,>);
-
         _dataList.Top = new(0, 0f);
         _dataList.Left = new(0, 0f);
         _dataList.Height = new(-5, 1f);
@@ -42,6 +37,14 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
 
         int unloaded = 0;
 
+        var wrapperAttribute = ConfigManager.GetCustomAttributeFromMemberThenMemberType<KeyValueWrapperAttribute>(MemberInfo, Item, List);
+        Type? customWrapper = wrapperAttribute?.Type;
+#pragma warning disable CS0618 // Type or member is obsolete
+        var legacyWrapperAttr = ConfigManager.GetCustomAttributeFromMemberThenMemberType<ValueWrapperAttribute>(MemberInfo, Item, List);
+        customWrapper ??= legacyWrapperAttr?.Type;
+#pragma warning restore CS0618 // Type or member is obsolete
+
+
         IDictionary dict = Value;
         int top = 0;
         int i = -1;
@@ -52,13 +55,13 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
                 unloaded++;
                 continue;
             }
-            List<Type> args = new(2);
-            if (_wrapperType.GetGenericArguments().Length > 1) args.Add(key.GetType());
-            if (_wrapperType.GetGenericArguments().Length > 0) args.Add(value.GetType());
-            object wrapper = Activator.CreateInstance(args.Count == 0 ? _wrapperType : _wrapperType.MakeGenericType([.. args]))!;
-            wrapper.Call(nameof(ValueWrapper<object, object>.Bind), key, value);
+
+            IKeyValueWrapper wrapper = KeyValueWrapper.CreateWrapper(
+                new(() => key, _ => throw new NotSupportedException()), new(() => dict[key], v => dict[key] = v),
+                customWrapper
+            );
             _dictWrappers.Add(wrapper);
-            (UIElement container, UIElement e) = ConfigManager.WrapIt(_dataList, ref top, ValueWrapper.GetValueWrapper(wrapper.GetType()), wrapper, i);
+            (UIElement container, UIElement e) = ConfigManager.WrapIt(_dataList, ref top, KeyValueWrapper.GetValueWrapper(wrapper.GetType()), wrapper, i);
             ConfigElement element = (ConfigElement)e;
 
             if (dict is IOrderedDictionary) {
@@ -79,19 +82,19 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
                 container.Append(moveButton);
             }
 
-            (UIElement kContainer, UIElement k) = ConfigManager.WrapIt(this, ref top, new(wrapper.GetType().GetProperty(nameof(ValueWrapper<object, object>.Key), System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.Public)), wrapper, i);
-            Func<string> label = Reflection.ConfigElement.TextDisplayFunction.GetValue((ConfigElement)k);
-            Func<string> tooltip = Reflection.ConfigElement.TooltipFunction.GetValue((ConfigElement)k);
-            RemoveChild(kContainer);
+            (UIElement keyContainer, UIElement uiKey) = ConfigManager.WrapIt(this, ref top, KeyValueWrapper.GetKeyWrapper(wrapper.GetType()), wrapper, i);
+            Func<string> label = Reflection.ConfigElement.TextDisplayFunction.GetValue((ConfigElement)uiKey);
+            Func<string> tooltip = Reflection.ConfigElement.TooltipFunction.GetValue((ConfigElement)uiKey);
+            RemoveChild(keyContainer);
             Reflection.ConfigElement.TextDisplayFunction.SetValue(element,
                 key is ItemDefinition item ? () => $"[i:{item.Type}] {item.Name}" :
                 () => {
                     string l = label();
-                    return l.StartsWith("Key: ") ? l[(nameof(ValueWrapper<object, object>.Key).Length + 2)..] : key.ToString() ?? "";
+                    return l.StartsWith("Key: ") ? l[(nameof(IKeyValuePair.Key).Length + 2)..] : key.ToString() ?? "";
                     // 
                 });
             Reflection.ConfigElement.TooltipFunction.SetValue(element, tooltip);
-            wrapper.Call(nameof(ValueWrapper<object, object>.OnBind), element);
+            wrapper.OnBind(element);
         }
         if (unloaded > 0) {
             _unloaded = new(new LocalizedLine(Language.GetText($"{Localization.Keys.UI}.Unloaded"), Colors.RarityTrash, unloaded));
@@ -113,7 +116,6 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
 
     private Text _unloaded = null!;
 
-    private readonly List<object> _dictWrappers = [];
-    private Type _wrapperType = null!;
+    private readonly List<IKeyValueWrapper> _dictWrappers = [];
     private readonly UIList _dataList = [];
 }

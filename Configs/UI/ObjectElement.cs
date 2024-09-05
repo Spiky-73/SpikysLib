@@ -12,7 +12,7 @@ public sealed class ObjectElement : ConfigElement<object> {
     public override void OnBind() {
         base.OnBind();
         object value = Value;
-        _wrapper = (Wrapper)Activator.CreateInstance(typeof(Wrapper<>).MakeGenericType(value.GetType()), value)!;
+        _wrapper = Wrapper.From(value);
 
         int top = 0;
         PropertyFieldWrapper member = _wrapper.Member;

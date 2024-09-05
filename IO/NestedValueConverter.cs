@@ -6,15 +6,15 @@ using SpikysLib.Configs;
 
 namespace SpikysLib.IO;
 
-public sealed class NestedValueConverter : JsonConverter<INestedValue> {
+public sealed class NestedValueConverter : JsonConverter<IKeyValuePair> {
 
     public const string KeyProperty = "key";
     public const string ValueProperty = "value";
 
-    public override INestedValue ReadJson(JsonReader reader, Type objectType, [AllowNull] INestedValue existingValue, bool hasExistingValue, JsonSerializer serializer) {
+    public override IKeyValuePair ReadJson(JsonReader reader, Type objectType, [AllowNull] IKeyValuePair existingValue, bool hasExistingValue, JsonSerializer serializer) {
         bool raw = !objectType.IsSubclassOfGeneric(typeof(NestedValue<,>), out Type? type);
         JObject obj = serializer.Deserialize<JObject>(reader)!;
-        existingValue ??= (INestedValue)Activator.CreateInstance(objectType)!;
+        existingValue ??= (IKeyValuePair)Activator.CreateInstance(objectType)!;
 
         // Compatibility version < v1.1
         if ((obj.Count == 1 && (obj.ContainsKey("Parent") || obj.ContainsKey("Value")))
@@ -34,7 +34,7 @@ public sealed class NestedValueConverter : JsonConverter<INestedValue> {
         return existingValue;
     }
 
-    public override void WriteJson(JsonWriter writer, [AllowNull] INestedValue value, JsonSerializer serializer) {
+    public override void WriteJson(JsonWriter writer, [AllowNull] IKeyValuePair value, JsonSerializer serializer) {
         if (value is null) return;
         JObject obj;
         JToken? key = value.Key is not null ? JToken.FromObject(value.Key, serializer) : null;
