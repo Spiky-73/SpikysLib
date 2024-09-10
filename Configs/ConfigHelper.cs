@@ -1,8 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Config;
+using Terraria.ModLoader.Config.UI;
 
 namespace SpikysLib.Configs;
 
@@ -10,6 +13,9 @@ public static class ConfigHelper {
 
     public static void Save(this ModConfig config) => Reflection.ConfigManager.Save.Invoke(config);
     public static void Load(this ModConfig config) => Reflection.ConfigManager.Load.Invoke(config);
+
+    public static IEnumerable<PropertyFieldWrapper> GetFieldsAndProperties(object item)
+        => ConfigManager.GetFieldsAndProperties(item).Where(v => !Attribute.IsDefined(v.MemberInfo, typeof(JsonIgnoreAttribute)) || Attribute.IsDefined(v.MemberInfo, typeof(ShowDespiteJsonIgnoreAttribute)));
 
     public static void SetInstance(object instance, bool unload = false) => instance.GetType().GetField("Instance", BindingFlags.FlattenHierarchy | BindingFlags.Static | BindingFlags.Public)?.SetValue(null, unload ? null : instance);
 

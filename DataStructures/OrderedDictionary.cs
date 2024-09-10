@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -65,8 +66,8 @@ public sealed class OrderedDictionary<TKey, TValue> : IOrderedDictionary<TKey, T
         }
     }
     public int Count => _keyedCollection.Count;
-    public ICollection<TKey> Keys => _keyedCollection.Select(i => i.Key).ToArray();
-    public ICollection<TValue> Values => _keyedCollection.Select(i => i.Value).ToArray();
+    public ReadOnlyCollection<TKey> Keys => new(_keyedCollection.Select(i => i.Key).ToArray());
+    public ReadOnlyCollection<TValue> Values => new(_keyedCollection.Select(i => i.Value).ToArray());
 
     private readonly KeyValuePairCollection<TKey, TValue> _keyedCollection;
 
@@ -75,6 +76,9 @@ public sealed class OrderedDictionary<TKey, TValue> : IOrderedDictionary<TKey, T
     bool ICollection<KeyValuePair<TKey, TValue>>.IsReadOnly => ((ICollection<KeyValuePair<TKey, TValue>>)_keyedCollection).IsReadOnly;
     bool ICollection.IsSynchronized => ((ICollection)_keyedCollection).IsSynchronized;
     object ICollection.SyncRoot => ((ICollection)_keyedCollection).SyncRoot;
+
+    ICollection<TKey> IDictionary<TKey, TValue>.Keys => Keys;
+    ICollection<TValue> IDictionary<TKey, TValue>.Values => Values;
 
     bool ICollection<KeyValuePair<TKey, TValue>>.Contains(KeyValuePair<TKey, TValue> item) => _keyedCollection.Contains(item);
     void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> item) => _keyedCollection.Add(item);

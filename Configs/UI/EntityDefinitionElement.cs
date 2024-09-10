@@ -59,9 +59,11 @@ public sealed class EntityDefinitionElement : ConfigElement<IEntityDefinition> {
     public void OpenDropDownField() => Expanded = true;
     public void CloseDropDownField(int index) {
         if (!Value.AllowNull && index < 0) return;
-        MemberInfo.SetValue(Item, _values[index]);
-        _index = index;
-        ConfigManager.SetPendingChanges();
+        if (_index != index) {
+            MemberInfo.SetValue(Item, _values[index]);
+            _index = index;
+            ConfigManager.SetPendingChanges();
+        }
         Expanded = false;
     }
 
@@ -93,6 +95,6 @@ public sealed class EntityDefinitionElement : ConfigElement<IEntityDefinition> {
 
     private bool _expanded;
     private HoverImage _expandButton = null!;
-    private readonly UIList _dataList = new();
-    private readonly List<Wrapper<Text>> _elements = new();
+    private readonly UIList _dataList = [];
+    private readonly List<Wrapper<Text>> _elements = [];
 }
