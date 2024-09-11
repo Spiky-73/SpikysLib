@@ -19,7 +19,7 @@ public static class MagicStorageIntegration {
     }
     
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public static bool Countains(Item item) {
+    public static bool Contains(Item item) {
         if (!InMagicStorage) return false;
         foreach (Item i in MagicStorage.StoragePlayer.LocalPlayer.GetStorageHeart().GetStoredItems())
             if (i.type == item.type && i.prefix == item.prefix) return true;
