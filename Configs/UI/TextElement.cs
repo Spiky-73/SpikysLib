@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using MonoMod.Cil;
 using SpikysLib.IL;
 using Terraria;
@@ -25,10 +26,17 @@ public sealed class TextElement : ConfigElement<Text?> {
         }
     }
 
+    public override void Draw(SpriteBatch spriteBatch) {
+        if (Label != "") base.Draw(spriteBatch);
+    }
+
     public override void Recalculate() {
         base.Recalculate();
-        Vector2 size = ChatManager.GetStringSize(FontAssets.ItemStack.Value, Label, new Vector2(0.8f), GetDimensions().Width + 1);
-        Height.Pixels = size.Y + 30 - FontAssets.ItemStack.Value.LineSpacing;
+        if (Label == "") Height.Pixels = 0;
+        else {
+            Vector2 size = ChatManager.GetStringSize(FontAssets.ItemStack.Value, Label, new Vector2(0.8f), GetDimensions().Width + 1);
+            Height.Pixels = size.Y + 30 - FontAssets.ItemStack.Value.LineSpacing;
+        }
         if (Parent != null && Parent is UISortableElement) Parent.Height.Set(Height.Pixels, 0f);
     }
 
