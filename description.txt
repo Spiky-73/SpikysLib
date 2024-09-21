@@ -2,10 +2,12 @@ Just a small library used by most of my mods.
 
 Content:
 - Custom UI elements
-- Terraria contants
+- Terraria constants
 - Custom data structures
 - Extension methods from Terraria classes
+- Helper methods
 - A generic reflection wrapper
 - Notification templates
 - Generic Math
 - Config Porting tools
+- An api for custom cursors

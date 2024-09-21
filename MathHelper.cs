@@ -29,4 +29,6 @@ public static class MathHelper {
     }
 
     public static T GCD<T>(T x, T y) where T : INumber<T> => T.IsZero(x) ? y : GCD(y % x, x);
+
+    public static T Mod<T>(T x, T y) where T : INumber<T> => T.Zero < x ? (x % y) : (x % y + y);
 }

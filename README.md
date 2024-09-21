@@ -6,6 +6,7 @@ Just a small library used by most of my mods.
 - Terraria constants
 - Custom data structures
 - Extension methods from Terraria classes
+- Helper methods
 - A generic reflection wrapper
 - Notification templates
 - Generic Math
@@ -20,13 +21,13 @@ Just a small library used by most of my mods.
 - Added IPreLoadMod interface
 - Added ObjectMembersElement class
 - Added ObjectElement class
-- Added methods To CollectionHelper
+- Added methods to CollectionHelper
 - Added OrderedDictionary\<TKey, TValue>
 - Merged ModConfigExtensions and PortConfig into ConfigHelper
 - Merged Graphics and GraphicsExtensions into GraphicsHelper
 - Renamed Extensions classes to Helper
 - Removed obsolete v1.0 items
-- Removed loosened conditions on NestedValue
+- Removed conditions on NestedValue
 - Fixed a bug with ValueWrappers without generic args
 - Fixed a bug with NestedValue serialization
 - Fixed typos

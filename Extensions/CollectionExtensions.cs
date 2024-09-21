@@ -23,7 +23,7 @@ public static class CollectionExtensions {
     public static int FindIndex<T>(this IList<T> list, Predicate<T> predicate) => CollectionsHelper.FindIndex(list, predicate);
 
     [Obsolete($"use {nameof(CollectionsHelper)}.{nameof(CollectionsHelper.GetOrAdd)} instead", true)]
-    public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, Func<TValue> builder) => CollectionsHelper.GetOrAdd(dict, key, builder);
+    public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, Func<TValue> builder) => CollectionsHelper.GetOrAdd(dict, key, _ => builder());
     
     [Obsolete($"use {nameof(CollectionsHelper)}.{nameof(CollectionsHelper.Items)} instead", true)]
     public static IEnumerable<(object key, object? value)> Items(this IDictionary dict) => CollectionsHelper.Items(dict);
