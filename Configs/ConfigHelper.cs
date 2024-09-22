@@ -23,6 +23,13 @@ public static class ConfigHelper {
     public static void MoveMember(bool cond, Action<ModConfig> move) {
         if (cond && s_loading) _moves.Add(move);
     }
+
+    public static void ApplyMoves(ModConfig config) {
+        if (_moves.Count == 0) return;
+        foreach (var move in _moves) move(config);
+        _moves.Clear();
+        SaveLoadingConfig();
+    }
     public static bool SaveLoadingConfig() => s_saveLoading = true;
 
     private static void HookLoad(Action<ModConfig> orig, ModConfig config) {
@@ -31,12 +38,8 @@ public static class ConfigHelper {
 
         orig(config);
         s_loading = false;
+        ApplyMoves(config);
 
-        if (_moves.Count != 0) {
-            foreach (var move in _moves) move(config);
-            _moves.Clear();
-            SaveLoadingConfig();
-        }
         if (s_saveLoading) config.Save();
         s_saveLoading = false;
     }

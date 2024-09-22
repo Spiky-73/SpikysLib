@@ -71,6 +71,7 @@ public static class TooltipHelper {
         return TooltipLineID.Modded;
     }
 
+    public static TooltipLine? FindLine(this List<TooltipLine> tooltips, TooltipLineID line) => tooltips.FindLine(line.ToString());
     public static TooltipLine? FindLine(this List<TooltipLine> tooltips, string name) => tooltips.Find(l => l.Name == name);
     public static TooltipLine AddLine(this List<TooltipLine> tooltips, TooltipLine line, TooltipLineID? after = null) {
         after ??= FromString(line.Name);

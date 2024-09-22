@@ -24,21 +24,17 @@ public static class TypeHelper {
         return false;
     }
 
-    public static object Retrieve(this object self, string name) => Retrieve(self.GetType(), name, null);
-    public static object Retrieve(this Type type, string name) => Retrieve(type, name, null);
-    private static object Retrieve(Type type, string name, object? self = null) => (type.GetPropertyField(name, AnyMemberFlags) ?? throw new MissingMemberException(type.Name, name)).GetValue(self);
+    public static object? Retrieve(this object self, string name) => Retrieve(self.GetType(), name, null);
+    public static object? Retrieve(this Type type, string name) => Retrieve(type, name, null);
+    private static object? Retrieve(Type type, string name, object? self = null) => type.InvokeMember(name, BindingFlags.GetField | BindingFlags.GetProperty, null, self, []);
 
     public static void Assign(this object self, string name, object value) => Assign(self.GetType(), name, value, self);
     public static void Assign(this Type type, string name, object value) => Assign(type, name, null, value);
-    private static void Assign(Type type, string name, object? self, object value) => (type.GetPropertyField(name, AnyMemberFlags) ?? throw new MissingMemberException(type.Name, name)).SetValue(self, value);
+    private static void Assign(Type type, string name, object? self, object value) => type.InvokeMember(name, BindingFlags.SetField | BindingFlags.SetProperty, null, self, [value]);
 
     public static object? Call(this object self, string name, params object[] args) => Call(self.GetType(), name, self, args);
     public static object? Call(this Type type, string name, params object[] args) => Call(type, name, null, args);
-    private static object? Call(Type type, string name, object? self, params object[] args) {
-        Type[] types = new Type[args.Length];
-        for (int i = 0; i < args.Length; i++) types[i] = args[i].GetType();
-        return (type.GetMethod(name, AnyMemberFlags, types) ?? throw new MissingMethodException(type.Name, name)).Invoke(self, args);
-    }
+    private static object? Call(Type type, string name, object? self, params object[] args) => type.InvokeMember(name, BindingFlags.InvokeMethod, null, self, args);
 
     public static PropertyFieldWrapper[] GetPropertiesFields(this Type type, BindingFlags flags = BindingFlags.Default) {
         PropertyInfo[] properties = type.GetProperties(flags);
