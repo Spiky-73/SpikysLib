@@ -86,14 +86,18 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
             Func<string> label = Reflection.ConfigElement.TextDisplayFunction.GetValue((ConfigElement)uiKey);
             Func<string> tooltip = Reflection.ConfigElement.TooltipFunction.GetValue((ConfigElement)uiKey);
             RemoveChild(keyContainer);
-            Reflection.ConfigElement.TextDisplayFunction.SetValue(element,
-                key is ItemDefinition item ? () => $"[i:{item.Type}] {item.Name}" :
-                () => {
+            Reflection.ConfigElement.TextDisplayFunction.SetValue(element, key switch {
+                ItemDefinition item => () => $"[i:{item.Type}] {item.Name}",
+                IEntityDefinition def => () => def.DisplayName,
+                _ =>  () => {
                     string l = label();
                     return l.StartsWith("Key: ") ? l[(nameof(IKeyValuePair.Key).Length + 2)..] : key.ToString() ?? "";
-                    // 
-                });
-            Reflection.ConfigElement.TooltipFunction.SetValue(element, tooltip);
+                }
+            });
+            Reflection.ConfigElement.TooltipFunction.SetValue(element, key switch {
+                IEntityDefinition def => () => def.Tooltip ?? string.Empty,
+                _ => tooltip
+            });
             wrapper.OnBind(element);
         }
         if (unloaded > 0) {

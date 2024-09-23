@@ -15,9 +15,9 @@ public static class TypeExtensions {
     public static bool IsSubclassOfGeneric(this Type? type, Type generic, [NotNullWhen(true)] out Type? impl) => TypeHelper.ImplementsInterface(type!, generic, out impl);
 
     [Obsolete($"use {nameof(TypeHelper)}.{nameof(TypeHelper.Retrieve)} instead", true)]
-    public static object Retrieve(this object self, string name) => TypeHelper.Retrieve(self, name);
+    public static object? Retrieve(this object self, string name) => TypeHelper.Retrieve(self, name);
     [Obsolete($"use {nameof(TypeHelper)}.{nameof(TypeHelper.Retrieve)} instead", true)]
-    public static object Retrieve(this Type type, string name) => TypeHelper.Retrieve(type, name);
+    public static object? Retrieve(this Type type, string name) => TypeHelper.Retrieve(type, name);
 
     [Obsolete($"use {nameof(TypeHelper)}.{nameof(TypeHelper.Assign)} instead", true)]
     public static void Assign(this object self, string name, object value) => TypeHelper.Assign(self, name, value);
