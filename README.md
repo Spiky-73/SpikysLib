@@ -30,6 +30,7 @@ Just a small library used by most of my mods.
 - Removed conditions on NestedValue
 - Fixed a bug with ValueWrappers without generic args
 - Fixed a bug with NestedValue serialization
+- Fixed CountItems bug when called serverside
 - Fixed typos
 
 ### v1.1.0.1

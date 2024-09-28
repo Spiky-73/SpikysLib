@@ -71,17 +71,20 @@ public static class PlayerHelper {
     }
 
     public static int CountItems(this Player player, int type, bool includeChest = false) {
-        int total = player.inventory.CountItems(type, InventorySlots.Mouse) + new[] { Main.mouseItem }.CountItems(type) + new[] { Main.CreativeMenu.GetItemByIndex(0) }.CountItems(type);
+        int count = player.whoAmI == Main.myPlayer ?
+            player.inventory.CountItems(type, InventorySlots.Mouse) + new Item[] { Main.mouseItem }.CountItems(type) + new[] { Main.CreativeMenu.GetItemByIndex(0) }.CountItems(type) :
+            player.inventory.CountItems(type);
         if (includeChest) {
-            if (CrossMod.MagicStorageIntegration.Enabled && CrossMod.MagicStorageIntegration.InMagicStorage) total += CrossMod.MagicStorageIntegration.CountItems(type);
-            else if (player.InChest(out Item[]? chest)) total += chest.CountItems(type);
-            if (player.chest != InventorySlots.VoidBag && player.useVoidBag()) total += player.bank4.item.CountItems(type);
+            if (CrossMod.MagicStorageIntegration.Enabled && CrossMod.MagicStorageIntegration.InMagicStorage) count += CrossMod.MagicStorageIntegration.CountItems(type);
+            else if (player.InChest(out Item[]? chest)) count += chest.CountItems(type);
+            if (player.chest != InventorySlots.VoidBag && player.useVoidBag()) count += player.bank4.item.CountItems(type);
         }
-        return total;
+        return count;
     }
     public static long CountCurrency(this Player player, int currency, bool includeBanks = true, bool includeChest = false) {
-        long count = player.inventory.CountCurrency(currency, InventorySlots.Mouse);
-        count += new Item[] { Main.mouseItem }.CountCurrency(currency);
+        long count = player.whoAmI == Main.myPlayer ?
+            player.inventory.CountCurrency(currency, InventorySlots.Mouse) + new Item[] { Main.mouseItem }.CountCurrency(currency) :
+            player.inventory.CountCurrency(currency);
         if (includeBanks) count += player.bank.item.CountCurrency(currency)
                                 + player.bank2.item.CountCurrency(currency)
                                 + player.bank3.item.CountCurrency(currency)
