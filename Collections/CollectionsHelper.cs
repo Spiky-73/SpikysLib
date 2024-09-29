@@ -33,10 +33,10 @@ public static class CollectionsHelper {
         return -1;
     }
 
-    public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, Func<TKey, TValue> builder) => dict.TryGetValue(key, out TValue? value) ? value : (dict[key] = builder(key));
-    public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value) => dict.GetOrAdd(key, _ => value);
-    public static TItem GetOrAddRaw<TKey, TValue, TItem>(this IDictionary<TKey, TValue> dict, TKey key, Func<TKey, TItem> builder) where TItem : TValue => (TItem)dict.GetOrAdd(key, key => builder(key))!;
-    public static TItem GetOrAddRaw<TKey, TValue, TItem>(this IDictionary<TKey, TValue> dict, TKey key, TValue value) where TItem : TValue => (TItem)dict.GetOrAddRaw(key, _ => value)!;
+    public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, Func<TValue> builder) => dict.TryGetValue(key, out TValue? value) ? value : (dict[key] = builder());
+    public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, TValue value) => dict.GetOrAdd(key, () => value);
+    public static TItem GetOrAddRaw<TKey, TValue, TItem>(this IDictionary<TKey, TValue> dict, TKey key, Func<TItem> builder) where TItem : TValue => (TItem)dict.GetOrAdd(key, () => builder())!;
+    public static TItem GetOrAddRaw<TKey, TValue, TItem>(this IDictionary<TKey, TValue> dict, TKey key, TValue value) where TItem : TValue => (TItem)dict.GetOrAddRaw(key, () => value)!;
 
     public static IEnumerable<(object key, object? value)> Items(this IDictionary dict) => dict.Items<object, object?>();
     public static IEnumerable<(TKey key, TValue value)> Items<TKey, TValue>(this IDictionary dict) where TKey : notnull {
