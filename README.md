@@ -23,6 +23,7 @@ Just a small library used by most of my mods.
 - Added ObjectElement class
 - Added methods to CollectionHelper
 - Added OrderedDictionary\<TKey, TValue>
+- Added ModPacketHandler and PacketHandlerLoader
 - Merged ModConfigExtensions and PortConfig into ConfigHelper
 - Merged Graphics and GraphicsExtensions into GraphicsHelper
 - Renamed Extensions classes to Helper
