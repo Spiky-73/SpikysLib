@@ -33,6 +33,7 @@ Just a small library used by most of my mods.
 - Fixed a bug with NestedValue serialization
 - Fixed CountItems bug when called serverside
 - Fixed typos
+- Fixed tooltips issues
 
 ### v1.1.0.1
 - Fixed serialization bugs

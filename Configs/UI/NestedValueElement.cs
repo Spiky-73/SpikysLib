@@ -52,9 +52,10 @@ public sealed class NestedValueElement : ConfigElement<IKeyValuePair> {
         Func<string> parentText = Reflection.ConfigElement.TextDisplayFunction.GetValue(_uiParent);
         Reflection.ConfigElement.TextDisplayFunction.SetValue(_uiParent, () => $"{TextDisplayFunction()}{parentText()[nameof(IKeyValuePair.Key).Length..]}");
         Reflection.ConfigElement.TextDisplayFunction.SetValue(_uiValue, () => string.Empty);
-
-        Reflection.ConfigElement.TooltipFunction.SetValue(_uiParent, () => TooltipFunction());
-        Reflection.ConfigElement.TooltipFunction.SetValue(_uiValue, () => TooltipFunction());
+        Func<string> parentTooltip = Reflection.ConfigElement.TooltipFunction.GetValue(_uiParent);
+        Func<string> valueTooltip = Reflection.ConfigElement.TooltipFunction.GetValue(_uiValue);
+        Reflection.ConfigElement.TooltipFunction.SetValue(_uiParent, () => ConfigHelper.JoinTooltips(TooltipFunction, parentTooltip));
+        Reflection.ConfigElement.TooltipFunction.SetValue(_uiValue, () => ConfigHelper.JoinTooltips(TooltipFunction, valueTooltip));
 
         Reflection.ConfigElement.backgroundColor.SetValue(_uiParent, Color.Transparent);
         Reflection.ConfigElement.backgroundColor.SetValue(_uiValue, Color.Transparent);

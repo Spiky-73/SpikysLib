@@ -44,6 +44,8 @@ public static class ConfigHelper {
         s_saveLoading = false;
     }
 
+    public static string JoinTooltips(params Func<string?>?[] tooltips) => string.Join('\n', tooltips.Select(t => t?.Invoke()).Where(t => !string.IsNullOrEmpty(t)));
+
     private static bool s_loading;
     private static bool s_saveLoading;
     private static readonly List<Action<ModConfig>> _moves = [];
