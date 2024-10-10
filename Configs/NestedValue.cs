@@ -16,7 +16,7 @@ public interface IKeyValuePair<TKey, TValue> : IKeyValuePair {
     object? IKeyValuePair.Value { get => Value; set => Value = (TValue)value!; }
 }
 
-// TODO test if default and not new()
+// TODO test if the new constraint can be removed
 [JsonConverter(typeof(IO.NestedValueConverter))]
 [CustomModConfigItem(typeof(NestedValueElement))]
 public class NestedValue<TKey, TValue> : IKeyValuePair<TKey, TValue> where TKey: new() where TValue: new() {

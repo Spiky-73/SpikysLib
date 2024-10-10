@@ -14,12 +14,11 @@ namespace SpikysLib.Configs.UI;
 
 public sealed class TextElement : ConfigElement<Text?> {
 
-    public new Text? Value => base.Value;
-
     public override void OnBind() {
         base.OnBind();
         Text? value = Value;
         if (value?.Label?.Value.Length > 0) Label = Language.GetTextValue(value.Label.Value);
+        else if (string.IsNullOrEmpty(Language.GetTextValue(Reflection.ConfigManager.GetConfigLabelKey.Invoke(MemberInfo.MemberInfo, "Label")))) Label = "";
         if (value?.Tooltip?.Value.Length > 0) {
             string tooltip = Language.GetTextValue(value.Tooltip.Value);
             TooltipFunction = () => tooltip;

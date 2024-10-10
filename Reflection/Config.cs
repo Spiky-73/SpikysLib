@@ -16,6 +16,8 @@ public static class ConfigManager {
     public static readonly StaticMethod<string> GetLocalizedLabel = new(typeof(TManager), nameof(GetLocalizedLabel), typeof(PropertyFieldWrapper));
     public static readonly StaticMethod<string> GetLocalizedTooltip = new(typeof(TManager), nameof(GetLocalizedTooltip), typeof(PropertyFieldWrapper));
     public static readonly StaticMethod<object?> RegisterLocalizationKeysForMembers = new(typeof(TManager), nameof(RegisterLocalizationKeysForMembers), typeof(Type));
+    public static readonly StaticMethod<string?> GetConfigKey = new(typeof(TManager), nameof(GetConfigKey), typeof(MemberInfo), typeof(string));
+    public static readonly StaticMethod<string?> GetConfigLabelKey = new(GetConfigKey.MemberInfo.MakeGenericMethod(typeof(LabelKeyAttribute)));
 }
 
 public static class ConfigElement {
