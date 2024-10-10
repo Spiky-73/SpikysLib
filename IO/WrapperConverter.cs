@@ -19,12 +19,26 @@ public sealed class WrapperConverter : JsonConverter<Wrapper> {
 
 public sealed class WrapperStringConverter : TypeConverter {
     public WrapperStringConverter(Type type) => ParentType = type;
-    public override bool CanConvertTo(ITypeDescriptorContext? context, Type? destinationType) => InnerConvertor.CanConvertTo(context, destinationType);
-    public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType) => InnerConvertor.ConvertTo(context, culture, ((Wrapper?)value)?.Value, destinationType);
-    
-    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType) => InnerConvertor.CanConvertFrom(context, sourceType);
-    public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value) => Activator.CreateInstance(ParentType, InnerConvertor.ConvertFrom(context, culture, value));
+    public override bool CanConvertTo(ITypeDescriptorContext? context, Type? destinationType) {
+        TypeConverter? converter = InnerConvertor();
+        return converter is not null ? converter.CanConvertTo(context, destinationType) : base.CanConvertTo(context, destinationType);
+    }
+
+    public override object? ConvertTo(ITypeDescriptorContext? context, CultureInfo? culture, object? value, Type destinationType) {
+        TypeConverter? converter = InnerConvertor();
+        return converter is not null ? converter.ConvertTo(context, culture, ((Wrapper?)value)?.Value, destinationType) : base.ConvertTo(context, culture, value, destinationType);
+    }
+
+    public override bool CanConvertFrom(ITypeDescriptorContext? context, Type sourceType) {
+        TypeConverter? converter = InnerConvertor();
+        return converter is not null ? converter.CanConvertFrom(context, sourceType) : base.CanConvertFrom(context, sourceType);
+    }
+
+    public override object? ConvertFrom(ITypeDescriptorContext? context, CultureInfo? culture, object value) {
+        TypeConverter? converter = InnerConvertor();
+        return converter is not null ? Activator.CreateInstance(ParentType, converter.ConvertFrom(context, culture, value)) : base.ConvertFrom(context, culture, value);
+    }
 
     public Type ParentType { get; }
-    public TypeConverter InnerConvertor => TypeDescriptor.GetConverter(ParentType.GenericTypeArguments[0]);
+    public TypeConverter? InnerConvertor() => ParentType.IsSubclassOfGeneric(typeof(Wrapper<>), out Type? impl) ? TypeDescriptor.GetConverter(impl.GenericTypeArguments[0]) : null;
 }

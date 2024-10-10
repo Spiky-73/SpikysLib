@@ -34,6 +34,7 @@ Just a small library used by most of my mods.
 - Fixed CountItems bug when called serverside
 - Fixed typos
 - Fixed tooltips issues
+- Fixed a bug with WrapperStringConverter
 
 ### v1.1.0.1
 - Fixed serialization bugs
