@@ -23,12 +23,13 @@ public class Wrapper {
 
     public Wrapper ChangeType(Type type) {
         Type genericType = typeof(Wrapper<>).MakeGenericType(type);
-        if (GetType() == genericType) return this;
-        return (Wrapper)Activator.CreateInstance(genericType, Value switch {
-            JObject { Count: 0 } or JValue { Value: null } => Activator.CreateInstance(type),
-            JToken token => token.ToObject(type),
-            _ => Convert.ChangeType(Value, type),
-        })!;
+        return GetType() == genericType ?
+            this :
+            From(genericType, Value switch {
+                JObject { Count: 0 } or JValue { Value: null } => Activator.CreateInstance(type),
+                JToken token => token.ToObject(type),
+                _ => Convert.ChangeType(Value, type),
+            });
     }
 
 
@@ -36,8 +37,8 @@ public class Wrapper {
     public override int GetHashCode() => Value!.GetHashCode();
     public override string? ToString() => Value?.ToString();
 
-    public static Wrapper From(Type type) => (Wrapper)Activator.CreateInstance(typeof(Wrapper<>).MakeGenericType(type))!;
-    public static Wrapper From(object value) => (Wrapper)Activator.CreateInstance(typeof(Wrapper<>).MakeGenericType(value.GetType()), value)!;
+    public static Wrapper From(object value) => From(value.GetType(), value);
+    public static Wrapper From(Type type, object? value = null) => (Wrapper)Activator.CreateInstance(typeof(Wrapper<>).MakeGenericType(type), value)!;
 }
 
 public class Wrapper<T> : Wrapper where T : new() {

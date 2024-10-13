@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.ModLoader.Config;
 using Terraria.ModLoader.Config.UI;
+using TUIElement = Terraria.UI.UIElement;
 using TElement = Terraria.ModLoader.Config.UI.ConfigElement;
 using TManager = Terraria.ModLoader.Config.ConfigManager;
 
@@ -14,6 +15,9 @@ public static class ConfigManager {
     public static readonly StaticMethod<object?> Load = new(typeof(TManager), nameof(Load), typeof(ModConfig));
     public static readonly StaticMethod<string> GetLocalizedLabel = new(typeof(TManager), nameof(GetLocalizedLabel), typeof(PropertyFieldWrapper));
     public static readonly StaticMethod<string> GetLocalizedTooltip = new(typeof(TManager), nameof(GetLocalizedTooltip), typeof(PropertyFieldWrapper));
+    public static readonly StaticMethod<object?> RegisterLocalizationKeysForMembers = new(typeof(TManager), nameof(RegisterLocalizationKeysForMembers), typeof(Type));
+    public static readonly StaticMethod<string?> GetConfigKey = new(typeof(TManager), nameof(GetConfigKey), typeof(MemberInfo), typeof(string));
+    public static readonly StaticMethod<string?> GetConfigLabelKey = new(GetConfigKey.MemberInfo.MakeGenericMethod(typeof(LabelKeyAttribute)));
 }
 
 public static class ConfigElement {
@@ -27,6 +31,7 @@ public static class ConfigElement {
 public static class UIModConfig {
     public static readonly Type Type = Main.tModLoader.GetType("Terraria.ModLoader.Config.UI.UIModConfig")!;
     public static readonly StaticProperty<string> Tooltip = new(Type, nameof(Tooltip));
+    public static readonly StaticMethod<object?> HandleHeader = new(Type, nameof(HandleHeader), typeof(TUIElement), typeof(int).MakeByRefType(), typeof(int).MakeByRefType(), typeof(PropertyFieldWrapper));
 }
 
 public static class ObjectElement {

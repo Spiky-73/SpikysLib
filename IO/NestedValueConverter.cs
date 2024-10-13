@@ -2,27 +2,26 @@ using System.Diagnostics.CodeAnalysis;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
-using SpikysLib.Extensions;
 using SpikysLib.Configs;
 
 namespace SpikysLib.IO;
 
-public sealed class NestedValueConverter : JsonConverter<INestedValue> {
+public sealed class NestedValueConverter : JsonConverter<IKeyValuePair> {
 
     public const string KeyProperty = "key";
     public const string ValueProperty = "value";
 
-    public override INestedValue ReadJson(JsonReader reader, Type objectType, [AllowNull] INestedValue existingValue, bool hasExistingValue, JsonSerializer serializer) {
+    public override IKeyValuePair ReadJson(JsonReader reader, Type objectType, [AllowNull] IKeyValuePair existingValue, bool hasExistingValue, JsonSerializer serializer) {
         bool raw = !objectType.IsSubclassOfGeneric(typeof(NestedValue<,>), out Type? type);
         JObject obj = serializer.Deserialize<JObject>(reader)!;
-        existingValue ??= (INestedValue)Activator.CreateInstance(objectType)!;
+        existingValue ??= (IKeyValuePair)Activator.CreateInstance(objectType)!;
 
         // Compatibility version < v1.1
         if ((obj.Count == 1 && (obj.ContainsKey("Parent") || obj.ContainsKey("Value")))
         || (obj.Count == 2 && obj.ContainsKey("Parent") && obj.ContainsKey("Value"))) {
             if (obj.TryGetValue("Parent", out JToken? parent)) existingValue.Key = raw ? parent : parent.ToObject(type!.GenericTypeArguments[0])!;
             if (obj.TryGetValue("Value", out JToken? value)) existingValue.Value = raw ? value : value.ToObject(type!.GenericTypeArguments[1])!;
-            PortConfig.SaveLoadingConfig = true;
+            ConfigHelper.SaveLoadingConfig();
             return existingValue;
         }
         if (!IsUpdated(obj)) {
@@ -35,17 +34,18 @@ public sealed class NestedValueConverter : JsonConverter<INestedValue> {
         return existingValue;
     }
 
-    public override void WriteJson(JsonWriter writer, [AllowNull] INestedValue value, JsonSerializer serializer) {
+    public override void WriteJson(JsonWriter writer, [AllowNull] IKeyValuePair value, JsonSerializer serializer) {
         if (value is null) return;
         JObject obj;
-        JToken val = JToken.FromObject(value.Value, serializer);
-        if (val is not JObject jobj || IsUpdated(jobj)) {
+        JToken? key = value.Key is not null ? JToken.FromObject(value.Key, serializer) : null;
+        JToken? val = value.Value is not null ? JToken.FromObject(value.Value, serializer) : null;
+        if (val is null || val is not JObject jobj || IsUpdated(jobj)) {
             obj = new() {
-                { KeyProperty, JToken.FromObject(value.Key, serializer) },
-                { ValueProperty, JObject.FromObject(value.Value, serializer) }
+                { KeyProperty, key },
+                { ValueProperty, val }
             };
         } else {
-            obj = new() { { $".{KeyProperty}", JToken.FromObject(value.Key, serializer) } };
+            obj = new() { { $".{KeyProperty}", key } };
             obj.Merge(val);
         }
         serializer.Serialize(writer, obj);

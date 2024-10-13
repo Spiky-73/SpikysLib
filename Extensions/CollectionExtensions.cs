@@ -3,60 +3,38 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
+using SpikysLib.Collections;
 
 namespace SpikysLib.Extensions;
 
+[Obsolete($"use {nameof(CollectionsHelper)} instead", true)]
 public static class CollectionExtensions {
-    public static object ItemAt(this IEnumerable enumerable, int index) {
-        int i = 0;
-        foreach (object o in enumerable) {
-            if (i++ == index) return o;
-        }
-        throw new IndexOutOfRangeException("The index was outside the bounds of the array");
-    }
-    public static bool Exist<T>(this IEnumerable<T> enumerable, Predicate<T> predicate) => enumerable.Exist(predicate, out _);
-    public static bool Exist<T>(this IEnumerable<T> enumerable, Predicate<T> predicate, [MaybeNullWhen(true)] out int count) {
-        count = 0;
-        foreach (T item in enumerable) {
-            if (predicate(item)) return true;
-            count++;
-        }
-        return false;
-    }
+    [Obsolete($"use {nameof(CollectionsHelper)}.{nameof(CollectionsHelper.ItemAt)} instead", true)]
+    public static object ItemAt(this IEnumerable enumerable, int index) => CollectionsHelper.ItemAt(enumerable, index);
 
-    [Obsolete($"use {nameof(ItemAt)} instead", true)]
-    public static object Index(this ICollection collection, int index) => collection.ItemAt(index);
+    [Obsolete($"use {nameof(CollectionsHelper)}.{nameof(CollectionsHelper.Exist)} instead", true)]
+    public static bool Exist<T>(this IEnumerable<T> enumerable, Predicate<T> predicate)  => CollectionsHelper.Exist(enumerable, predicate);
+    [Obsolete($"use {nameof(CollectionsHelper)}.{nameof(CollectionsHelper.Exist)} instead", true)]
+    public static bool Exist<T>(this IEnumerable<T> enumerable, Predicate<T> predicate, [MaybeNullWhen(true)] out int count) => CollectionsHelper.Exist(enumerable, predicate, out count);
 
-    public static int FindIndex<T>(this IReadOnlyList<T> list, Predicate<T> predicate) {
-        for (int i = 0; i < list.Count; i++) if (predicate(list[i])) return i;
-        return -1;
-    }
-    public static int FindIndex<T>(this IList<T> list, Predicate<T> predicate) {
-        for (int i = 0; i < list.Count; i++) if (predicate(list[i])) return i;
-        return -1;
-    }
+    [Obsolete($"use {nameof(CollectionsHelper)}.{nameof(CollectionsHelper.FindIndex)} instead", true)]
+    public static int FindIndex<T>(this IReadOnlyList<T> list, Predicate<T> predicate) => CollectionsHelper.FindIndex(list, predicate);
+    [Obsolete($"use {nameof(CollectionsHelper)}.{nameof(CollectionsHelper.FindIndex)} instead", true)]
+    public static int FindIndex<T>(this IList<T> list, Predicate<T> predicate) => CollectionsHelper.FindIndex(list, predicate);
 
-    public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, Func<TValue> builder) {
-        if (dict.TryGetValue(key, out TValue? value)) return value;
-        return dict[key] = builder();
-    }
+    [Obsolete($"use {nameof(CollectionsHelper)}.{nameof(CollectionsHelper.GetOrAdd)} instead", true)]
+    public static TValue GetOrAdd<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, Func<TValue> builder) => CollectionsHelper.GetOrAdd(dict, key, () => builder());
     
-    public static IEnumerable<(object key, object? value)> Items(this IDictionary dict) => dict.Items<object, object?>();
-    public static IEnumerable<(Tkey key, TValue value)> Items<Tkey, TValue>(this IDictionary dict) where Tkey : notnull {
-        foreach (DictionaryEntry entry in dict) {
-            yield return new((Tkey)entry.Key, (TValue)entry.Value!);
-        }
-    }
+    [Obsolete($"use {nameof(CollectionsHelper)}.{nameof(CollectionsHelper.Items)} instead", true)]
+    public static IEnumerable<(object key, object? value)> Items(this IDictionary dict) => CollectionsHelper.Items(dict);
+    [Obsolete($"use {nameof(CollectionsHelper)}.{nameof(CollectionsHelper.Items)} instead", true)]
+    public static IEnumerable<(Tkey key, TValue value)> Items<Tkey, TValue>(this IDictionary dict) where Tkey : notnull => CollectionsHelper.Items<Tkey, TValue>(dict);
 
-    public static bool TryAdd(this IOrderedDictionary dict, object key, object value) {
-        if (dict.Contains(key)) return false;
-        dict.Add(key, value);
-        return true;
-    }
-    public static void Move(this IOrderedDictionary dict, int origIndex, int destIndex) => dict.Move(dict.Keys.ItemAt(origIndex), destIndex);
-    public static void Move(this IOrderedDictionary dict, object key, int destIndex) {
-        object? value = dict[key];
-        dict.Remove(key);
-        dict.Insert(destIndex, key, value);
-    }
+    [Obsolete($"use {nameof(CollectionsHelper)}.{nameof(CollectionsHelper.TryAdd)} instead", true)]
+    public static bool TryAdd(this IOrderedDictionary dict, object key, object value) => CollectionsHelper.TryAdd(dict, key, value);
+    
+    [Obsolete($"use {nameof(CollectionsHelper)}.{nameof(CollectionsHelper.Move)} instead", true)]
+    public static void Move(this IOrderedDictionary dict, int origIndex, int destIndex) => CollectionsHelper.Move(dict, origIndex, destIndex);
+    [Obsolete($"use {nameof(CollectionsHelper)}.{nameof(CollectionsHelper.Move)} instead", true)]
+    public static void Move(this IOrderedDictionary dict, object key, int destIndex) => CollectionsHelper.Move(dict, key, destIndex);
 }

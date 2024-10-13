@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using MonoMod.Cil;
-using SpikysLib.Extensions;
+using SpikysLib.IL;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameContent.UI.States;
@@ -13,22 +14,28 @@ namespace SpikysLib.Configs.UI;
 
 public sealed class TextElement : ConfigElement<Text?> {
 
-    public new Text? Value => base.Value;
-
     public override void OnBind() {
         base.OnBind();
         Text? value = Value;
         if (value?.Label?.Value.Length > 0) Label = Language.GetTextValue(value.Label.Value);
+        else if (string.IsNullOrEmpty(Language.GetTextValue(Reflection.ConfigManager.GetConfigLabelKey.Invoke(MemberInfo.MemberInfo, "Label")))) Label = "";
         if (value?.Tooltip?.Value.Length > 0) {
             string tooltip = Language.GetTextValue(value.Tooltip.Value);
             TooltipFunction = () => tooltip;
         }
     }
 
+    public override void Draw(SpriteBatch spriteBatch) {
+        if (Label != "") base.Draw(spriteBatch);
+    }
+
     public override void Recalculate() {
         base.Recalculate();
-        Vector2 size = ChatManager.GetStringSize(FontAssets.ItemStack.Value, Label, new Vector2(0.8f), GetDimensions().Width + 1);
-        Height.Pixels = size.Y + 30 - FontAssets.ItemStack.Value.LineSpacing;
+        if (Label == "") Height.Pixels = 0;
+        else {
+            Vector2 size = ChatManager.GetStringSize(FontAssets.ItemStack.Value, Label, new Vector2(0.8f), GetDimensions().Width + 1);
+            Height.Pixels = size.Y + 30 - FontAssets.ItemStack.Value.LineSpacing;
+        }
         if (Parent != null && Parent is UISortableElement) Parent.Height.Set(Height.Pixels, 0f);
     }
 

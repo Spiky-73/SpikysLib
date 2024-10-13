@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using SpikysLib.Extensions;
+using SpikysLib.Collections;
 using System.Linq;
 
 namespace SpikysLib.DataStructures;

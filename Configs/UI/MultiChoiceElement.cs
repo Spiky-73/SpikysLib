@@ -19,8 +19,6 @@ public sealed class MultiChoiceElement : ConfigElement<MultiChoice> {
     }
 
     private void SetupSelf() {
-        _tooltip = TooltipFunction;
-        TooltipFunction = null;
         DrawLabel = false;
 
         MultiChoice value = Value ??= (MultiChoice)Activator.CreateInstance(MemberInfo.Type)!;
@@ -50,13 +48,7 @@ public sealed class MultiChoiceElement : ConfigElement<MultiChoice> {
         Func<string> elementLabel = Reflection.ConfigElement.TextDisplayFunction.GetValue(_selectedElement)!;
         Func<string>? elementTooltip = Reflection.ConfigElement.TooltipFunction.GetValue(_selectedElement);
         Reflection.ConfigElement.TextDisplayFunction.SetValue(_selectedElement, () => $"{TextDisplayFunction()}: {elementLabel()}");
-        Reflection.ConfigElement.TooltipFunction.SetValue(_selectedElement, () => {
-            List<string> parts = new();
-            string? p = null;
-            if ((p = _tooltip?.Invoke()) is not null && p.Length != 0) parts.Add(p);
-            if ((p = elementTooltip?.Invoke()) is not null && p.Length != 0) parts.Add(p);
-            return string.Join('\n', parts);
-        });
+        Reflection.ConfigElement.TooltipFunction.SetValue(_selectedElement, () => ConfigHelper.JoinTooltips(TooltipFunction, elementTooltip));
 
         int count = value.Choices.Count;
         UIImage swapButton;
@@ -87,5 +79,4 @@ public sealed class MultiChoiceElement : ConfigElement<MultiChoice> {
 
     private ConfigElement _selectedElement = null!;
     private readonly List<Func<string>> _labels = [];
-    private Func<string>? _tooltip = null;
 }

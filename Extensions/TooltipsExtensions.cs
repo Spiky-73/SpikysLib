@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Terraria.ModLoader;
 
 namespace SpikysLib.Extensions;
 
+[Obsolete($"use {nameof(SpikysLib)}.{nameof(global::SpikysLib.TooltipLineID)} instead", true)]
 public enum TooltipLineID {
     ItemName,
     Favorite,
@@ -62,33 +64,18 @@ public enum TooltipLineID {
     Modded
 }
 
+[Obsolete($"use {nameof(TooltipHelper)} instead", true)]
 public static class TooltipsExtensions {
-
-    public static TooltipLineID FromString(string? value) {
-        if(value is null) return TooltipLineID.Modded;
-        if (value.StartsWith("Tooltip")) return TooltipLineID.Tooltip;
-        if (System.Enum.TryParse(value, out TooltipLineID id)) return id;
-        return TooltipLineID.Modded;
-    }
-
-    public static TooltipLine? FindLine(this List<TooltipLine> tooltips, string name) => tooltips.Find(l => l.Name == name);
-    public static TooltipLine AddLine(this List<TooltipLine> tooltips, TooltipLine line, TooltipLineID? after = null) {
-        after ??= FromString(line.Name);
-        for (int i = 0; i < tooltips.Count; i++) {
-            if (tooltips[i].Name == line.Name) return tooltips[i];
-            TooltipLineID lookingAt = FromString(tooltips[i].Name);
-            if (lookingAt <= after) continue;
-            tooltips.Insert(i, line);
-            return line;
-        }
-        tooltips.Add(line);
-        return line;
-    }
-
-    public static TooltipLine FindorAddLine(this List<TooltipLine> tooltips, TooltipLine line, out bool addedLine, TooltipLineID? after = null) {
-        TooltipLine? target = tooltips.FindLine(line.Name);
-        if (addedLine = target is null) target = tooltips.AddLine(line, after);
-        return target!;
-    }
-    public static TooltipLine FindorAddLine(this List<TooltipLine> tooltips, TooltipLine line, TooltipLineID after = TooltipLineID.Modded) => FindorAddLine(tooltips, line, out _, after);
+    public static TooltipLineID FromString(string? value) => (TooltipLineID)TooltipHelper.FromString(value);
+    
+    [Obsolete($"use {nameof(TooltipHelper)}.{nameof(TooltipHelper.FindLine)} instead", true)]
+    public static TooltipLine? FindLine(this List<TooltipLine> tooltips, string name) => TooltipHelper.FindLine(tooltips, name);
+    
+    [Obsolete($"use {nameof(TooltipHelper)}.{nameof(TooltipHelper.AddLine)} instead", true)]
+    public static TooltipLine AddLine(this List<TooltipLine> tooltips, TooltipLine line, TooltipLineID? after = null) => TooltipHelper.AddLine(tooltips, line, (global::SpikysLib.TooltipLineID?)after);
+    
+    [Obsolete($"use {nameof(TooltipHelper)}.{nameof(TooltipHelper.FindOrAddLine)} instead", true)]
+    public static TooltipLine FindorAddLine(this List<TooltipLine> tooltips, TooltipLine line, out bool addedLine, TooltipLineID? after = null) => TooltipHelper.FindOrAddLine(tooltips, line, out addedLine, (global::SpikysLib.TooltipLineID?)after);
+    [Obsolete($"use {nameof(TooltipHelper)}.{nameof(TooltipHelper.FindOrAddLine)} instead", true)]
+    public static TooltipLine FindorAddLine(this List<TooltipLine> tooltips, TooltipLine line, TooltipLineID after = TooltipLineID.Modded) => TooltipHelper.FindOrAddLine(tooltips, line, (global::SpikysLib.TooltipLineID)after);
 }

@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Collections.Generic;
 
+using TMod = Terraria.ModLoader.Mod;
 using TRecipe = Terraria.Recipe;
 using TCustomCurrencyManager = Terraria.GameContent.UI.CustomCurrencyManager;
 using TCustomCurrencySystem = Terraria.GameContent.UI.CustomCurrencySystem;
@@ -9,6 +10,10 @@ namespace SpikysLib.Reflection;
 
 public static class Main {
     public static readonly Assembly tModLoader = Assembly.Load("tModLoader");
+}
+
+public static class Mod {
+    public static readonly Method<TMod, object?> AutoloadConfig = new(nameof(AutoloadConfig));
 }
 
 public static class Recipe {

@@ -2,7 +2,7 @@ Just a small library used by most of my mods.
 
 [h2]Content[\h2]
 - Custom UI elements
-- Terraria contants
+- Terraria constants
 - Custom data structures
 - Extension methods from Terraria classes
 - A generic reflection wrapper
