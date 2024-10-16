@@ -36,10 +36,6 @@ public sealed class ObjectMembersElement : ConfigElement<object?> {
                 top = (int)args[1]; order = (int)args[2];
                 ConfigManager.WrapIt(_dataList, ref top, variable, value, order++);
             }
-        } else {
-            int top = 0;
-            int order = 0;
-            ConfigManager.WrapIt(_dataList, ref top, MemberInfo, this, order++);
         }
         MaxHeight.Pixels = int.MaxValue;
         Recalculate();
