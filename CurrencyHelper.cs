@@ -19,7 +19,7 @@ public static class CurrencyHelper {
         }
         return None;
     }
-    public static long CurrencyValue(int item) => CurrencyType(item) switch {
+    public static int CurrencyValue(int item) => CurrencyType(item) switch {
         None => 0,
         Coins => CoinValues[item],
         int t => CustomCurrencyManager.TryGetCurrencySystem(t, out var system) ? system.ValuePerUnit(item) : 0
