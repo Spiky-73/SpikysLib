@@ -11,7 +11,19 @@ public static class CurrencyHelper {
     public const int None = -2;
     public const int Coins = -1;
 
-    public static bool IsPartOfACurrency(int item, out int currency) => new Item(item).IsPartOfACurrency(out currency);
+    public static bool IsPartOfACurrency(int item, out int currency) => (currency = CurrencyType(item)) != None;
+    public static int CurrencyType(int item) {
+        if (CoinValues.ContainsKey(item)) return Coins;
+        foreach ((int key, CustomCurrencySystem system) in CustomCurrencies()) {
+            if (system.ValuePerUnit().ContainsKey(item)) return key;
+        }
+        return None;
+    }
+    public static long CurrencyValue(int item) => CurrencyType(item) switch {
+        None => 0,
+        Coins => CoinValues[item],
+        int t => CustomCurrencyManager.TryGetCurrencySystem(t, out var system) ? system.ValuePerUnit(item) : 0
+    };
 
     public static int LowestValueType(int currency) => currency switch {
         None => ItemID.None,
@@ -24,19 +36,14 @@ public static class CurrencyHelper {
         switch (currency) {
         case None: return [];
         case Coins:
-            values = [
-                new(ItemID.PlatinumCoin, 1000000),
-                new(ItemID.GoldCoin, 10000),
-                new(ItemID.SilverCoin, 100),
-                new(ItemID.CopperCoin, 1)
-            ];
+            values = new(CoinValues);
             break;
         default:
             Dictionary<int, int> valuesPerUnit = CustomCurrencyManager.TryGetCurrencySystem(currency, out CustomCurrencySystem system) ? system.ValuePerUnit() : [];
             foreach (var v in valuesPerUnit) values.Add(v);
-            values.Sort((a, b) => a.Value < b.Value ? 0 : 1);
             break;
         }
+        values.Sort((a, b) => a.Value < b.Value ? 0 : 1);
 
         List<KeyValuePair<int, int>> stacks = [];
         foreach (var coin in values) {
@@ -67,4 +74,11 @@ public static class CurrencyHelper {
     public static Dictionary<int, CustomCurrencySystem> CustomCurrencies() => Reflection.CustomCurrencyManager._currencies.GetValue();
     public static Dictionary<int, int> ValuePerUnit(this CustomCurrencySystem system) => Reflection.CustomCurrencySystem._valuePerUnit.GetValue(system);
     public static int ValuePerUnit(this CustomCurrencySystem system, int type) => Reflection.CustomCurrencySystem._valuePerUnit.GetValue(system)[type];
+
+    public static readonly Dictionary<int, int> CoinValues = new() {
+        {ItemID.CopperCoin,   1},
+        {ItemID.SilverCoin,   100},
+        {ItemID.GoldCoin,     10000},
+        {ItemID.PlatinumCoin, 1000000},
+    };
 }
