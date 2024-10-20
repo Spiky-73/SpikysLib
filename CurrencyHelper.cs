@@ -11,6 +11,8 @@ public static class CurrencyHelper {
     public const int None = -2;
     public const int Coins = -1;
 
+    public static bool IsPartOfACurrency(int item, out int currency) => new Item(item).IsPartOfACurrency(out currency);
+
     public static int LowestValueType(int currency) => currency switch {
         None => ItemID.None,
         Coins => ItemID.CopperCoin,
