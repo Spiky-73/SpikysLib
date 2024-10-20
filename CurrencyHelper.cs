@@ -3,10 +3,10 @@ using Terraria;
 using Terraria.ID;
 using Terraria.GameContent.UI;
 using System.Linq;
+using Microsoft.Xna.Framework;
 
 namespace SpikysLib;
 
-// TODO look into CustomCurrencySystem to reuse stuff
 public static class CurrencyHelper {
     public const int None = -2;
     public const int Coins = -1;
@@ -39,11 +39,10 @@ public static class CurrencyHelper {
             values = new(CoinValues);
             break;
         default:
-            Dictionary<int, int> valuesPerUnit = CustomCurrencyManager.TryGetCurrencySystem(currency, out CustomCurrencySystem system) ? system.ValuePerUnit() : [];
-            foreach (var v in valuesPerUnit) values.Add(v);
+            values = CustomCurrencyManager.TryGetCurrencySystem(currency, out CustomCurrencySystem system) ? new(system.ValuePerUnit()) : [];
             break;
         }
-        values.Sort((a, b) => a.Value < b.Value ? 0 : 1);
+        values.Sort((a, b) => -a.Value.CompareTo(b.Value));
 
         List<KeyValuePair<int, int>> stacks = [];
         foreach (var coin in values) {
@@ -55,20 +54,22 @@ public static class CurrencyHelper {
         return stacks;
     }
 
-    public static string PriceText(int currency, long count) {
-        if (count == 0 || currency == None) return string.Empty;
+    public static string PriceText(int currency, long price) {
+        if (price == 0 || currency == None) return string.Empty;
 
-        List<KeyValuePair<int, int>> coins = CurrencyCountToItems(currency, count);
-        List<string> parts = [];
         switch (currency) {
         case Coins:
+            List<KeyValuePair<int, int>> coins = CurrencyCountToItems(currency, price);
+            List<string> parts = [];
             foreach (KeyValuePair<int, int> coin in coins) parts.Add($"{coin.Value} {Lang.inter[18 - coin.Key + ItemID.CopperCoin].Value}");
-            break;
+            return $"[c/{(CoinColors[coins[0].Key]*(Main.mouseTextColor/255f)).Hex3()}:{string.Join(' ', parts)}]";
         default:
-            foreach (KeyValuePair<int, int> coin in coins) parts.Add($"{coin.Value} {Lang.GetItemNameValue(coin.Key)}");
-            break;
+            string[] lines = [string.Empty];
+            int num = 0;
+            CustomCurrencyManager.GetPriceText(currency, lines, ref num, price);
+            lines[0] = lines[0].Replace(Lang.tip[50] + " ", string.Empty);
+            return lines[0];
         }
-        return string.Join(' ', parts);
     }
 
     public static Dictionary<int, CustomCurrencySystem> CustomCurrencies() => Reflection.CustomCurrencyManager._currencies.GetValue();
@@ -80,5 +81,11 @@ public static class CurrencyHelper {
         {ItemID.SilverCoin,   100},
         {ItemID.GoldCoin,     10000},
         {ItemID.PlatinumCoin, 1000000},
+    };
+    public static readonly Dictionary<int, Color> CoinColors = new() {
+        {ItemID.CopperCoin,   Colors.CoinCopper},
+        {ItemID.SilverCoin,   Colors.CoinSilver},
+        {ItemID.GoldCoin,     Colors.CoinGold},
+        {ItemID.PlatinumCoin, Colors.CoinPlatinum},
     };
 }

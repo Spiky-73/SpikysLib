@@ -18,6 +18,7 @@ Just a small library used by most of my mods.
 ### v1.3
 - Added DrawStringWithShadow and DrawStringShadow methods to GraphicsHelper
 - Added IsPartOfACurrency, CurrencyValue and CurrencyType method for item types to CurrencyHelper
+- Improved GetPriceText method
 
 ### v1.2.0.1
 - Fixed a crash when using ObjectMemberElement with null values
