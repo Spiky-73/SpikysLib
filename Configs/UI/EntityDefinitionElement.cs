@@ -35,7 +35,7 @@ public sealed class EntityDefinitionElement : ConfigElement<IEntityDefinition> {
 
         SetupList();
 
-        _expandButton = new HoverImage(CollapsedTexture, Language.GetTextValue($"tModLoader.ModConfigExpand"));
+        _expandButton = new global::SpikysLib.UI.Elements.HoverImage(CollapsedTexture, Language.GetTextValue($"tModLoader.ModConfigExpand"));
         _expandButton.Left.Set(-30 + 5, 1);
         _expandButton.Top.Set(4, 0);
         _expandButton.OnLeftClick += (_, _) => OpenDropDownField();
@@ -94,7 +94,7 @@ public sealed class EntityDefinitionElement : ConfigElement<IEntityDefinition> {
     }
 
     private bool _expanded;
-    private HoverImage _expandButton = null!;
+    private global::SpikysLib.UI.Elements.HoverImage _expandButton = null!;
     private readonly UIList _dataList = [];
     private readonly List<Wrapper<Text>> _elements = [];
 }

@@ -53,11 +53,11 @@ public sealed class MultiChoiceElement : ConfigElement<MultiChoice> {
         int count = value.Choices.Count;
         UIImage swapButton;
         if (count == 2) {
-            swapButton = new HoverImage(PlayTexture, Language.GetTextValue($"{Localization.Keys.UI}.Change", _labels[(value.ChoiceIndex + 1) % count]()));
+            swapButton = new global::SpikysLib.UI.Elements.HoverImage(PlayTexture, Language.GetTextValue($"{Localization.Keys.UI}.Change", _labels[(value.ChoiceIndex + 1) % count]()));
             swapButton.OnLeftClick += (UIMouseEvent a, UIElement b) => ChangeChoice(value.ChoiceIndex + 1);
         } else {
-            swapButton = new HoverImageSplit(UpDownTexture, Language.GetTextValue($"{Localization.Keys.UI}.Change", _labels[(value.ChoiceIndex + 1) % count]()), Language.GetTextValue($"{Localization.Keys.UI}.Change", _labels[(value.ChoiceIndex - 1 + count) % count]()));
-            swapButton.OnLeftClick += (UIMouseEvent a, UIElement b) => ChangeChoice(value.ChoiceIndex + (((HoverImageSplit)swapButton).HoveringUp ? 1 : -1));
+            swapButton = new global::SpikysLib.UI.Elements.HoverImageSplit(UpDownTexture, Language.GetTextValue($"{Localization.Keys.UI}.Change", _labels[(value.ChoiceIndex + 1) % count]()), Language.GetTextValue($"{Localization.Keys.UI}.Change", _labels[(value.ChoiceIndex - 1 + count) % count]()));
+            swapButton.OnLeftClick += (UIMouseEvent a, UIElement b) => ChangeChoice(value.ChoiceIndex + (((global::SpikysLib.UI.Elements.HoverImageSplit)swapButton).HoveringUp ? 1 : -1));
         }
         swapButton.VAlign = 0.5f;
         swapButton.Left.Set(-30 + 5, 1);

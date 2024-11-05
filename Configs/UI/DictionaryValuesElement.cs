@@ -69,7 +69,7 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
                 element.Left.Pixels += 25;
 
                 int index = i;
-                HoverImageSplit moveButton = new(UpDownTexture, Language.GetTextValue($"{Localization.Keys.UI}.Up"), Language.GetTextValue($"{Localization.Keys.UI}.Down")) {
+                global::SpikysLib.UI.Elements.HoverImageSplit moveButton = new(UpDownTexture, Language.GetTextValue($"{Localization.Keys.UI}.Up"), Language.GetTextValue($"{Localization.Keys.UI}.Down")) {
                     VAlign = 0.5f,
                     Left = new(2, 0f),
                 };

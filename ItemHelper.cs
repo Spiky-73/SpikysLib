@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent.UI;
 using Terraria.ModLoader;
+using Terraria.UI;
 
 namespace SpikysLib;
 
@@ -85,4 +86,10 @@ public static class ItemHelper {
         CurrencyHelper.Coins => item.value / 5,
         int t => CustomCurrencyManager.TryGetCurrencySystem(t, out var system) ? system.ValuePerUnit(item.type) : 0
     };
+
+    public static bool IsInventoryContext(int context) {
+        if (context == -1 || context == ItemSlot.Context.InWorld || context == ItemSlot.Context.ChatItem || context == ItemSlot.Context.CreativeInfinite) return false;
+        if (ItemSlot.Context.DisplayDollArmor <= context && context <= ItemSlot.Context.HatRackDye) return false;
+        return true;
+    }
 }
