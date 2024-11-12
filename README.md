@@ -18,7 +18,13 @@ Just a small library used by most of my mods.
 ### v1.3
 - Added DrawStringWithShadow and DrawStringShadow methods to GraphicsHelper
 - Added IsPartOfACurrency, CurrencyValue and CurrencyType method for item types to CurrencyHelper
-- Improved GetPriceText method
+- Added ItemHelper.IsInventoryContext
+- Added GraphicsHelper.DrawMouseText
+- Moved HoverImage and HoverImageSplit to SpikysLib.UI.Elements
+- Added SpikysLib.UI.Elements.HoverImageFramed
+- Added SpikysLib.UI.Elements.UIFlexGrid and UIFlexList
+- Improved CurrencyHelper.GetPriceText method
+- Fixed HoverImage tooltip not been drawn in-game
 - Fixed TooltipHelper.AddLine not always adding the line
 
 ### v1.2.0.1
