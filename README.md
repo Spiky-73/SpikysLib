@@ -16,6 +16,7 @@ Just a small library used by most of my mods.
 # Changelog
 
 ### v1.3
+- Added a GUID to items
 - Added DrawStringWithShadow and DrawStringShadow methods to GraphicsHelper
 - Added IsPartOfACurrency, CurrencyValue and CurrencyType method for item types to CurrencyHelper
 - Added ItemHelper.IsInventoryContext
