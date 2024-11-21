@@ -106,10 +106,6 @@ public sealed class ItemGuid : GlobalItem {
 
     public ItemGuid() => UniqueId = Guid.NewGuid();
 
-    public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) {
-        tooltips.AddLine(new(Mod, "guid", UniqueId.ToString()));
-    }
-
     private static Item HookTransferGuid(Reflection.ItemLoader.TransferWithLimitFn orig, Item source, int limit) {
         Item destination = orig(source, limit);
         if (!source.IsAir && destination.TryGetGlobalItem(out ItemGuid itemGuid)) itemGuid.UniqueId = Guid.NewGuid();
