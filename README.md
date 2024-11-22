@@ -25,8 +25,10 @@ Just a small library used by most of my mods.
 - Added SpikysLib.UI.Elements.HoverImageFramed
 - Added SpikysLib.UI.Elements.UIFlexGrid and UIFlexList
 - Improved CurrencyHelper.GetPriceText method
+- Changed MagicStorageIntegration method signatures
 - Fixed HoverImage tooltip not been drawn in-game
 - Fixed TooltipHelper.AddLine not always adding the line
+- Fixed PlayerHelper.CountItems not working wing Quality of Terraria
 
 ### v1.2.0.1
 - Fixed a crash when using ObjectMemberElement with null values

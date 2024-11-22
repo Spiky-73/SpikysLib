@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
+using SpikysLib.Collections;
 using SpikysLib.Constants;
 using Terraria;
 using Terraria.DataStructures;
@@ -70,15 +72,28 @@ public static class PlayerHelper {
         };
     }
 
-    public static int CountItems(this Player player, int type, bool includeChest = false) {
-        int count = player.whoAmI == Main.myPlayer ?
-            player.inventory.CountItems(type, InventorySlots.Mouse) + new Item[] { Main.mouseItem }.CountItems(type) + new[] { Main.CreativeMenu.GetItemByIndex(0) }.CountItems(type) :
+    public static int CountItems(this Player player, int type, bool includeChests = false) {
+        bool local = player.whoAmI == Main.myPlayer;
+
+        if (!includeChests) return local ?
+            (player.inventory.CountItems(type, InventorySlots.Mouse) + new Item[] { Main.mouseItem }.CountItems(type)) :
             player.inventory.CountItems(type);
-        if (includeChest) {
-            if (CrossMod.MagicStorageIntegration.Enabled && CrossMod.MagicStorageIntegration.InMagicStorage) count += CrossMod.MagicStorageIntegration.CountItems(type);
-            else if (player.InChest(out Item[]? chest)) count += chest.CountItems(type);
-            if (player.chest != InventorySlots.VoidBag && player.useVoidBag()) count += player.bank4.item.CountItems(type);
+
+        int count = 0;
+        if(local){
+            // Makes sure the held item is counted a single time
+            if(!_mouseItemMaterial) count += new Item[] { Main.mouseItem }.CountItems(type);
+            count += OwnedItems.GetValueOrDefault(type);
+        } else {
+            count += new Item[] { player.inventory[InventorySlots.Mouse] }.CountItems(type);
+            (Dictionary<int, int> items, var ownedItems) = ([], Reflection.Recipe._ownedItems.GetValue());
+            Reflection.Recipe._ownedItems.SetValue(items);
+            Reflection.Recipe.CollectItemsToCraftWithFrom.Invoke(player);
+            Reflection.Recipe._ownedItems.SetValue(ownedItems);
+            count += items.GetValueOrDefault(type);
         }
+        if (CrossMod.MagicStorageIntegration.Enabled) count += CrossMod.MagicStorageIntegration.CountItems(player, type);
+        
         return count;
     }
     public static long CountCurrency(this Player player, int currency, bool includeBanks = true, bool includeChest = false) {
@@ -96,9 +111,26 @@ public static class PlayerHelper {
 
 
     public static ReadOnlyDictionary<int, int> OwnedItems { get; private set; } = null!;
+    private static bool _mouseItemMaterial;
 
     public static readonly int[] InventoryContexts = [ItemSlot.Context.InventoryItem, ItemSlot.Context.InventoryAmmo, ItemSlot.Context.InventoryCoin];
 
-    internal static void Load() => OwnedItems = new(Reflection.Recipe._ownedItems.GetValue());
+    internal static void Load() {
+        OwnedItems = new(Reflection.Recipe._ownedItems.GetValue());
+        On_Recipe.CollectItemsToCraftWithFrom += HookCollectItemsToCraftWithFrom;
+        On_Recipe.CollectItems_IEnumerable1 += HookDetectMouseItemMaterial;
+    }
+
+
+    private static void HookCollectItemsToCraftWithFrom(On_Recipe.orig_CollectItemsToCraftWithFrom orig, Player player) {
+        if(player == Main.LocalPlayer) _mouseItemMaterial = false;
+        orig(player);
+    }
+
+    private static void HookDetectMouseItemMaterial(On_Recipe.orig_CollectItems_IEnumerable1 orig, IEnumerable<Item> items) {
+        if(items.Exist(i => i == Main.mouseItem)) _mouseItemMaterial = true;
+        orig(items);
+    }
+
     internal static void Unload() => OwnedItems = null!;
 }
