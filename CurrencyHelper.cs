@@ -3,13 +3,27 @@ using Terraria;
 using Terraria.ID;
 using Terraria.GameContent.UI;
 using System.Linq;
+using Microsoft.Xna.Framework;
 
 namespace SpikysLib;
 
-// TODO look into CustomCurrencySystem to reuse stuff
 public static class CurrencyHelper {
     public const int None = -2;
     public const int Coins = -1;
+
+    public static bool IsPartOfACurrency(int item, out int currency) => (currency = CurrencyType(item)) != None;
+    public static int CurrencyType(int item) {
+        if (CoinValues.ContainsKey(item)) return Coins;
+        foreach ((int key, CustomCurrencySystem system) in CustomCurrencies()) {
+            if (system.ValuePerUnit().ContainsKey(item)) return key;
+        }
+        return None;
+    }
+    public static int CurrencyValue(int item) => CurrencyType(item) switch {
+        None => 0,
+        Coins => CoinValues[item],
+        int t => CustomCurrencyManager.TryGetCurrencySystem(t, out var system) ? system.ValuePerUnit(item) : 0
+    };
 
     public static int LowestValueType(int currency) => currency switch {
         None => ItemID.None,
@@ -22,19 +36,13 @@ public static class CurrencyHelper {
         switch (currency) {
         case None: return [];
         case Coins:
-            values = [
-                new(ItemID.PlatinumCoin, 1000000),
-                new(ItemID.GoldCoin, 10000),
-                new(ItemID.SilverCoin, 100),
-                new(ItemID.CopperCoin, 1)
-            ];
+            values = new(CoinValues);
             break;
         default:
-            Dictionary<int, int> valuesPerUnit = CustomCurrencyManager.TryGetCurrencySystem(currency, out CustomCurrencySystem system) ? system.ValuePerUnit() : [];
-            foreach (var v in valuesPerUnit) values.Add(v);
-            values.Sort((a, b) => a.Value < b.Value ? 0 : 1);
+            values = CustomCurrencyManager.TryGetCurrencySystem(currency, out CustomCurrencySystem system) ? new(system.ValuePerUnit()) : [];
             break;
         }
+        values.Sort((a, b) => -a.Value.CompareTo(b.Value));
 
         List<KeyValuePair<int, int>> stacks = [];
         foreach (var coin in values) {
@@ -46,23 +54,38 @@ public static class CurrencyHelper {
         return stacks;
     }
 
-    public static string PriceText(int currency, long count) {
-        if (count == 0 || currency == None) return string.Empty;
+    public static string PriceText(int currency, long price) {
+        if (price == 0 || currency == None) return string.Empty;
 
-        List<KeyValuePair<int, int>> coins = CurrencyCountToItems(currency, count);
-        List<string> parts = [];
         switch (currency) {
         case Coins:
+            List<KeyValuePair<int, int>> coins = CurrencyCountToItems(currency, price);
+            List<string> parts = [];
             foreach (KeyValuePair<int, int> coin in coins) parts.Add($"{coin.Value} {Lang.inter[18 - coin.Key + ItemID.CopperCoin].Value}");
-            break;
+            return $"[c/{(CoinColors[coins[0].Key]*(Main.mouseTextColor/255f)).Hex3()}:{string.Join(' ', parts)}]";
         default:
-            foreach (KeyValuePair<int, int> coin in coins) parts.Add($"{coin.Value} {Lang.GetItemNameValue(coin.Key)}");
-            break;
+            string[] lines = [string.Empty];
+            int num = 0;
+            CustomCurrencyManager.GetPriceText(currency, lines, ref num, price);
+            lines[0] = lines[0].Replace(Lang.tip[50] + " ", string.Empty);
+            return lines[0];
         }
-        return string.Join(' ', parts);
     }
 
     public static Dictionary<int, CustomCurrencySystem> CustomCurrencies() => Reflection.CustomCurrencyManager._currencies.GetValue();
     public static Dictionary<int, int> ValuePerUnit(this CustomCurrencySystem system) => Reflection.CustomCurrencySystem._valuePerUnit.GetValue(system);
     public static int ValuePerUnit(this CustomCurrencySystem system, int type) => Reflection.CustomCurrencySystem._valuePerUnit.GetValue(system)[type];
+
+    public static readonly Dictionary<int, int> CoinValues = new() {
+        {ItemID.CopperCoin,   1},
+        {ItemID.SilverCoin,   100},
+        {ItemID.GoldCoin,     10000},
+        {ItemID.PlatinumCoin, 1000000},
+    };
+    public static readonly Dictionary<int, Color> CoinColors = new() {
+        {ItemID.CopperCoin,   Colors.CoinCopper},
+        {ItemID.SilverCoin,   Colors.CoinSilver},
+        {ItemID.GoldCoin,     Colors.CoinGold},
+        {ItemID.PlatinumCoin, Colors.CoinPlatinum},
+    };
 }

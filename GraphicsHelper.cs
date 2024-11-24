@@ -27,4 +27,12 @@ public static class GraphicsHelper {
             }
         }
     }
+
+
+    internal static void DrawMouseText(string tooltip) {
+        if (Main.gameMenu || Main.ingameOptionsWindow) Reflection.UIModConfig.Tooltip.SetValue(tooltip);
+        else Main.instance.MouseText(tooltip);
+    }
+
+
 }

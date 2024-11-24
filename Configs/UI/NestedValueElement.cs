@@ -41,7 +41,7 @@ public sealed class NestedValueElement : ConfigElement<IKeyValuePair> {
 
         if (!_isObjectElement) {
             _containerValue.Top = conParent.Height;
-            _expandButton = new HoverImage(ExpandedTexture, Language.GetTextValue("tModLoader.ModConfigCollapse"));
+            _expandButton = new global::SpikysLib.UI.Elements.HoverImage(ExpandedTexture, Language.GetTextValue("tModLoader.ModConfigCollapse"));
             _expandButton.Top.Set(4f, 0f);
             _expandButton.Left.Set(-25f, 1f);
             _expandButton.OnLeftClick += (a, b) => Expanded = !Expanded;
@@ -100,7 +100,7 @@ public sealed class NestedValueElement : ConfigElement<IKeyValuePair> {
 
     private bool _isObjectElement;
     private bool _expanded; // Only used if _isObjectElement is false
-    private HoverImage _expandButton = null!;
+    private global::SpikysLib.UI.Elements.HoverImage _expandButton = null!;
     private UIElement _containerValue = null!;
 
     private ConfigElement _uiParent = null!;

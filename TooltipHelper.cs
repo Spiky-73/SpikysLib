@@ -73,23 +73,22 @@ public static class TooltipHelper {
 
     public static TooltipLine? FindLine(this List<TooltipLine> tooltips, TooltipLineID line) => tooltips.FindLine(line.ToString());
     public static TooltipLine? FindLine(this List<TooltipLine> tooltips, string name) => tooltips.Find(l => l.Name == name);
-    public static TooltipLine AddLine(this List<TooltipLine> tooltips, TooltipLine line, TooltipLineID? after = null) {
+    public static void AddLine(this List<TooltipLine> tooltips, TooltipLine line, TooltipLineID? after = null) {
         after ??= FromString(line.Name);
         for (int i = 0; i < tooltips.Count; i++) {
-            if (tooltips[i].Name == line.Name) return tooltips[i];
             TooltipLineID lookingAt = FromString(tooltips[i].Name);
             if (lookingAt <= after) continue;
             tooltips.Insert(i, line);
-            return line;
+            return;
         }
         tooltips.Add(line);
-        return line;
     }
 
     public static TooltipLine FindOrAddLine(this List<TooltipLine> tooltips, TooltipLine line, TooltipLineID? after = null) => FindOrAddLine(tooltips, line, out _, after);
     public static TooltipLine FindOrAddLine(this List<TooltipLine> tooltips, TooltipLine line, out bool addedLine, TooltipLineID? after = null) {
         TooltipLine? target = tooltips.FindLine(line.Name);
-        if (addedLine = target is null) target = tooltips.AddLine(line, after);
-        return target!;
+        if (addedLine = target is not null) return target!;
+        tooltips.AddLine(line, after);
+        return line!;
     }
 }

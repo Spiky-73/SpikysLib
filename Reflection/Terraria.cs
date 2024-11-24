@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Collections.Generic;
 
+using TPlayer = Terraria.Player;
 using TMod = Terraria.ModLoader.Mod;
 using TRecipe = Terraria.Recipe;
 using TCustomCurrencyManager = Terraria.GameContent.UI.CustomCurrencyManager;
@@ -18,6 +19,7 @@ public static class Mod {
 
 public static class Recipe {
     public static readonly StaticField<Dictionary<int, int>> _ownedItems = new(typeof(TRecipe), nameof(_ownedItems));
+    public static readonly StaticMethod<object?> CollectItemsToCraftWithFrom = new(typeof(TRecipe), nameof(CollectItemsToCraftWithFrom), typeof(TPlayer));
 }
 
 public static class CustomCurrencyManager {

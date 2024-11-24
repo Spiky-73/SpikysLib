@@ -70,10 +70,13 @@ public static class TooltipsExtensions {
     
     [Obsolete($"use {nameof(TooltipHelper)}.{nameof(TooltipHelper.FindLine)} instead", true)]
     public static TooltipLine? FindLine(this List<TooltipLine> tooltips, string name) => TooltipHelper.FindLine(tooltips, name);
-    
+
     [Obsolete($"use {nameof(TooltipHelper)}.{nameof(TooltipHelper.AddLine)} instead", true)]
-    public static TooltipLine AddLine(this List<TooltipLine> tooltips, TooltipLine line, TooltipLineID? after = null) => TooltipHelper.AddLine(tooltips, line, (global::SpikysLib.TooltipLineID?)after);
-    
+    public static TooltipLine AddLine(this List<TooltipLine> tooltips, TooltipLine line, TooltipLineID? after = null) {
+        TooltipHelper.AddLine(tooltips, line, (global::SpikysLib.TooltipLineID?)after);
+        return line;
+    }
+
     [Obsolete($"use {nameof(TooltipHelper)}.{nameof(TooltipHelper.FindOrAddLine)} instead", true)]
     public static TooltipLine FindorAddLine(this List<TooltipLine> tooltips, TooltipLine line, out bool addedLine, TooltipLineID? after = null) => TooltipHelper.FindOrAddLine(tooltips, line, out addedLine, (global::SpikysLib.TooltipLineID?)after);
     [Obsolete($"use {nameof(TooltipHelper)}.{nameof(TooltipHelper.FindOrAddLine)} instead", true)]

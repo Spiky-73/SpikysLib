@@ -15,6 +15,24 @@ Just a small library used by most of my mods.
 
 # Changelog
 
+### v1.3
+- Added a GUID to items
+- Added DrawStringWithShadow and DrawStringShadow methods to GraphicsHelper
+- Added IsPartOfACurrency, CurrencyValue and CurrencyType method for item types to CurrencyHelper
+- Added ItemHelper.IsInventoryContext
+- Added GraphicsHelper.DrawMouseText
+- Moved HoverImage and HoverImageSplit to SpikysLib.UI.Elements
+- Added SpikysLib.UI.Elements.HoverImageFramed
+- Added SpikysLib.UI.Elements.UIFlexGrid and UIFlexList
+- Improved CurrencyHelper.GetPriceText method
+- Changed MagicStorageIntegration method signatures
+- Fixed HoverImage tooltip not been drawn in-game
+- Fixed TooltipHelper.AddLine not always adding the line
+- Fixed PlayerHelper.CountItems not working wing Quality of Terraria
+
+### v1.2.0.1
+- Fixed a crash when using ObjectMemberElement with null values
+
 ### v1.2
 - Added Expand/Collapse button to EntityDefinitionElement
 - Added LanguageHelper class
