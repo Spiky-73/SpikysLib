@@ -15,6 +15,9 @@ Just a small library used by most of my mods.
 
 # Changelog
 
+### v1.3.1
+- Added GraphicsHelper.DrawTexture
+
 ### v1.3
 - Added a GUID to items
 - Added DrawStringWithShadow and DrawStringShadow methods to GraphicsHelper

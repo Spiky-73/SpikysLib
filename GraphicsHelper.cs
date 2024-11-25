@@ -14,6 +14,13 @@ public static class GraphicsHelper {
         color.B = (byte)(color.B * mult);
     }
 
+    public static float DrawTexture(SpriteBatch spriteBatch, Texture2D value, Color alpha, Vector2 position, ref float scale, float sizeLimit) {
+        Rectangle frame = value.Frame(1, 1, 0, 0, 0, 0);
+        if (frame.Width > sizeLimit || frame.Height > sizeLimit) scale *= (frame.Width <= frame.Height) ? (sizeLimit / frame.Height) : (sizeLimit / frame.Width);
+        spriteBatch.Draw(value, position, new Rectangle?(frame), alpha, 0f, frame.Size() / 2f, scale, 0, 0f);
+        return scale;
+    }
+
     public static void DrawTileFrame(this SpriteBatch spriteBatch, int tile, Vector2 position, Vector2 origin, float scale) {
         Main.instance.LoadTiles(tile);
 
