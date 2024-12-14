@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using SpikysLib.CrossMod;
 using Terraria;
 using Terraria.GameContent.UI;
 using Terraria.ModLoader;
@@ -94,30 +95,43 @@ public static class ItemHelper {
         return true;
     }
 
-    public static Guid UniqueId(this Item item) => item.TryGetGlobalItem(out ItemGuid itemGuid) ? itemGuid.UniqueId : Guid.Empty;
+    public static Guid UniqueId(this Item item) {
+        if (!item.TryGetGlobalItem(out ItemGuid itemGuid)) return default;
+        if (itemGuid.UniqueId == default) itemGuid.UniqueId = Guid.NewGuid();
+        return itemGuid.UniqueId;
+    }
 }
 
 public sealed class ItemGuid : GlobalItem {
+    internal static bool _createOnRequest;
 
     public override void Load() {
         MonoModHooks.Add(Reflection.ItemLoader.TransferWithLimit, HookTransferGuid);
+        _createOnRequest = MagicStorageIntegration.Enabled && MagicStorageIntegration.Version < new Version(0, 6, 1);
     }
     public Guid UniqueId;
 
-    public ItemGuid() => UniqueId = Guid.NewGuid();
+    public ItemGuid() {
+        if(!_createOnRequest) UniqueId = Guid.NewGuid();
+    }
 
-    // public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) {
-    //     tooltips.AddLine(new(Mod, "guid", UniqueId.ToString()));
-    // }
+    public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) {
+        if(Configs.DebugInfo.Instance.displayGuids) tooltips.AddLine(new(Mod, "guid", UniqueId.ToString()));
+    }
 
     private static Item HookTransferGuid(Reflection.ItemLoader.TransferWithLimitFn orig, Item source, int limit) {
         Item destination = orig(source, limit);
-        if (!source.IsAir && destination.TryGetGlobalItem(out ItemGuid itemGuid)) itemGuid.UniqueId = Guid.NewGuid();
+        if (!source.IsAir && destination.TryGetGlobalItem(out ItemGuid itemGuid) && itemGuid.UniqueId != default) itemGuid.UniqueId = Guid.NewGuid();
         return destination;
     }
 
-    public override void SaveData(Item item, TagCompound tag) => tag["guid"] = UniqueId.ToString();
-    public override void LoadData(Item item, TagCompound tag) { if (tag.TryGet("guid", out string guid)) UniqueId = new(guid); }
+    public override void SaveData(Item item, TagCompound tag) {
+        if (UniqueId != default) tag["guid"] = UniqueId.ToString();
+    }
+
+    public override void LoadData(Item item, TagCompound tag) {
+        if (!_createOnRequest && tag.TryGet("guid", out string guid)) UniqueId = new(guid);
+        }
 
     // BUG tML bug
     // public override void NetSend(Item item, BinaryWriter writer) {
