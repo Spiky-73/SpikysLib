@@ -36,4 +36,6 @@ public static class MagicStorageIntegration {
         if (heart is null) return false;
         return heart.GetStoredItems().Exist(i => i.type == item.type && i.prefix == item.prefix);
     }
+
+    public static bool StackingFix => Enabled;
 }

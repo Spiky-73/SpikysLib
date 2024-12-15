@@ -103,16 +103,14 @@ public static class ItemHelper {
 }
 
 public sealed class ItemGuid : GlobalItem {
-    internal static bool _createOnRequest;
 
     public override void Load() {
         MonoModHooks.Add(Reflection.ItemLoader.TransferWithLimit, HookTransferGuid);
-        _createOnRequest = MagicStorageIntegration.Enabled && MagicStorageIntegration.Version < new Version(0, 6, 1);
     }
     public Guid UniqueId;
 
     public ItemGuid() {
-        if(!_createOnRequest) UniqueId = Guid.NewGuid();
+        if(!MagicStorageIntegration.StackingFix) UniqueId = Guid.NewGuid();
     }
 
     public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) {
@@ -130,7 +128,7 @@ public sealed class ItemGuid : GlobalItem {
     }
 
     public override void LoadData(Item item, TagCompound tag) {
-        if (!_createOnRequest && tag.TryGet("guid", out string guid)) UniqueId = new(guid);
+        if (!MagicStorageIntegration.StackingFix && tag.TryGet("guid", out string guid)) UniqueId = new(guid);
         }
 
     // BUG tML bug

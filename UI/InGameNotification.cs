@@ -1,9 +1,11 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
+using SpikysLib.Configs;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.GameInput;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.UI;
 using Terraria.UI.Chat;
@@ -94,4 +96,18 @@ public class InGameNotification : IInGameNotification {
     public const float IconScale = 0.3f;
     public const int FadeTime = 30;
     public static readonly Vector2 Padding = new(7, 5);
+}
+
+
+public sealed class NotificationPlayer : ModPlayer {
+    public override void OnEnterWorld() {
+        if (DebugInfo.Instance.lastPlayedVersion.Length != 0 && Mod.Version <= new System.Version(DebugInfo.Instance.lastPlayedVersion)) return;
+
+        DebugInfo.Instance.lastPlayedVersion = Mod.Version.ToString();
+        DebugInfo.Instance.Save();
+
+        if (Language.GetText($"{Localization.Keys.Chat}.Summary").Value.Length != 0) {
+            InGameNotificationsTracker.AddNotification(new InGameNotification(Mod, new LocalizedLine(Language.GetText($"{Localization.Keys.Chat}.Summary"))) { timeLeft = 15 * 60 });
+        }
+    }
 }
