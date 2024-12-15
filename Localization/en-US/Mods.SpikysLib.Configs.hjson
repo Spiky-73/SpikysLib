@@ -14,3 +14,12 @@ Wrapper: {
 
 	Tooltip: ""
 }
+
+DebugInfo: {
+	DisplayName: Debug Info
+
+	displayGuids: {
+		Label: Display Unique Ids
+		Tooltip: Show items' uids in their tooltip
+	}
+}
