@@ -16,8 +16,6 @@ public class UIFlexGrid : UIGrid {
     public bool FlexWidth = true;
 
     public override void Recalculate() {
-        base.Recalculate();
-
         if (FlexWidth && ItemsPerLine > 0) {
             float maxWidth = 0;
             for (int l = 0; l < _items.Count; l += ItemsPerLine) {
@@ -28,6 +26,7 @@ public class UIFlexGrid : UIGrid {
 
             Width.Set(maxWidth + (ItemsPerLine - 1) * ListPadding, 0);
         }
+        base.Recalculate();
         if (FlexHeight) Height.Set(GetTotalHeight(), 0);
     }
 }
@@ -36,8 +35,8 @@ public class UIFlexList : UIList {
     public bool FlexHeight = true;
     public bool FlexWidth = true;
     public override void Recalculate() {
-        base.Recalculate();
         if (FlexWidth) Width.Set(_items.Count == 0 ? 0 : _items.Select(i => i.Width.Pixels).Max(), 0);
+        base.Recalculate();
         if (FlexHeight) Height.Set(GetTotalHeight(), 0);
     }
 }
