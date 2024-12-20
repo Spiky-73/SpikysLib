@@ -17,6 +17,7 @@ Just a small library used by most of my mods.
 
 ### v1.3.1.1
 - Fixed a complete freeze of the of game when joining multiplayer
+- Fixed UIFlex elements incorrect size on Recalculate
 
 ### v1.3.1
 - Added GraphicsHelper.DrawTexture
