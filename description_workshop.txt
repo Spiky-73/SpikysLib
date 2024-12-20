@@ -1,6 +1,6 @@
 Just a small library used by most of my mods.   
 
-[h2]Content[/2]
+[h2]Content[/h2]
 - Custom UI elements
 - Terraria constants
 - Custom data structures
