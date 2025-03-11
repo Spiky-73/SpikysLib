@@ -25,7 +25,7 @@ public static class ILHelper {
         value = def;
         int loc = def;
         if (finder(moveType, i => i.MatchStloc(out loc) && predicate(i))) value = loc;
-        else if (def == -1) throw new SymbolsNotFoundException("No Stloc with those conditions were found");
+        else throw new SymbolsNotFoundException("No Stloc with those conditions were found");
         if (def != -1 && value != def) ModContent.GetInstance<SpikysLib>().Logger.Warn($"Found loc {value} but default is {def}");
         return cursor;
     }
@@ -37,7 +37,7 @@ public static class ILHelper {
         value = def;
         int loc = def;
         if (finder(out ILCursor[] cs, i => i.MatchStloc(out loc) && predicate(i))) value = loc;
-        else if (def == -1) throw new SymbolsNotFoundException("No Stloc with those conditions were found");
+        else throw new SymbolsNotFoundException("No Stloc with those conditions were found");
         if (def != -1 && value != def) ModContent.GetInstance<SpikysLib>().Logger.Warn($"Found loc {value} but default is {def}");
         c = cs[0];
     }
