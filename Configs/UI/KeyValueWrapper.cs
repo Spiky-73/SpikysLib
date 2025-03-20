@@ -74,18 +74,3 @@ public class KeyValueWrapperAttribute : Attribute {
 
     public Type Type { get; }
 }
-
-[Obsolete($"use {nameof(KeyValueWrapper)} instead")]
-public class ValueWrapper<TKey, TValue> : KeyValueWrapper<TKey, TValue> {}
-
-[Obsolete($"use {nameof(KeyValueWrapperAttribute)} instead")]
-[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Class | AttributeTargets.Enum)]
-public sealed class ValueWrapperAttribute : Attribute {
-    public ValueWrapperAttribute(Type type) {
-        if (!type.IsSubclassOfGeneric(typeof(ValueWrapper<,>), out _) && !type.ImplementsInterface(typeof(IKeyValueWrapper), out _)) throw new ArgumentException($"The type {type} does derive from {typeof(ValueWrapper<,>)}");
-        if (type.GetGenericArguments().Length > 2) throw new ArgumentException($"The type {type} can have at most 2 generic arguments");
-        Type = type;
-    }
-
-    public Type Type { get; }
-}
