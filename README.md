@@ -15,8 +15,13 @@ Just a small library used by most of my mods.
 
 # Changelog
 
-### vDEV
+### v1.4
 - Added GraphicsHelper.DrawBorderStringFourWay
+- Replaced DictionaryValueElement with DictionaryElement
+- Finalized the implementation of DictionaryElement
+- OrderedDictonary now uses DictionaryElement by default
+- Removed IKeyValueWrapper.OnBindKey
+- Renamed methods GetKeyWrapper and GetValueWrapper of KeyValueWrapper to GetKeyMember to GetValueMember
 
 ### v1.3.1.1
 - Fixed a complete freeze of the of game when joining multiplayer
