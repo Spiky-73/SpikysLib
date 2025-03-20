@@ -33,10 +33,6 @@ public sealed class DictionaryElement : ConfigElement<IDictionary> {
 
         var wrapperAttribute = ConfigManager.GetCustomAttributeFromMemberThenMemberType<KeyValueWrapperAttribute>(MemberInfo, Item, List);
         _customWrapper = wrapperAttribute?.Type;
-#pragma warning disable CS0618 // Type or member is obsolete
-        var legacyWrapperAttr = ConfigManager.GetCustomAttributeFromMemberThenMemberType<ValueWrapperAttribute>(MemberInfo, Item, List);
-        _customWrapper ??= legacyWrapperAttr?.Type;
-#pragma warning restore CS0618 // Type or member is obsolete
 
         _expandButton = new global::SpikysLib.UI.Elements.HoverImage(CollapsedTexture, Language.GetTextValue($"tModLoader.ModConfigExpand"));
         _expandButton.Left.Set(-79, 1);

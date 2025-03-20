@@ -40,11 +40,6 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
 
         var wrapperAttribute = ConfigManager.GetCustomAttributeFromMemberThenMemberType<KeyValueWrapperAttribute>(MemberInfo, Item, List);
         Type? customWrapper = wrapperAttribute?.Type;
-#pragma warning disable CS0618 // Type or member is obsolete
-        var legacyWrapperAttr = ConfigManager.GetCustomAttributeFromMemberThenMemberType<ValueWrapperAttribute>(MemberInfo, Item, List);
-        customWrapper ??= legacyWrapperAttr?.Type;
-#pragma warning restore CS0618 // Type or member is obsolete
-
 
         IDictionary dict = Value;
         int top = 0;
