@@ -4,6 +4,7 @@ using ReLogic.Graphics;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ObjectData;
+using Terraria.UI.Chat;
 
 namespace SpikysLib;
 
@@ -64,6 +65,17 @@ public static class GraphicsHelper {
                 break;
             }
             DynamicSpriteFontExtensionMethods.DrawString(sb, font, text, zero, color, 0f, origin, scale, 0, 0f);
+        }
+    }
+
+    public static void DrawStringWithShadow(this SpriteBatch spriteBatch, DynamicSpriteFont font, string text, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, float spread = 2f) {
+        GraphicsHelper.DrawStringShadow(spriteBatch, font, text, position, Color.Black, rotation, origin, scale, spread);
+        Main.spriteBatch.DrawString(font, text, position, color, rotation, origin, scale, 0, 0);
+    }
+
+    public static void DrawStringShadow(this SpriteBatch spriteBatch, DynamicSpriteFont font, string text, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, float spread = 2f) {
+        foreach (Vector2 v in ChatManager.ShadowDirections) {
+            spriteBatch.DrawString(font, text, position + v * spread, color, rotation, origin, scale, 0, 0);
         }
     }
 }

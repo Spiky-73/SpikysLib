@@ -22,6 +22,7 @@ Just a small library used by most of my mods.
 - OrderedDictonary now uses DictionaryElement by default
 - Removed IKeyValueWrapper.OnBindKey
 - Renamed methods GetKeyWrapper and GetValueWrapper of KeyValueWrapper to GetKeyMember to GetValueMember
+- Fixed DrawStringWithShadow and DrawStringShadow methods missing from GraphicsHelper
 - Removed obsolete v1.2 members
 
 ### v1.3.1.1
