@@ -109,7 +109,7 @@ public sealed class DictionaryElement : ConfigElement<IDictionary> {
                 continue;
             }
 
-            IKeyValueWrapper wrapper = KeyValueWrapper.CreateWrapper(
+            IKeyValueWrapper innerWrapper = KeyValueWrapper.CreateWrapper(
                 new(() => key, k => {
                     if (dict.Contains(k!)) return;
                     dict.Remove(key);
@@ -119,13 +119,12 @@ public sealed class DictionaryElement : ConfigElement<IDictionary> {
                 }), new(() => dict[key], v => value = dict[key] = v),
                 _customWrapper
             );
+            Wrapper wrapper = Wrapper.From(innerWrapper);
             _dictWrappers.Add(wrapper);
 
             UIElement container; ConfigElement element;
             if (!_constantKeys) {
-                NestedValueWrapper nestedWrapper = new(wrapper);
-                (container, UIElement e) = ConfigManager.WrapIt(_dataList, ref top, nestedWrapper.Member, nestedWrapper, i);
-                // (container, UIElement e) = ConfigManager.WrapIt(_dataList, ref top, new(Reflection.DictionaryElement._dictWrappers), this, 0, _dictWrappers, wrapper.GetType(), i);
+                (container, UIElement e) = ConfigManager.WrapIt(_dataList, ref top, wrapper.Member, wrapper, i);
                 element = (ConfigElement)e;
                 element.Width.Pixels -= 10;
                 element.Left.Pixels += 10;
@@ -142,9 +141,9 @@ public sealed class DictionaryElement : ConfigElement<IDictionary> {
                 };
                 container.Append(deleteButton);
             } else {
-                (container, UIElement e) = ConfigManager.WrapIt(_dataList, ref top, KeyValueWrapper.GetValueMember(wrapper.GetType()), wrapper, i);
+                (container, UIElement e) = ConfigManager.WrapIt(_dataList, ref top, KeyValueWrapper.GetValueMember(innerWrapper.GetType()), innerWrapper, i);
                 element = (ConfigElement)e;
-                (UIElement keyContainer, UIElement uiKey) = ConfigManager.WrapIt(this, ref top, KeyValueWrapper.GetKeyMember(wrapper.GetType()), wrapper, i);
+                (UIElement keyContainer, UIElement uiKey) = ConfigManager.WrapIt(this, ref top, KeyValueWrapper.GetKeyMember(innerWrapper.GetType()), innerWrapper, i);
                 Func<string> label = Reflection.ConfigElement.TextDisplayFunction.GetValue((ConfigElement)uiKey);
                 Func<string> tooltip = Reflection.ConfigElement.TooltipFunction.GetValue((ConfigElement)uiKey);
                 RemoveChild(keyContainer);
@@ -176,7 +175,7 @@ public sealed class DictionaryElement : ConfigElement<IDictionary> {
                 };
                 container.Append(moveButton);
             }
-            wrapper.OnBind(element);
+            innerWrapper.OnBind(element);
         }
         if (unloaded > 0) {
             _unloaded = new(new LocalizedLine(Language.GetText($"{Localization.Keys.UI}.Unloaded"), Colors.RarityTrash, unloaded));
@@ -229,15 +228,8 @@ public sealed class DictionaryElement : ConfigElement<IDictionary> {
     private Text _unloaded = null!;
 
     private Type? _customWrapper;
-    private readonly List<IKeyValueWrapper> _dictWrappers = [];
+    private readonly List<Wrapper> _dictWrappers = [];
     private readonly UIList _dataList = [];
 
     private bool _constantKeys;
-
-    internal class NestedValueWrapper : Wrapper {
-        public NestedValueWrapper(object value) => Value = value;
-
-        [JsonIgnore, CustomModConfigItem(typeof(NestedValueElement))]
-        new public object Value { get => base.Value!; set => base.Value = value; }
-    }
 }

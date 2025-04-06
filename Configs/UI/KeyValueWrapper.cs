@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using Newtonsoft.Json;
+using Terraria.ModLoader.Config;
 using Terraria.ModLoader.Config.UI;
 
 namespace SpikysLib.Configs.UI;
@@ -38,6 +39,9 @@ public class KeyValueWrapper<TKey, TValue>: IKeyValueWrapper<TKey, TValue> {
     [JsonIgnore] public Property<TKey> KeyProp { get; set; }
     [JsonIgnore] public Property<TValue> ValueProp { get; set; }
 }
+
+[CustomModConfigItem(typeof(NestedValueElement))]
+public class NestedKeyValueWrapper<TKey, TValue>: KeyValueWrapper<TKey, TValue> {}
 
 public static class KeyValueWrapper {
     public static PropertyFieldWrapper GetKeyMember(Type type) => GetMember(type, nameof(IKeyValuePair.Key))!;
