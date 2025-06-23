@@ -15,6 +15,11 @@ Just a small library used by most of my mods.
 
 # Changelog
 
+### v1.3.1.2
+- Ported to MagicStorage v0.7
+- Added a custom StorageAggregator to MagicStorage
+- Disabled MagicStorageIntegration.StackFix
+
 ### v1.3.1.1
 - Fixed a complete freeze of the of game when joining multiplayer
 - Fixed UIFlex elements incorrect size on Recalculate
