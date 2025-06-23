@@ -3,17 +3,32 @@ using Terraria;
 using Terraria.ModLoader;
 using SpikysLib.Collections;
 using System;
+using Terraria.ModLoader.IO;
 
 namespace SpikysLib.CrossMod;
 
 [JITWhenModsEnabled(ModName)]
-public static class MagicStorageIntegration {
+public sealed class MagicStorageIntegration : ILoadable {
     public const string ModName = "MagicStorage";
 
     public static bool Enabled => ModLoader.HasMod(ModName);
     public static Version Version => ModLoader.GetMod(ModName).Version;
     public static bool InMagicStorage(Player player) => Main.worldID != 0 && player.GetModPlayer<MagicStorage.StoragePlayer>().GetStorageHeart() is not null;
-    
+
+    public void Load(Mod mod) {
+        if (Enabled) ModLoader.GetMod(ModName).Call("Create Aggregator",
+            mod, "UidAggregator",                     // Mod, Name
+            (Item _) => false,                        // AppliesToItem
+            null,                                     // CanAggregateItems
+            null,                                     // SelectData
+            (GlobalItem item, TagCompound tag) => { // SelectGlobalData
+                if (item is ItemGuid) tag.Remove("guid");
+            }
+        );
+    }
+
+    public void Unload() { }
+
     [Obsolete("use CountItems(Player player, int type, int? prefix) instead"), MethodImpl(MethodImplOptions.NoInlining)] // v1.3
     public static int CountItems(int type, int? prefix = null) => CountItems(Main.LocalPlayer, type, prefix);
     [MethodImpl(MethodImplOptions.NoInlining)]
@@ -37,5 +52,5 @@ public static class MagicStorageIntegration {
         return heart.GetStoredItems().Exist(i => i.type == item.type && i.prefix == item.prefix);
     }
 
-    public static bool StackingFix => Enabled;
+    public static bool StackingFix => false;
 }

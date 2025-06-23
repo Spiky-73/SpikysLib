@@ -25,6 +25,11 @@ Just a small library used by most of my mods.
 - Fixed DrawStringWithShadow and DrawStringShadow methods missing from GraphicsHelper
 - Removed obsolete v1.2 members
 
+### v1.3.1.2
+- Ported to MagicStorage v0.7
+- Added a custom StorageAggregator to MagicStorage
+- Disabled MagicStorageIntegration.StackFix
+
 ### v1.3.1.1
 - Fixed a complete freeze of the of game when joining multiplayer
 - Fixed UIFlex elements incorrect size on Recalculate

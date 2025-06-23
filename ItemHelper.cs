@@ -33,7 +33,7 @@ public static class ItemHelper {
     }
 
     public static void RunWithHiddenItems(Item[] items, Action action, Predicate<Item> hidden) {
-    Dictionary<int, Item> hiddenItems = new();
+        Dictionary<int, Item> hiddenItems = new();
         for (int i = 0; i < items.Length; i++) {
             if (!hidden(items[i])) continue;
             hiddenItems[i] = items[i];
@@ -110,11 +110,11 @@ public sealed class ItemGuid : GlobalItem {
     public Guid UniqueId;
 
     public ItemGuid() {
-        if(!MagicStorageIntegration.StackingFix) UniqueId = Guid.NewGuid();
+        if (!MagicStorageIntegration.StackingFix) UniqueId = Guid.NewGuid();
     }
 
     public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) {
-        if(Configs.DebugInfo.Instance.displayGuids) tooltips.AddLine(new(Mod, "guid", UniqueId.ToString()));
+        if (Configs.DebugInfo.Instance.displayGuids) tooltips.AddLine(new(Mod, "guid", UniqueId.ToString()));
     }
 
     private static Item HookTransferGuid(Reflection.ItemLoader.TransferWithLimitFn orig, Item source, int limit) {
@@ -129,7 +129,7 @@ public sealed class ItemGuid : GlobalItem {
 
     public override void LoadData(Item item, TagCompound tag) {
         if (!MagicStorageIntegration.StackingFix && tag.TryGet("guid", out string guid)) UniqueId = new(guid);
-        }
+    }
 
     // BUG tML bug
     // public override void NetSend(Item item, BinaryWriter writer) {
