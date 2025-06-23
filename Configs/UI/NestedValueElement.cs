@@ -23,7 +23,7 @@ public sealed class NestedValueElement : ConfigElement<IKeyValuePair> {
         );
 
         int top = 0;
-        (_containerValue, UIElement uiValue) = ConfigManager.WrapIt(this, ref top, KeyValueWrapper.GetValueWrapper(_wrapper.GetType()), _wrapper, 0);
+        (_containerValue, UIElement uiValue) = ConfigManager.WrapIt(this, ref top, KeyValueWrapper.GetValueMember(_wrapper.GetType()), _wrapper, 0);
         _uiValue = (ConfigElement)uiValue;
         _isObjectElement = uiValue.GetType() == Reflection.ObjectElement.Type;
         if (_isObjectElement) {
@@ -33,7 +33,7 @@ public sealed class NestedValueElement : ConfigElement<IKeyValuePair> {
         } else _expanded = true;
 
         top = 0;
-        (UIElement conParent, UIElement uiParent) = ConfigManager.WrapIt(this, ref top, KeyValueWrapper.GetKeyWrapper(_wrapper.GetType()), _wrapper, 0);
+        (UIElement conParent, UIElement uiParent) = ConfigManager.WrapIt(this, ref top, KeyValueWrapper.GetKeyMember(_wrapper.GetType()), _wrapper, 0);
         _uiParent = (ConfigElement)uiParent;
         conParent.Left.Pixels -= 20;
         conParent.Width.Pixels -= 5;
@@ -60,7 +60,6 @@ public sealed class NestedValueElement : ConfigElement<IKeyValuePair> {
         Reflection.ConfigElement.backgroundColor.SetValue(_uiParent, Color.Transparent);
         Reflection.ConfigElement.backgroundColor.SetValue(_uiValue, Color.Transparent);
 
-        _wrapper.OnBindKey(_uiValue);
         _wrapper.OnBind(_uiValue);
 
         Expanded = false;

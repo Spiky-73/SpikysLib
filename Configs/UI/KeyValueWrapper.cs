@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Newtonsoft.Json;
+using Terraria.ModLoader.Config;
 using Terraria.ModLoader.Config.UI;
 
 namespace SpikysLib.Configs.UI;
@@ -9,6 +11,7 @@ namespace SpikysLib.Configs.UI;
 public readonly record struct Property<T>(Func<T> Get, Action<T> Set);
 
 public interface IKeyValueWrapper : IKeyValuePair {
+    [Obsolete("use OnBind instead", true)] // v1.4
     void OnBindKey(ConfigElement element) { }
     void OnBind(ConfigElement element) { }
 
@@ -29,17 +32,26 @@ public class KeyValueWrapper<TKey, TValue>: IKeyValueWrapper<TKey, TValue> {
     public virtual TKey Key { get => KeyProp.Get(); set => KeyProp.Set(value); }
     public virtual TValue Value { get => ValueProp.Get(); set => ValueProp.Set(value); }
 
+    [Obsolete("use OnBind instead", true)] // v1.4
     public virtual void OnBindKey(ConfigElement element) { }
     public virtual void OnBind(ConfigElement element) { }
 
-    public Property<TKey> KeyProp { get; set; }
-    public Property<TValue> ValueProp { get; set; }
+    [JsonIgnore] public Property<TKey> KeyProp { get; set; }
+    [JsonIgnore] public Property<TValue> ValueProp { get; set; }
 }
 
+[CustomModConfigItem(typeof(NestedValueElement))]
+public class NestedKeyValueWrapper<TKey, TValue>: KeyValueWrapper<TKey, TValue> {}
+
 public static class KeyValueWrapper {
-    public static PropertyFieldWrapper GetKeyWrapper(Type type) => GetWrapper(type, nameof(IKeyValuePair.Key))!;
-    public static PropertyFieldWrapper GetValueWrapper(Type type) => GetWrapper(type, nameof(IKeyValuePair.Value))!;
-    private static PropertyFieldWrapper GetWrapper(Type type, string name) => type.GetPropertiesFields(BindingFlags.Instance | BindingFlags.Public).Where(p => p.Name == name).First();
+    public static PropertyFieldWrapper GetKeyMember(Type type) => GetMember(type, nameof(IKeyValuePair.Key))!;
+    public static PropertyFieldWrapper GetValueMember(Type type) => GetMember(type, nameof(IKeyValuePair.Value))!;
+    private static PropertyFieldWrapper GetMember(Type type, string name) => type.GetPropertiesFields(BindingFlags.Instance | BindingFlags.Public).Where(p => p.Name == name).First();
+    
+    [Obsolete("use GetKeyMember instead", true)] // v1.4
+    public static PropertyFieldWrapper GetKeyWrapper(Type type) => GetMember(type, nameof(IKeyValuePair.Key))!;
+    [Obsolete("use GetValueMember instead", true)] // v1.4
+    public static PropertyFieldWrapper GetValueWrapper(Type type) => GetMember(type, nameof(IKeyValuePair.Value))!;
 
     public static IKeyValueWrapper CreateWrapper(Property<object?> keyProp, Property<object?> valueProp, Type? customWrapper = null) {
         customWrapper ??= typeof(KeyValueWrapper<,>);
@@ -60,21 +72,6 @@ public static class KeyValueWrapper {
 public class KeyValueWrapperAttribute : Attribute {
     public KeyValueWrapperAttribute(Type type) {
         if (!type.ImplementsInterface(typeof(IKeyValueWrapper), out _)) throw new ArgumentException($"The type {type} does derive from {nameof(IKeyValueWrapper)}");
-        if (type.GetGenericArguments().Length > 2) throw new ArgumentException($"The type {type} can have at most 2 generic arguments");
-        Type = type;
-    }
-
-    public Type Type { get; }
-}
-
-[Obsolete($"use {nameof(KeyValueWrapper)} instead")]
-public class ValueWrapper<TKey, TValue> : KeyValueWrapper<TKey, TValue> {}
-
-[Obsolete($"use {nameof(KeyValueWrapperAttribute)} instead")]
-[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Class | AttributeTargets.Enum)]
-public sealed class ValueWrapperAttribute : Attribute {
-    public ValueWrapperAttribute(Type type) {
-        if (!type.IsSubclassOfGeneric(typeof(ValueWrapper<,>), out _) && !type.ImplementsInterface(typeof(IKeyValueWrapper), out _)) throw new ArgumentException($"The type {type} does derive from {typeof(ValueWrapper<,>)}");
         if (type.GetGenericArguments().Length > 2) throw new ArgumentException($"The type {type} can have at most 2 generic arguments");
         Type = type;
     }
