@@ -4,6 +4,7 @@
     <AssemblyName>SpikysLib</AssemblyName>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+    <NoWarn>CommonCollisionName</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="../ModAssemblies/MagicStorage_v0.7.0.1.dll" />
