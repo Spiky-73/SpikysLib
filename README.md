@@ -15,6 +15,9 @@ Just a small library used by most of my mods.
 
 # Changelog
 
+### v1.3.1.3
+- Fixed UIFlex elements having incorrect sizes on Recalculate again
+
 ### v1.3.1.2
 - Ported to MagicStorage v0.7
 - Added a custom StorageAggregator to MagicStorage
