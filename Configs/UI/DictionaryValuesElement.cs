@@ -15,6 +15,7 @@ using Terraria.ID;
 
 namespace SpikysLib.Configs.UI;
 
+[Obsolete("use DictonaryElement instead")] // v1.4
 public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
 
     public override void OnBind() {
@@ -39,11 +40,6 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
 
         var wrapperAttribute = ConfigManager.GetCustomAttributeFromMemberThenMemberType<KeyValueWrapperAttribute>(MemberInfo, Item, List);
         Type? customWrapper = wrapperAttribute?.Type;
-#pragma warning disable CS0618 // Type or member is obsolete
-        var legacyWrapperAttr = ConfigManager.GetCustomAttributeFromMemberThenMemberType<ValueWrapperAttribute>(MemberInfo, Item, List);
-        customWrapper ??= legacyWrapperAttr?.Type;
-#pragma warning restore CS0618 // Type or member is obsolete
-
 
         IDictionary dict = Value;
         int top = 0;
@@ -61,7 +57,7 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
                 customWrapper
             );
             _dictWrappers.Add(wrapper);
-            (UIElement container, UIElement e) = ConfigManager.WrapIt(_dataList, ref top, KeyValueWrapper.GetValueWrapper(wrapper.GetType()), wrapper, i);
+            (UIElement container, UIElement e) = ConfigManager.WrapIt(_dataList, ref top, KeyValueWrapper.GetValueMember(wrapper.GetType()), wrapper, i);
             ConfigElement element = (ConfigElement)e;
 
             if (dict is IOrderedDictionary) {
@@ -82,7 +78,7 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
                 container.Append(moveButton);
             }
 
-            (UIElement keyContainer, UIElement uiKey) = ConfigManager.WrapIt(this, ref top, KeyValueWrapper.GetKeyWrapper(wrapper.GetType()), wrapper, i);
+            (UIElement keyContainer, UIElement uiKey) = ConfigManager.WrapIt(this, ref top, KeyValueWrapper.GetKeyMember(wrapper.GetType()), wrapper, i);
             Func<string> label = Reflection.ConfigElement.TextDisplayFunction.GetValue((ConfigElement)uiKey);
             Func<string> tooltip = Reflection.ConfigElement.TooltipFunction.GetValue((ConfigElement)uiKey);
             RemoveChild(keyContainer);

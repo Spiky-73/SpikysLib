@@ -1,8 +1,10 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Graphics;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ObjectData;
+using Terraria.UI.Chat;
 
 namespace SpikysLib;
 
@@ -40,5 +42,40 @@ public static class GraphicsHelper {
         else Main.instance.MouseText(tooltip);
     }
 
+    public static void DrawBorderStringFourWay(this SpriteBatch sb, DynamicSpriteFont font, string text, Vector2 position, Color textColor, Color borderColor, Vector2 origin, float scale = 1f) {
+        Color color = borderColor;
+        float delta = 2 * scale;
+        for (int i = 0; i < 5; i++) {
+            Vector2 zero = position;
+            switch (i) {
+            case 0:
+                zero.X -= delta;
+                break;
+            case 1:
+                zero.X += delta;
+                break;
+            case 2:
+                zero.Y -= delta;
+                break;
+            case 3:
+                zero.Y += delta;
+                break;
+            default:
+                color = textColor;
+                break;
+            }
+            DynamicSpriteFontExtensionMethods.DrawString(sb, font, text, zero, color, 0f, origin, scale, 0, 0f);
+        }
+    }
 
+    public static void DrawStringWithShadow(this SpriteBatch spriteBatch, DynamicSpriteFont font, string text, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, float spread = 2f) {
+        GraphicsHelper.DrawStringShadow(spriteBatch, font, text, position, Color.Black, rotation, origin, scale, spread);
+        Main.spriteBatch.DrawString(font, text, position, color, rotation, origin, scale, 0, 0);
+    }
+
+    public static void DrawStringShadow(this SpriteBatch spriteBatch, DynamicSpriteFont font, string text, Vector2 position, Color color, float rotation, Vector2 origin, Vector2 scale, float spread = 2f) {
+        foreach (Vector2 v in ChatManager.ShadowDirections) {
+            spriteBatch.DrawString(font, text, position + v * spread, color, rotation, origin, scale, 0, 0);
+        }
+    }
 }
