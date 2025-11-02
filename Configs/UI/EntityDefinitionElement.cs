@@ -39,7 +39,7 @@ public sealed class EntityDefinitionElement : ConfigElement<IEntityDefinition> {
         _expandButton.Left.Set(-30 + 5, 1);
         _expandButton.Top.Set(4, 0);
         _expandButton.OnLeftClick += (_, _) => OpenDropDownField();
-        if(!Value.AllowNull) OpenDropDownField();
+        if(!Value.AllowNull && Value.Type <= 0) OpenDropDownField();
         else CloseDropDownField(_index);
     }
 

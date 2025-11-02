@@ -5,6 +5,8 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using SpikysLib.Configs.UI;
+using Terraria.ModLoader.Config;
 
 namespace SpikysLib.DataStructures;
 
@@ -28,6 +30,7 @@ public interface IOrderedDictionary<TKey, TValue> : IOrderedDictionary, IDiction
     void IDictionary.Remove(object key) => Remove((TKey)key);
 }
 
+[CustomModConfigItem(typeof(DictionaryElement))]
 public sealed class OrderedDictionary<TKey, TValue> : IOrderedDictionary<TKey, TValue> where TKey : notnull {
 
     public OrderedDictionary() : this(null, null) {}

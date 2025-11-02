@@ -15,6 +15,16 @@ Just a small library used by most of my mods.
 
 # Changelog
 
+### v1.4
+- Added GraphicsHelper.DrawBorderStringFourWay
+- Replaced DictionaryValueElement with DictionaryElement
+- Finalized the implementation of DictionaryElement
+- OrderedDictonary now uses DictionaryElement by default
+- Removed IKeyValueWrapper.OnBindKey
+- Renamed methods GetKeyWrapper and GetValueWrapper of KeyValueWrapper to GetKeyMember to GetValueMember
+- Fixed DrawStringWithShadow and DrawStringShadow methods missing from GraphicsHelper
+- Removed obsolete v1.2 members
+
 ### v1.3.1.4
 - Fixed NestedValue not expanding properly with the new EnumElement.
 
