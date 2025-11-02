@@ -73,6 +73,7 @@ public sealed class NestedValueElement : ConfigElement<IKeyValuePair> {
             Height = _uiParent.Height;
             if (_expanded) Height.Pixels += _uiValue.Height.Pixels + 5;
         }
+        Height.Pixels = Math.Max(Height.Pixels, _uiParent.Height.Pixels);
         if (Parent is not null && Parent is UISortableElement) Parent.Height.Set(Height.Pixels, 0f);
     }
 

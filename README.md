@@ -15,6 +15,9 @@ Just a small library used by most of my mods.
 
 # Changelog
 
+### v1.3.1.4
+- Fixed NestedValue not expanding properly with the new EnumElement.
+
 ### v1.3.1.3
 - Fixed UIFlex elements having incorrect sizes on Recalculate again
 
