@@ -25,6 +25,9 @@ Just a small library used by most of my mods.
 - Fixed DrawStringWithShadow and DrawStringShadow methods missing from GraphicsHelper
 - Removed obsolete v1.2 members
 
+### v1.3.1.4
+- Fixed NestedValue not expanding properly with the new EnumElement.
+
 ### v1.3.1.3
 - Fixed UIFlex elements having incorrect sizes on Recalculate again
 
