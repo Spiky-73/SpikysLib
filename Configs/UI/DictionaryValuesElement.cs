@@ -79,26 +79,26 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
             }
 
             (UIElement keyContainer, UIElement uiKey) = ConfigManager.WrapIt(this, ref top, KeyValueWrapper.GetKeyMember(wrapper.GetType()), wrapper, i);
-            Func<string> label = Reflection.ConfigElement.TextDisplayFunction.GetValue((ConfigElement)uiKey);
-            Func<string> tooltip = Reflection.ConfigElement.TooltipFunction.GetValue((ConfigElement)uiKey);
+            Func<string> label = ((ConfigElement)uiKey).TextDisplayFunction;
+            Func<string> tooltip = ((ConfigElement)uiKey).TooltipFunction;
             RemoveChild(keyContainer);
-            Reflection.ConfigElement.TextDisplayFunction.SetValue(element, key switch {
+            element.TextDisplayFunction = key switch {
                 ItemDefinition item => () => $"[i:{item.Type}] {item.Name}",
                 IEntityDefinition def => () => def.DisplayName,
-                _ =>  () => {
+                _ => () => {
                     string l = label();
                     return l.StartsWith("Key: ") ? l[(nameof(IKeyValuePair.Key).Length + 2)..] : key.ToString() ?? "";
                 }
-            });
-            Reflection.ConfigElement.TooltipFunction.SetValue(element, key switch {
+            };
+            element.TooltipFunction = key switch {
                 IEntityDefinition def => () => def.Tooltip ?? string.Empty,
                 _ => tooltip
-            });
+            };
             wrapper.OnBind(element);
         }
         if (unloaded > 0) {
             _unloaded = new(new LocalizedLine(Language.GetText($"{Localization.Keys.UI}.Unloaded"), Colors.RarityTrash, unloaded));
-            (UIElement container, UIElement element) = ConfigManager.WrapIt(_dataList, ref top, new(Reflection.DictionaryValuesElement._unloaded), this, i);
+            (UIElement container, UIElement element) = ConfigManager.WrapIt(_dataList, ref top, _unloadedInfo, this, i);
         }
         MaxHeight.Pixels = int.MaxValue;
         Recalculate();
@@ -115,6 +115,7 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
     public override void Draw(SpriteBatch spriteBatch) => DrawChildren(spriteBatch);
 
     private Text _unloaded = null!;
+    private PropertyFieldWrapper _unloadedInfo = new(TypeHelper.GetField((DictionaryValuesElement i) => i._unloaded));
 
     private readonly List<IKeyValueWrapper> _dictWrappers = [];
     private readonly UIList _dataList = [];

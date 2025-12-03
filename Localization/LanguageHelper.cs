@@ -1,13 +1,14 @@
 using System;
 using System.Linq;
 using Terraria.Localization;
+using Terraria.ModLoader.Config;
 
 namespace SpikysLib.Localization;
 
 public delegate string KeyModifier(string key); 
 
 public static class LanguageHelper {
-    public static void RegisterLocalizationKeysForMembers(Type type) => Reflection.ConfigManager.RegisterLocalizationKeysForMembers.Invoke(type);
+    public static void RegisterLocalizationKeysForMembers(Type type) => ConfigManager.RegisterLocalizationKeysForMembers(type);
 
     public static event KeyModifier? ModifyKey;
 

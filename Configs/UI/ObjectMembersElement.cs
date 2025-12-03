@@ -31,9 +31,7 @@ public sealed class ObjectMembersElement : ConfigElement<object?> {
             int order = 0;
             foreach (PropertyFieldWrapper variable in ConfigHelper.GetFieldsAndProperties(value)) {
                 int top = 0;
-                object[] args = [_dataList, top, order, variable];
-                Reflection.UIModConfig.HandleHeader.Invoke(args);
-                top = (int)args[1]; order = (int)args[2];
+                UIModConfig.HandleHeader(_dataList, ref top, ref order, variable);
                 ConfigManager.WrapIt(_dataList, ref top, variable, value, order++);
             }
         }

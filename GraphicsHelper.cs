@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Graphics;
 using Terraria;
 using Terraria.GameContent;
+using Terraria.ModLoader.Config.UI;
 using Terraria.ObjectData;
 using Terraria.UI.Chat;
 
@@ -38,7 +39,7 @@ public static class GraphicsHelper {
     }
 
     public static void DrawMouseText(string tooltip) {
-        if (Main.gameMenu || Main.ingameOptionsWindow) Reflection.UIModConfig.Tooltip.SetValue(tooltip);
+        if (Main.gameMenu || Main.ingameOptionsWindow) UIModConfig.Tooltip = tooltip;
         else Main.instance.MouseText(tooltip);
     }
 

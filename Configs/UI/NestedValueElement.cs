@@ -1,6 +1,5 @@
 using System;
 using Microsoft.Xna.Framework;
-using Terraria.GameContent.UI.Elements;
 using Terraria.GameContent.UI.States;
 using Terraria.Localization;
 using Terraria.ModLoader.Config;
@@ -25,11 +24,10 @@ public sealed class NestedValueElement : ConfigElement<IKeyValuePair> {
         int top = 0;
         (_containerValue, UIElement uiValue) = ConfigManager.WrapIt(this, ref top, KeyValueWrapper.GetValueMember(_wrapper.GetType()), _wrapper, 0);
         _uiValue = (ConfigElement)uiValue;
-        _isObjectElement = uiValue.GetType() == Reflection.ObjectElement.Type;
-        if (_isObjectElement) {
+        if (uiValue is Terraria.ModLoader.Config.UI.ObjectElement objectElement) {
             _containerValue.Left.Pixels -= 20;
             _containerValue.Width.Pixels += 20;
-            ((UIImage)Reflection.ObjectElement.expandButton.GetValue(_uiValue)!).Left.Set(-25f, 1f);
+            objectElement.expandButton.Left.Set(-25f, 1f);
         } else _expanded = true;
 
         top = 0;
@@ -39,7 +37,7 @@ public sealed class NestedValueElement : ConfigElement<IKeyValuePair> {
         conParent.Width.Pixels -= 5;
         _uiParent.OnLeftDoubleClick += (_, _) => Expanded = !Expanded;
 
-        if (!_isObjectElement) {
+        if (_uiValue is not Terraria.ModLoader.Config.UI.ObjectElement) {
             _containerValue.Top = conParent.Height;
             _expandButton = new global::SpikysLib.UI.Elements.HoverImage(ExpandedTexture, Language.GetTextValue("tModLoader.ModConfigCollapse"));
             _expandButton.Top.Set(4f, 0f);
@@ -49,16 +47,16 @@ public sealed class NestedValueElement : ConfigElement<IKeyValuePair> {
         }
 
         DrawLabel = false;
-        Func<string> parentText = Reflection.ConfigElement.TextDisplayFunction.GetValue(_uiParent);
-        Reflection.ConfigElement.TextDisplayFunction.SetValue(_uiParent, () => $"{TextDisplayFunction()}{parentText()[nameof(IKeyValuePair.Key).Length..]}");
-        Reflection.ConfigElement.TextDisplayFunction.SetValue(_uiValue, () => string.Empty);
-        Func<string> parentTooltip = Reflection.ConfigElement.TooltipFunction.GetValue(_uiParent);
-        Func<string> valueTooltip = Reflection.ConfigElement.TooltipFunction.GetValue(_uiValue);
-        Reflection.ConfigElement.TooltipFunction.SetValue(_uiParent, () => ConfigHelper.JoinTooltips(TooltipFunction, parentTooltip));
-        Reflection.ConfigElement.TooltipFunction.SetValue(_uiValue, () => ConfigHelper.JoinTooltips(TooltipFunction, valueTooltip));
+        Func<string> parentText = _uiParent.TextDisplayFunction;
+        _uiParent.TextDisplayFunction = () => $"{TextDisplayFunction()}{parentText()[nameof(IKeyValuePair.Key).Length..]}";
+        _uiValue.TextDisplayFunction = () => string.Empty;
+        Func<string> parentTooltip = _uiParent.TooltipFunction;
+        Func<string> valueTooltip = _uiValue.TooltipFunction;
+        _uiParent.TooltipFunction = () => ConfigHelper.JoinTooltips(TooltipFunction, parentTooltip);
+        _uiValue.TooltipFunction = () => ConfigHelper.JoinTooltips(TooltipFunction, valueTooltip);
 
-        Reflection.ConfigElement.backgroundColor.SetValue(_uiParent, Color.Transparent);
-        Reflection.ConfigElement.backgroundColor.SetValue(_uiValue, Color.Transparent);
+        _uiParent.backgroundColor = Color.Transparent;
+        _uiValue.backgroundColor = Color.Transparent;
 
         _wrapper.OnBind(_uiValue);
 
@@ -67,7 +65,7 @@ public sealed class NestedValueElement : ConfigElement<IKeyValuePair> {
 
     public override void Recalculate() {
         base.Recalculate();
-        if (_isObjectElement) Height.Pixels = Math.Max(_uiValue.Height.Pixels, _uiParent.Height.Pixels);
+        if (_uiValue is Terraria.ModLoader.Config.UI.ObjectElement) Height.Pixels = Math.Max(_uiValue.Height.Pixels, _uiParent.Height.Pixels);
         else {
             Height.Pixels = _uiParent.Height.Pixels;
             _containerValue.Top = _uiParent.Height;
@@ -77,11 +75,11 @@ public sealed class NestedValueElement : ConfigElement<IKeyValuePair> {
     }
 
     public bool Expanded {
-        get => _isObjectElement ? (bool)Reflection.ObjectElement.expanded.GetValue(_uiValue)! : _expanded;
+        get => _uiValue is Terraria.ModLoader.Config.UI.ObjectElement objectElement ? objectElement.expanded : _expanded;
         set {
-            if (_isObjectElement) {
-                Reflection.ObjectElement.expanded.SetValue(_uiValue, value);
-                Reflection.ObjectElement.pendingChanges.SetValue(_uiValue, true);
+            if (_uiValue is Terraria.ModLoader.Config.UI.ObjectElement objectElement) {
+                objectElement.expanded = value;
+                objectElement.pendingChanges = true;
                 return;
             }
 
@@ -98,7 +96,6 @@ public sealed class NestedValueElement : ConfigElement<IKeyValuePair> {
         }
     }
 
-    private bool _isObjectElement;
     private bool _expanded; // Only used if _isObjectElement is false
     private global::SpikysLib.UI.Elements.HoverImage _expandButton = null!;
     private UIElement _containerValue = null!;

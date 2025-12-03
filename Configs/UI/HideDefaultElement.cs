@@ -64,7 +64,7 @@ public sealed class HideDefaultElement : ConfigElement<object> {
 
         foreach (PropertyFieldWrapper variable in ConfigHelper.GetFieldsAndProperties(data)) {
             if (Equals(variable.GetValue(data), Activator.CreateInstance(variable.Type))) continue;
-            _entries.Add(new(new(new StringLine(Reflection.ConfigManager.GetLocalizedLabel.Invoke(variable)), new StringLine(Reflection.ConfigManager.GetLocalizedTooltip.Invoke(variable)))));
+            _entries.Add(new(new(new StringLine(ConfigManager.GetLocalizedLabel(variable)), new StringLine(ConfigManager.GetLocalizedTooltip(variable)))));
             (UIElement container, UIElement element) = ConfigManager.WrapIt(_dataList, ref top, _entries[^1].Member, _entries[^1], 0);
         }
     }

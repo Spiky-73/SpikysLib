@@ -144,21 +144,21 @@ public sealed class DictionaryElement : ConfigElement<IDictionary> {
                 (container, UIElement e) = ConfigManager.WrapIt(_dataList, ref top, KeyValueWrapper.GetValueMember(innerWrapper.GetType()), innerWrapper, i);
                 element = (ConfigElement)e;
                 (UIElement keyContainer, UIElement uiKey) = ConfigManager.WrapIt(this, ref top, KeyValueWrapper.GetKeyMember(innerWrapper.GetType()), innerWrapper, i);
-                Func<string> label = Reflection.ConfigElement.TextDisplayFunction.GetValue((ConfigElement)uiKey);
-                Func<string> tooltip = Reflection.ConfigElement.TooltipFunction.GetValue((ConfigElement)uiKey);
+                Func<string> label = ((ConfigElement)uiKey).TextDisplayFunction;
+                Func<string> tooltip = ((ConfigElement)uiKey).TooltipFunction;
                 RemoveChild(keyContainer);
-                Reflection.ConfigElement.TextDisplayFunction.SetValue(element, key switch {
+                element.TextDisplayFunction = key switch {
                     ItemDefinition item => () => $"[i:{item.Type}] {item.Name}",
                     IEntityDefinition def => () => def.DisplayName,
                     _ => () => {
                         string l = label();
                         return l.StartsWith("Key: ") ? l[(nameof(IKeyValuePair.Key).Length + 2)..] : key.ToString() ?? "";
                     }
-                });
-                Reflection.ConfigElement.TooltipFunction.SetValue(element, key switch {
+                };
+                element.TooltipFunction = key switch {
                     IEntityDefinition def => () => def.Tooltip ?? string.Empty,
                     _ => tooltip
-                });
+                };
             }
             if (dict is IOrderedDictionary) {
                 global::SpikysLib.UI.Elements.HoverImageSplit moveButton = new(UpDownTexture, Language.GetTextValue($"{Localization.Keys.UI}.Up"), Language.GetTextValue($"{Localization.Keys.UI}.Down")) {
@@ -179,7 +179,7 @@ public sealed class DictionaryElement : ConfigElement<IDictionary> {
         }
         if (unloaded > 0) {
             _unloaded = new(new LocalizedLine(Language.GetText($"{Localization.Keys.UI}.Unloaded"), Colors.RarityTrash, unloaded));
-            (UIElement container, UIElement element) = ConfigManager.WrapIt(_dataList, ref top, new(Reflection.DictionaryElement._unloaded), this, i);
+            (UIElement container, UIElement element) = ConfigManager.WrapIt(_dataList, ref top, _unloadedInfo, this, i);
         }
         MaxHeight.Pixels = int.MaxValue;
         Recalculate();
@@ -226,6 +226,7 @@ public sealed class DictionaryElement : ConfigElement<IDictionary> {
     private Type _valueType = null!;
 
     private Text _unloaded = null!;
+    private PropertyFieldWrapper _unloadedInfo = new(TypeHelper.GetField((DictionaryElement i) => i._unloaded));
 
     private Type? _customWrapper;
     private readonly List<Wrapper> _dictWrappers = [];

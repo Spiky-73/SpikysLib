@@ -10,24 +10,24 @@ namespace SpikysLib;
 public class SpikysLib : Mod {
 
     public override void Load() {
-		TextElement.Load();
-		ConfigHelper.Load();
-		CursorLoader.Load();
-		PlayerHelper.Load();
-		LanguageHelper.Load();
-		MonoModHooks.Add(Reflection.Mod.AutoloadConfig, HookPreLoadMod);
-	}
+        TextElement.Load();
+        ConfigHelper.Load();
+        CursorLoader.Load();
+        PlayerHelper.Load();
+        LanguageHelper.Load();
+        MonoModHooks.Add(TypeHelper.GetMethod((Mod m) => m.AutoloadConfig), HookPreLoadMod);
+    }
 
     public override void Unload() {
-		TextElement.Unload();
-		ConfigHelper.Unload();
-		CursorLoader.Unload();
-		PlayerHelper.Unload();
-		LanguageHelper.Unload();
-	}
+        TextElement.Unload();
+        ConfigHelper.Unload();
+        CursorLoader.Unload();
+        PlayerHelper.Unload();
+        LanguageHelper.Unload();
+    }
 
-	public static void HookPreLoadMod(Action<Mod> orig, Mod mod) {
-		if (mod is IPreLoadMod preLoadMod) preLoadMod.PreLoadMod();
-		orig(mod);
-	}
+    public static void HookPreLoadMod(Action<Mod> orig, Mod mod) {
+        if (mod is IPreLoadMod preLoadMod) preLoadMod.PreLoadMod();
+        orig(mod);
+    }
 }

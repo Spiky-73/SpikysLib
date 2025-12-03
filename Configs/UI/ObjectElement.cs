@@ -7,6 +7,7 @@ using Terraria.UI;
 
 namespace SpikysLib.Configs.UI;
 
+[Obsolete($"use {nameof(AnyElement)} insteade", true)] // v1.4
 public sealed class ObjectElement : ConfigElement<object> {
 
     public override void OnBind() {
@@ -21,10 +22,10 @@ public sealed class ObjectElement : ConfigElement<object> {
         container.Left.Pixels -= 20;
         container.Width.Pixels += 20;
 
-        Reflection.ConfigElement.backgroundColor.SetValue(_element, Color.Transparent);
-        Func<string> childText = Reflection.ConfigElement.TextDisplayFunction.GetValue(_element)!;
-        Reflection.ConfigElement.TextDisplayFunction.SetValue(_element,() => $"{TextDisplayFunction()}{childText()[member.Name.Length..]}");
-        Reflection.ConfigElement.TooltipFunction.SetValue(_element, TooltipFunction);
+        _element.backgroundColor = Color.Transparent;
+        var childText = _element.TextDisplayFunction;
+        _element.TextDisplayFunction = () => $"{TextDisplayFunction()}{childText()[member.Name.Length..]}";
+        _element.TooltipFunction = TooltipFunction;
         DrawLabel = false;
         TooltipFunction = null;
         MaxHeight.Pixels = int.MaxValue;

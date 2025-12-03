@@ -105,7 +105,7 @@ public static class ItemHelper {
 public sealed class ItemGuid : GlobalItem {
 
     public override void Load() {
-        MonoModHooks.Add(Reflection.ItemLoader.TransferWithLimit, HookTransferGuid);
+        MonoModHooks.Add(TypeHelper.GetMethod(() => ItemLoader.TransferWithLimit), HookTransferGuid);
     }
     public Guid UniqueId;
 
@@ -117,7 +117,8 @@ public sealed class ItemGuid : GlobalItem {
         if (Configs.DebugInfo.Instance.displayGuids) tooltips.AddLine(new(Mod, "guid", UniqueId.ToString()));
     }
 
-    private static Item HookTransferGuid(Reflection.ItemLoader.TransferWithLimitFn orig, Item source, int limit) {
+    private delegate Item TransferWithLimitFn(Item source, int limit);
+    private static Item HookTransferGuid(TransferWithLimitFn orig, Item source, int limit) {
         Item destination = orig(source, limit);
         if (!source.IsAir && destination.TryGetGlobalItem(out ItemGuid itemGuid) && itemGuid.UniqueId != default) itemGuid.UniqueId = Guid.NewGuid();
         return destination;

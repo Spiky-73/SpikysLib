@@ -11,15 +11,15 @@ namespace SpikysLib.Configs;
 
 public static class ConfigHelper {
 
-    public static void Save(this ModConfig config) => Reflection.ConfigManager.Save.Invoke(config);
-    public static void Load(this ModConfig config) => Reflection.ConfigManager.Load.Invoke(config);
+    public static void Save(this ModConfig config) => ConfigManager.Save(config);
+    public static void Load(this ModConfig config) => ConfigManager.Load(config); // TODO use the new API
 
     public static IEnumerable<PropertyFieldWrapper> GetFieldsAndProperties(object item)
         => ConfigManager.GetFieldsAndProperties(item).Where(v => !Attribute.IsDefined(v.MemberInfo, typeof(JsonIgnoreAttribute)) || Attribute.IsDefined(v.MemberInfo, typeof(ShowDespiteJsonIgnoreAttribute)));
 
     public static void SetInstance(object instance, bool unload = false) => instance.GetType().GetField("Instance", BindingFlags.FlattenHierarchy | BindingFlags.Static | BindingFlags.Public)?.SetValue(null, unload ? null : instance);
 
-    public static void MoveMember<TConfig>(bool cond, Action<TConfig> move) where TConfig: ModConfig => MoveMember(cond, c => move((TConfig)c));
+    public static void MoveMember<TConfig>(bool cond, Action<TConfig> move) where TConfig : ModConfig => MoveMember(cond, c => move((TConfig)c));
     public static void MoveMember(bool cond, Action<ModConfig> move) {
         if (cond && s_loading) _moves.Add(move);
     }
@@ -50,6 +50,6 @@ public static class ConfigHelper {
     private static bool s_saveLoading;
     private static readonly List<Action<ModConfig>> _moves = [];
 
-    internal static void Load() => MonoModHooks.Add(Reflection.ConfigManager.Load, HookLoad);
+    internal static void Load() => MonoModHooks.Add(TypeHelper.GetMethod(() => ConfigManager.Load), HookLoad);
     internal static void Unload() { }
 }

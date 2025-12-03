@@ -80,20 +80,20 @@ public static class PlayerHelper {
             player.inventory.CountItems(type);
 
         int count = 0;
-        if(local){
+        if (local) {
             // Makes sure the held item is counted a single time
-            if(!_mouseItemMaterial) count += new Item[] { Main.mouseItem }.CountItems(type);
+            if (!_mouseItemMaterial) count += new Item[] { Main.mouseItem }.CountItems(type);
             count += OwnedItems.GetValueOrDefault(type);
         } else {
             count += new Item[] { player.inventory[InventorySlots.Mouse] }.CountItems(type);
-            (Dictionary<int, int> items, var ownedItems) = ([], Reflection.Recipe._ownedItems.GetValue());
-            Reflection.Recipe._ownedItems.SetValue(items);
-            Reflection.Recipe.CollectItemsToCraftWithFrom.Invoke(player);
-            Reflection.Recipe._ownedItems.SetValue(ownedItems);
+            (Dictionary<int, int> items, var ownedItems) = ([], Recipe._ownedItems);
+            Recipe._ownedItems = items;
+            Recipe.CollectItemsToCraftWithFrom(player);
+            Recipe._ownedItems = ownedItems;
             count += items.GetValueOrDefault(type);
         }
         if (CrossMod.MagicStorageIntegration.Enabled) count += CrossMod.MagicStorageIntegration.CountItems(player, type);
-        
+
         return count;
     }
     public static long CountCurrency(this Player player, int currency, bool includeBanks = true, bool includeChest = false) {
@@ -116,19 +116,19 @@ public static class PlayerHelper {
     public static readonly int[] InventoryContexts = [ItemSlot.Context.InventoryItem, ItemSlot.Context.InventoryAmmo, ItemSlot.Context.InventoryCoin];
 
     internal static void Load() {
-        OwnedItems = new(Reflection.Recipe._ownedItems.GetValue());
+        OwnedItems = Recipe._ownedItems.AsReadOnly();
         On_Recipe.CollectItemsToCraftWithFrom += HookCollectItemsToCraftWithFrom;
         On_Recipe.CollectItems_IEnumerable1 += HookDetectMouseItemMaterial;
     }
 
 
     private static void HookCollectItemsToCraftWithFrom(On_Recipe.orig_CollectItemsToCraftWithFrom orig, Player player) {
-        if(player == Main.LocalPlayer) _mouseItemMaterial = false;
+        if (player == Main.LocalPlayer) _mouseItemMaterial = false;
         orig(player);
     }
 
     private static void HookDetectMouseItemMaterial(On_Recipe.orig_CollectItems_IEnumerable1 orig, IEnumerable<Item> items) {
-        if(items.Exist(i => i == Main.mouseItem)) _mouseItemMaterial = true;
+        if (items.Exist(i => i == Main.mouseItem)) _mouseItemMaterial = true;
         orig(items);
     }
 

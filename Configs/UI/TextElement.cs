@@ -7,6 +7,7 @@ using Terraria.GameContent;
 using Terraria.GameContent.UI.States;
 using Terraria.Localization;
 using Terraria.ModLoader;
+using Terraria.ModLoader.Config;
 using Terraria.ModLoader.Config.UI;
 using Terraria.UI.Chat;
 
@@ -18,7 +19,7 @@ public sealed class TextElement : ConfigElement<Text?> {
         base.OnBind();
         Text? value = Value;
         if (value?.Label?.Value.Length > 0) Label = Language.GetTextValue(value.Label.Value);
-        else if (string.IsNullOrEmpty(Language.GetTextValue(Reflection.ConfigManager.GetConfigLabelKey.Invoke(MemberInfo.MemberInfo, "Label")))) Label = "";
+        else if (string.IsNullOrEmpty(Language.GetTextValue(ConfigManager.GetConfigKey<LabelKeyAttribute>(MemberInfo.MemberInfo, "Label")))) Label = "";
         if (value?.Tooltip?.Value.Length > 0) {
             string tooltip = Language.GetTextValue(value.Tooltip.Value);
             TooltipFunction = () => tooltip;
@@ -39,7 +40,7 @@ public sealed class TextElement : ConfigElement<Text?> {
         if (Parent != null && Parent is UISortableElement) Parent.Height.Set(Height.Pixels, 0f);
     }
 
-    internal static void Load() => MonoModHooks.Modify(Reflection.ConfigElement.DrawSelf, ILTextColors);
+    internal static void Load() => MonoModHooks.Modify(TypeHelper.GetMethod((ConfigElement i) => i.DrawSelf), ILTextColors);
     internal static void Unload() { }
 
     private static void ILTextColors(ILContext il) {

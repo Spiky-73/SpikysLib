@@ -17,12 +17,14 @@ Just a small library used by most of my mods.
 
 ### v1.4
 - Added GraphicsHelper.DrawBorderStringFourWay
+- Added Linq.Expression based reflection methods to TypeHelper
 - Replaced DictionaryValueElement with DictionaryElement
 - Finalized the implementation of DictionaryElement
 - OrderedDictonary now uses DictionaryElement by default
 - Removed IKeyValueWrapper.OnBindKey
 - Renamed methods GetKeyWrapper and GetValueWrapper of KeyValueWrapper to GetKeyMember to GetValueMember
 - Fixed DrawStringWithShadow and DrawStringShadow methods missing from GraphicsHelper
+- Added an assembly publiciser internally
 - Removed obsolete v1.2 members
 
 ### v1.3.1.4

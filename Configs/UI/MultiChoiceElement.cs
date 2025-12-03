@@ -25,7 +25,7 @@ public sealed class MultiChoiceElement : ConfigElement<MultiChoice> {
         int top = 0;
         foreach (var choice in value.Choices) {
             (UIElement container, UIElement element) = ConfigManager.WrapIt(this, ref top, choice, value, 0);
-            _labels.Add(Reflection.ConfigElement.TextDisplayFunction.GetValue((ConfigElement)element));
+            _labels.Add(((ConfigElement)element).TextDisplayFunction);
         }
         RemoveAllChildren();
     }
@@ -43,12 +43,12 @@ public sealed class MultiChoiceElement : ConfigElement<MultiChoice> {
         container.Width.Pixels -= 7;
 
         MaxHeight.Pixels = int.MaxValue;
-        Reflection.ConfigElement.backgroundColor.SetValue(_selectedElement, Color.Transparent);
+        _selectedElement.backgroundColor = Color.Transparent;
 
-        Func<string> elementLabel = Reflection.ConfigElement.TextDisplayFunction.GetValue(_selectedElement)!;
-        Func<string>? elementTooltip = Reflection.ConfigElement.TooltipFunction.GetValue(_selectedElement);
-        Reflection.ConfigElement.TextDisplayFunction.SetValue(_selectedElement, () => $"{TextDisplayFunction()}: {elementLabel()}");
-        Reflection.ConfigElement.TooltipFunction.SetValue(_selectedElement, () => ConfigHelper.JoinTooltips(TooltipFunction, elementTooltip));
+        var elementLabel = _selectedElement.TextDisplayFunction;
+        var elementTooltip = _selectedElement.TooltipFunction;
+        _selectedElement.TextDisplayFunction = () => $"{TextDisplayFunction()}: {elementLabel()}";
+        _selectedElement.TooltipFunction = () => ConfigHelper.JoinTooltips(TooltipFunction, elementTooltip);
 
         int count = value.Choices.Count;
         UIImage swapButton;

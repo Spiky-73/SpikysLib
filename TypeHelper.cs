@@ -1,6 +1,7 @@
 using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using Terraria.ModLoader.Config.UI;
 
@@ -56,4 +57,29 @@ public static class TypeHelper {
     }
 
     public const BindingFlags AnyMemberFlags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
+
+
+    public static MemberInfo GetMember(LambdaExpression expr) => GetMemberFromLambda(expr);
+    public static FieldInfo GetField<T, F>(Expression<Func<T, F>> expr) => (FieldInfo)GetMemberFromLambda(expr);
+    public static FieldInfo GetField<P>(Expression<Func<P>> expr) => (FieldInfo)GetMemberFromLambda(expr);
+    public static PropertyInfo GetProperty<T, P>(Expression<Func<T, P>> expr) => (PropertyInfo)GetMemberFromLambda(expr);
+    public static PropertyInfo GetProperty<P>(Expression<Func<P>> expr) => (PropertyInfo)GetMemberFromLambda(expr);
+    public static MethodInfo GetMethod<T>(Expression<Func<T, Delegate>> expr) => GetMethodFromDelegate(expr);
+    public static MethodInfo GetMethod(Expression<Func<Delegate>> expr) => GetMethodFromDelegate(expr);
+    public static MethodInfo GetMethod<T>(Expression<Action<T>> expr) => (MethodInfo)GetMemberFromLambda(expr);
+    public static MethodInfo GetMethod<T, V>(Expression<Func<T, V>> expr) => (MethodInfo)GetMemberFromLambda(expr);
+    public static MethodInfo GetMethod(Expression<Action> expr) => (MethodInfo)GetMemberFromLambda(expr);
+    public static MethodInfo GetMethod<V>(Expression<Func<V>> expr) => (MethodInfo)GetMemberFromLambda(expr);
+    public static ConstructorInfo GetConstructor<T>(Expression<Func<T>> expr) => (ConstructorInfo)GetMemberFromLambda(expr);
+
+    private static MemberInfo GetMemberFromLambda(LambdaExpression expr) => expr.Body switch {
+        NewExpression e => e.Constructor,
+        MemberExpression e => e.Member,
+        MethodCallExpression e => e.Method,
+        _ => null,
+    } ?? throw new ArgumentException("Invalid lambda expression " + expr.Body);
+    private static MethodInfo GetMethodFromDelegate(LambdaExpression expr) {
+        var method = (((expr.Body as UnaryExpression)?.Operand as MethodCallExpression)?.Object as ConstantExpression)?.Value as MethodInfo;
+        return method ?? throw new ArgumentException("Invalid lambda expression " + expr.Body);
+    }
 }

@@ -72,9 +72,9 @@ public static class CurrencyHelper {
         }
     }
 
-    public static Dictionary<int, CustomCurrencySystem> CustomCurrencies() => Reflection.CustomCurrencyManager._currencies.GetValue();
-    public static Dictionary<int, int> ValuePerUnit(this CustomCurrencySystem system) => Reflection.CustomCurrencySystem._valuePerUnit.GetValue(system);
-    public static int ValuePerUnit(this CustomCurrencySystem system, int type) => Reflection.CustomCurrencySystem._valuePerUnit.GetValue(system)[type];
+    public static Dictionary<int, CustomCurrencySystem> CustomCurrencies() => CustomCurrencyManager._currencies;
+    public static Dictionary<int, int> ValuePerUnit(this CustomCurrencySystem system) => system._valuePerUnit;
+    public static int ValuePerUnit(this CustomCurrencySystem system, int type) => system._valuePerUnit[type];
 
     public static readonly Dictionary<int, int> CoinValues = new() {
         {ItemID.CopperCoin,   1},
