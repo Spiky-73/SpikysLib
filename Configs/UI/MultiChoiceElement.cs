@@ -7,6 +7,8 @@ using Terraria.GameContent.UI.Elements;
 using Terraria.GameContent.UI.States;
 using Terraria.Localization;
 using Microsoft.Xna.Framework;
+using Terraria.ModLoader.UI;
+using SpikysLib.UI.Elements;
 
 namespace SpikysLib.Configs.UI;
 
@@ -53,11 +55,11 @@ public sealed class MultiChoiceElement : ConfigElement<MultiChoice> {
         int count = value.Choices.Count;
         UIImage swapButton;
         if (count == 2) {
-            swapButton = new global::SpikysLib.UI.Elements.HoverImage(PlayTexture, Language.GetTextValue($"{Localization.Keys.UI}.Change", _labels[(value.ChoiceIndex + 1) % count]()));
-            swapButton.OnLeftClick += (UIMouseEvent a, UIElement b) => ChangeChoice(value.ChoiceIndex + 1);
+            swapButton = new UIHoverImage(PlayTexture, Language.GetTextValue($"{Localization.Keys.UI}.Change", _labels[(value.ChoiceIndex + 1) % count]()));
+            swapButton.OnLeftClick += (a, b) => ChangeChoice(value.ChoiceIndex + 1);
         } else {
-            swapButton = new global::SpikysLib.UI.Elements.HoverImageSplit(UpDownTexture, Language.GetTextValue($"{Localization.Keys.UI}.Change", _labels[(value.ChoiceIndex + 1) % count]()), Language.GetTextValue($"{Localization.Keys.UI}.Change", _labels[(value.ChoiceIndex - 1 + count) % count]()));
-            swapButton.OnLeftClick += (UIMouseEvent a, UIElement b) => ChangeChoice(value.ChoiceIndex + (((global::SpikysLib.UI.Elements.HoverImageSplit)swapButton).HoveringUp ? 1 : -1));
+            swapButton = new UIModConfigHoverImageSplit(UpDownTexture, Language.GetTextValue($"{Localization.Keys.UI}.Change", _labels[(value.ChoiceIndex + 1) % count]()), Language.GetTextValue($"{Localization.Keys.UI}.Change", _labels[(value.ChoiceIndex - 1 + count) % count]()));
+            swapButton.OnLeftClick += (a, b) => ChangeChoice(value.ChoiceIndex + (((UIModConfigHoverImageSplit)swapButton).HoveringUp() ? 1 : -1));
         }
         swapButton.VAlign = 0.5f;
         swapButton.Left.Set(-30 + 5, 1);

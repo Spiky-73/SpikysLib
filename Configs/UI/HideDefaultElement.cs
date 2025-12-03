@@ -7,6 +7,7 @@ using Terraria.GameContent.UI.States;
 using Terraria.Localization;
 using Terraria.ModLoader.Config;
 using Terraria.ModLoader.Config.UI;
+using Terraria.ModLoader.UI;
 using Terraria.UI;
 
 namespace SpikysLib.Configs.UI;
@@ -32,7 +33,7 @@ public sealed class HideDefaultElement : ConfigElement<object> {
         _dataList.PaddingBottom = -5f;
         SetupList();
 
-        _expandButton = new global::SpikysLib.UI.Elements.HoverImage(ExpandedTexture, Language.GetTextValue("tModLoader.ModConfigCollapse"));
+        _expandButton = new(ExpandedTexture, Language.GetTextValue("tModLoader.ModConfigCollapse"));
         _expandButton.Top.Set(4f, 0f);
         _expandButton.Left.Set(-25f, 1f);
         _expandButton.OnLeftClick += (a, b) => Expand();
@@ -77,7 +78,7 @@ public sealed class HideDefaultElement : ConfigElement<object> {
     }
 
     private bool _expanded = false;
-    private global::SpikysLib.UI.Elements.HoverImage _expandButton = null!;
+    private UIHoverImage _expandButton = null!;
     private readonly UIList _dataList = new();
     private readonly List<Wrapper<Text>> _entries = new();
 }

@@ -17,6 +17,7 @@ public class HoverImage : UIHoverImage {
 [Obsolete("use Terraria.ModLoader.UI.UIModConfigHoverImageSplit with an Assembly publiciser instead")] // v1.4
 public class HoverImageSplit : UIModConfigHoverImageSplit {
 
+    [Obsolete("use UIHoverImageSplit.HoveringUp instead")] // v1.4
     public bool HoveringUp => Main.mouseY < GetDimensions().Y + GetDimensions().Height / 2;
 
     public HoverImageSplit(Asset<Texture2D> texture, string hoverTextUp, string hoverTextDown) : base(texture, hoverTextUp, hoverTextDown) { }
@@ -24,6 +25,12 @@ public class HoverImageSplit : UIModConfigHoverImageSplit {
 
 [Obsolete("use UIHoverImageFramed instead", true)] // v1.4
 public class HoverImageFramed(Asset<Texture2D> texture, Rectangle frame, string hoverText) : UIHoverImageFramed(texture, frame, hoverText) { }
+
+
+public static class UIHoverImageSplit {
+
+    public static bool HoveringUp(this UIModConfigHoverImageSplit self) => Main.mouseY < self.GetDimensions().Y + self.GetDimensions().Height / 2;
+}
 
 public class UIHoverImageFramed : UIImageFramed {
 

@@ -15,6 +15,8 @@ using Terraria.ID;
 using Terraria.Audio;
 using Newtonsoft.Json;
 using Terraria.ModLoader;
+using Terraria.ModLoader.UI;
+using SpikysLib.UI.Elements;
 
 namespace SpikysLib.Configs.UI;
 
@@ -34,7 +36,7 @@ public sealed class DictionaryElement : ConfigElement<IDictionary> {
         var wrapperAttribute = ConfigManager.GetCustomAttributeFromMemberThenMemberType<KeyValueWrapperAttribute>(MemberInfo, Item, List);
         _customWrapper = wrapperAttribute?.Type;
 
-        _expandButton = new global::SpikysLib.UI.Elements.HoverImage(CollapsedTexture, Language.GetTextValue($"tModLoader.ModConfigExpand"));
+        _expandButton = new UIHoverImage(CollapsedTexture, Language.GetTextValue($"tModLoader.ModConfigExpand"));
         _expandButton.Left.Set(-79, 1);
         _expandButton.Top.Set(4, 0);
         _expandButton.OnLeftClick += (_, _) => Expanded = !Expanded;
@@ -128,7 +130,7 @@ public sealed class DictionaryElement : ConfigElement<IDictionary> {
                 element = (ConfigElement)e;
                 element.Width.Pixels -= 10;
                 element.Left.Pixels += 10;
-                global::SpikysLib.UI.Elements.HoverImage deleteButton = new(DeleteTexture, Language.GetTextValue("tModLoader.ModConfigRemove")) {
+                UIHoverImage deleteButton = new(DeleteTexture, Language.GetTextValue("tModLoader.ModConfigRemove")) {
                     VAlign = 0.5f,
                     Left = new(element.Left.Pixels + 2, 0f),
                 };
@@ -161,15 +163,15 @@ public sealed class DictionaryElement : ConfigElement<IDictionary> {
                 };
             }
             if (dict is IOrderedDictionary) {
-                global::SpikysLib.UI.Elements.HoverImageSplit moveButton = new(UpDownTexture, Language.GetTextValue($"{Localization.Keys.UI}.Up"), Language.GetTextValue($"{Localization.Keys.UI}.Down")) {
+                UIModConfigHoverImageSplit moveButton = new(UpDownTexture, Language.GetTextValue($"{Localization.Keys.UI}.Up"), Language.GetTextValue($"{Localization.Keys.UI}.Down")) {
                     VAlign = 0.5f,
                     Left = new(element.Left.Pixels + 2, 0f)
                 };
                 element.Width.Pixels -= 24;
                 element.Left.Pixels += 24;
                 moveButton.OnLeftClick += (UIMouseEvent a, UIElement b) => {
-                    if (moveButton.HoveringUp ? index <= 0 : index >= dict.Count - 1) return;
-                    ((IOrderedDictionary)Value).Move(index, index + (moveButton.HoveringUp ? -1 : 1));
+                    if (moveButton.HoveringUp() ? index <= 0 : index >= dict.Count - 1) return;
+                    ((IOrderedDictionary)Value).Move(index, index + (moveButton.HoveringUp() ? -1 : 1));
                     SetupList();
                     ConfigManager.SetPendingChanges();
                 };
@@ -219,9 +221,9 @@ public sealed class DictionaryElement : ConfigElement<IDictionary> {
     }
 
     private bool _expanded;
-    private global::SpikysLib.UI.Elements.HoverImage _expandButton = null!;
-    private global::SpikysLib.UI.Elements.HoverImage _addButton = null!;
-    private global::SpikysLib.UI.Elements.HoverImage _clearButton = null!;
+    private UIHoverImage _expandButton = null!;
+    private UIHoverImage _addButton = null!;
+    private UIHoverImage _clearButton = null!;
     private Type _keyType = null!;
     private Type _valueType = null!;
 

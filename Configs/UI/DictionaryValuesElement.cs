@@ -12,6 +12,7 @@ using Terraria.Localization;
 using SpikysLib.Collections;
 using SpikysLib.UI;
 using Terraria.ID;
+using SpikysLib.UI.Elements;
 
 namespace SpikysLib.Configs.UI;
 
@@ -65,13 +66,13 @@ public sealed class DictionaryValuesElement : ConfigElement<IDictionary> {
                 element.Left.Pixels += 25;
 
                 int index = i;
-                global::SpikysLib.UI.Elements.HoverImageSplit moveButton = new(UpDownTexture, Language.GetTextValue($"{Localization.Keys.UI}.Up"), Language.GetTextValue($"{Localization.Keys.UI}.Down")) {
+                UIModConfigHoverImageSplit moveButton = new(UpDownTexture, Language.GetTextValue($"{Localization.Keys.UI}.Up"), Language.GetTextValue($"{Localization.Keys.UI}.Down")) {
                     VAlign = 0.5f,
                     Left = new(2, 0f),
                 };
                 moveButton.OnLeftClick += (UIMouseEvent a, UIElement b) => {
-                    if (moveButton.HoveringUp ? index <= 0 : index >= dict.Count - 1) return;
-                    ((IOrderedDictionary)Value).Move(index, index + (moveButton.HoveringUp ? -1 : 1));
+                    if (moveButton.HoveringUp() ? index <= 0 : index >= dict.Count - 1) return;
+                    ((IOrderedDictionary)Value).Move(index, index + (moveButton.HoveringUp() ? -1 : 1));
                     SetupList();
                     ConfigManager.SetPendingChanges();
                 };

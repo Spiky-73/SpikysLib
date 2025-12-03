@@ -6,6 +6,7 @@ using Terraria.GameContent.UI.States;
 using Terraria.Localization;
 using Terraria.ModLoader.Config;
 using Terraria.ModLoader.Config.UI;
+using Terraria.ModLoader.UI;
 using Terraria.UI;
 
 namespace SpikysLib.Configs.UI;
@@ -35,7 +36,7 @@ public sealed class EntityDefinitionElement : ConfigElement<IEntityDefinition> {
 
         SetupList();
 
-        _expandButton = new global::SpikysLib.UI.Elements.HoverImage(CollapsedTexture, Language.GetTextValue($"tModLoader.ModConfigExpand"));
+        _expandButton = new(CollapsedTexture, Language.GetTextValue($"tModLoader.ModConfigExpand"));
         _expandButton.Left.Set(-30 + 5, 1);
         _expandButton.Top.Set(4, 0);
         _expandButton.OnLeftClick += (_, _) => OpenDropDownField();
@@ -94,7 +95,7 @@ public sealed class EntityDefinitionElement : ConfigElement<IEntityDefinition> {
     }
 
     private bool _expanded;
-    private global::SpikysLib.UI.Elements.HoverImage _expandButton = null!;
+    private UIHoverImage _expandButton = null!;
     private readonly UIList _dataList = [];
     private readonly List<Wrapper<Text>> _elements = [];
 }
