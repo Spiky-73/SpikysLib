@@ -18,6 +18,7 @@ Just a small library used by most of my mods.
 ### v1.4
 - Added GraphicsHelper.DrawBorderStringFourWay
 - Added Linq.Expression based reflection methods to TypeHelper
+- Added Linq.Expression based ILHelpers
 - Replaced DictionaryValueElement with DictionaryElement
 - Finalized the implementation of DictionaryElement
 - OrderedDictonary now uses DictionaryElement by default

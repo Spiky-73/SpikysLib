@@ -1,4 +1,5 @@
 using System;
+using System.Linq.Expressions;
 using System.Reflection;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
@@ -13,8 +14,7 @@ public static class ILHelper {
     public static bool SaferMatchCallvirt(this Instruction inst, MethodInfo method) => SaferMatch(() => inst.MatchCallvirt(method));
     public static bool SaferMatchCallvirt(this Instruction inst, Type type, string name) => SaferMatch(() => inst.MatchCallvirt(type, name));
     private static bool SaferMatch(Func<bool> cb) {
-        try { return cb(); }
-        catch (InvalidCastException) { return false; }
+        try { return cb(); } catch (InvalidCastException) { return false; }
     }
 
     public static ILCursor GotoNextLoc(this ILCursor cursor, out int value, Predicate<Instruction> predicate, int def = -1) => cursor.GotoNextLoc(MoveType.Before, out value, predicate, def);
@@ -42,4 +42,40 @@ public static class ILHelper {
         c = cs[0];
     }
     private delegate bool TryFind(out ILCursor[] cursors, params Func<Instruction, bool>[] predicates);
+
+    public static ILCursor Emit(this ILCursor cursor, OpCode opcode, LambdaExpression expr) => CallFieldOrMethod(expr, i => cursor.Emit(opcode, i), i => cursor.Emit(opcode, i));
+    public static ILCursor EmitCall(this ILCursor cursor, LambdaExpression expr) => cursor.EmitCall(TypeHelper.GetMethod(expr));
+    public static ILCursor EmitCallvirt(this ILCursor cursor, LambdaExpression expr) => cursor.EmitCallvirt(TypeHelper.GetMethod(expr));
+    public static ILCursor EmitJmp(this ILCursor cursor, LambdaExpression expr) => cursor.EmitJmp(TypeHelper.GetMethod(expr));
+    public static ILCursor EmitLdfld(this ILCursor cursor, LambdaExpression expr) => cursor.EmitLdfld(TypeHelper.GetField(expr));
+    public static ILCursor EmitLdflda(this ILCursor cursor, LambdaExpression expr) => cursor.EmitLdflda(TypeHelper.GetField(expr));
+    public static ILCursor EmitLdftn(this ILCursor cursor, LambdaExpression expr) => cursor.EmitLdftn(TypeHelper.GetMethod(expr));
+    public static ILCursor EmitLdsfld(this ILCursor cursor, LambdaExpression expr) => cursor.EmitLdsfld(TypeHelper.GetField(expr));
+    public static ILCursor EmitLdsflda(this ILCursor cursor, LambdaExpression expr) => cursor.EmitLdsflda(TypeHelper.GetField(expr));
+    public static ILCursor EmitLdtoken(this ILCursor cursor, LambdaExpression expr) => CallFieldOrMethod(expr, cursor.EmitLdtoken, cursor.EmitLdtoken);
+    public static ILCursor EmitLdvirtftn(this ILCursor cursor, LambdaExpression expr) => cursor.EmitLdvirtftn(TypeHelper.GetMethod(expr));
+    public static ILCursor EmitNewobj(this ILCursor cursor, LambdaExpression expr) => cursor.EmitNewobj(TypeHelper.GetConstructor(expr));
+    public static ILCursor EmitStfld(this ILCursor cursor, LambdaExpression expr) => cursor.EmitStfld(TypeHelper.GetField(expr));
+    public static ILCursor EmitStsfld(this ILCursor cursor, LambdaExpression expr) => cursor.EmitStsfld(TypeHelper.GetField(expr));
+
+    public static bool MatchCall(this Instruction instr, LambdaExpression expr) => instr.MatchCall(TypeHelper.GetMethod(expr));
+    public static bool MatchCallvirt(this Instruction instr, LambdaExpression expr) => instr.MatchCallvirt(TypeHelper.GetMethod(expr));
+    public static bool MatchCallOrCallvirt(this Instruction instr, LambdaExpression expr) => instr.MatchCallOrCallvirt(TypeHelper.GetMethod(expr));
+    public static bool MatchJmp(this Instruction instr, LambdaExpression expr) => instr.MatchJmp(TypeHelper.GetMethod(expr));
+    public static bool MatchLdfld(this Instruction instr, LambdaExpression expr) => instr.MatchLdfld(TypeHelper.GetField(expr));
+    public static bool MatchLdflda(this Instruction instr, LambdaExpression expr) => instr.MatchLdflda(TypeHelper.GetField(expr));
+    public static bool MatchLdftn(this Instruction instr, LambdaExpression expr) => instr.MatchLdftn(TypeHelper.GetMethod(expr));
+    public static bool MatchLdsfld(this Instruction instr, LambdaExpression expr) => instr.MatchLdsfld(TypeHelper.GetField(expr));
+    public static bool MatchLdsflda(this Instruction instr, LambdaExpression expr) => instr.MatchLdsflda(TypeHelper.GetField(expr));
+    public static bool MatchLdToken(this Instruction instr, LambdaExpression expr) => CallFieldOrMethod(expr, instr.MatchLdtoken, instr.MatchLdtoken);
+    public static bool MatchLdvirtftn(this Instruction instr, LambdaExpression expr) => instr.MatchLdvirtftn(TypeHelper.GetMethod(expr));
+    public static bool MatchNewobj(this Instruction instr, LambdaExpression expr) => instr.MatchNewobj(TypeHelper.GetConstructor(expr));
+    public static bool MatchStfld(this Instruction instr, LambdaExpression expr) => instr.MatchStfld(TypeHelper.GetField(expr));
+    public static bool MatchStsfld(this Instruction instr, LambdaExpression expr) => instr.MatchStfld(TypeHelper.GetField(expr));
+
+    private static T CallFieldOrMethod<T>(LambdaExpression expr, Func<FieldInfo, T> field, Func<MethodBase, T> method) => TypeHelper.GetMember(expr) switch {
+        FieldInfo f => field(f),
+        MethodBase m => method(m),
+        _ => throw new ArgumentException("expr must be a field of a method"),
+    };
 }
