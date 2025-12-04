@@ -5,6 +5,7 @@
     <AssemblyName>SpikysLib</AssemblyName>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
+    <!-- <PublicizerRuntimeStrategies>Unsafe</PublicizerRuntimeStrategies> -->
   </PropertyGroup>
 
   <ItemGroup>
@@ -12,24 +13,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <Publicize Include="tModLoader"/>
-  	<DoNotPublicize Include="tModLoader:Terraria.ModLoader.ModType`2.CloneNewInstances" />
-  	<DoNotPublicize Include="tModLoader:Terraria.ModLoader.ModType.InitTemplateInstance" />
-  	<DoNotPublicize Include="tModLoader:Terraria.ModLoader.ModType.Register" />
-  	<DoNotPublicize Include="tModLoader:Terraria.ModLoader.ModType.ValidateType" />
-    <DoNotPublicize Include="tModLoader:Terraria.GameContent.UI.Elements.UIImage.DrawSelf" />
-    <DoNotPublicize Include="tModLoader:Terraria.GameContent.UI.Elements.UIImageFramed.DrawSelf" />
-    <DoNotPublicize Include="tModLoader:Terraria.UI.UIElement.DrawChildren" />
-    <DoNotPublicize Include="tModLoader:Terraria.UI.UIElement.DrawSelf" />
-    <DoNotPublicize Include="tModLoader:Terraria.UI.UIElement.OnLeftClick" />
-    <DoNotPublicize Include="tModLoader:Terraria.UI.UIElement.OnLeftDoubleClick" />
-    <DoNotPublicize Include="tModLoader:Terraria.UI.UIElement.OnMouseOut" />
-    <DoNotPublicize Include="tModLoader:Terraria.UI.UIElement.OnMouseOver" />
-    <DoNotPublicize Include="tModLoader:Terraria.UI.UIElement.OnRightClick" />
-    <DoNotPublicize Include="tModLoader:Terraria.UI.UIElement.OnRightMouseDown" />
-    <DoNotPublicize Include="tModLoader:Terraria.UI.UIElement.OnScrollWheel" />
-    <DoNotPublicize Include="tModLoader:Terraria.UI.UIElement.OnUpdate" />
-
+    <Publicize Include="tModLoader" IncludeCompilerGeneratedMembers="false" IncludeVirtualMembers="false" />
+  	<Publicize Include="tModLoader:Terraria.ModLoader.Config.UI.ConfigElement.DrawSelf" />
   </ItemGroup>
 
   <ItemGroup>

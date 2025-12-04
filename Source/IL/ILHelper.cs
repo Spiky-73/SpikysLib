@@ -9,10 +9,10 @@ namespace SpikysLib.IL;
 
 public static class ILHelper {
 
-    public static bool SaferMatchCall(this Instruction inst, MethodInfo method) => SaferMatch(() => inst.MatchCall(method));
-    public static bool SaferMatchCall(this Instruction inst, Type type, string name) => SaferMatch(() => inst.MatchCall(type, name));
-    public static bool SaferMatchCallvirt(this Instruction inst, MethodInfo method) => SaferMatch(() => inst.MatchCallvirt(method));
-    public static bool SaferMatchCallvirt(this Instruction inst, Type type, string name) => SaferMatch(() => inst.MatchCallvirt(type, name));
+    public static bool SaferMatchCall(this Instruction instr, MethodInfo method) => SaferMatch(() => instr.MatchCall(method));
+    public static bool SaferMatchCall(this Instruction instr, Type type, string name) => SaferMatch(() => instr.MatchCall(type, name));
+    public static bool SaferMatchCallvirt(this Instruction instr, MethodInfo method) => SaferMatch(() => instr.MatchCallvirt(method));
+    public static bool SaferMatchCallvirt(this Instruction instr, Type type, string name) => SaferMatch(() => instr.MatchCallvirt(type, name));
     private static bool SaferMatch(Func<bool> cb) {
         try { return cb(); } catch (InvalidCastException) { return false; }
     }
@@ -71,11 +71,19 @@ public static class ILHelper {
     public static bool MatchLdvirtftn(this Instruction instr, LambdaExpression expr) => instr.MatchLdvirtftn(TypeHelper.GetMethod(expr));
     public static bool MatchNewobj(this Instruction instr, LambdaExpression expr) => instr.MatchNewobj(TypeHelper.GetConstructor(expr));
     public static bool MatchStfld(this Instruction instr, LambdaExpression expr) => instr.MatchStfld(TypeHelper.GetField(expr));
-    public static bool MatchStsfld(this Instruction instr, LambdaExpression expr) => instr.MatchStfld(TypeHelper.GetField(expr));
+    public static bool MatchStsfld(this Instruction instr, LambdaExpression expr) => instr.MatchStsfld(TypeHelper.GetField(expr));
+    
 
     private static T CallFieldOrMethod<T>(LambdaExpression expr, Func<FieldInfo, T> field, Func<MethodBase, T> method) => TypeHelper.GetMember(expr) switch {
         FieldInfo f => field(f),
         MethodBase m => method(m),
         _ => throw new ArgumentException("expr must be a field of a method"),
     };
+
+    public static bool MatchGetppt(this Instruction instr, LambdaExpression expr) => instr.MatchCallOrCallvirt(TypeHelper.GetProperty(expr).GetMethod!);
+    public static bool MatchSetppt(this Instruction instr, LambdaExpression expr) => instr.MatchCallOrCallvirt(TypeHelper.GetProperty(expr).SetMethod!);
+
+    public static bool SaferMatchCall(this Instruction instr, LambdaExpression expr) => instr.SaferMatchCall(TypeHelper.GetMethod(expr));
+    public static bool SaferMatchCallvirt(this Instruction instr, LambdaExpression expr) => instr.SaferMatchCallvirt(TypeHelper.GetMethod(expr));
+
 }
