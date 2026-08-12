@@ -5,7 +5,8 @@
     <AssemblyName>SpikysLib</AssemblyName>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <!-- <PublicizerRuntimeStrategies>Unsafe</PublicizerRuntimeStrategies> -->
+    <NoWarn>IDE0130</NoWarn>
+    <NoWarn>CommonCollisionName</NoWarn> <!-- TODO remove in v1.5 when SpikysLib.Reflection classes are removed -->
   </PropertyGroup>
 
   <ItemGroup>

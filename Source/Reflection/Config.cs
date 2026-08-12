@@ -1,0 +1,46 @@
+using System;
+using System.Reflection;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using Terraria.ModLoader.Config;
+using Terraria.ModLoader.Config.UI;
+using TUIElement = Terraria.UI.UIElement;
+using TElement = Terraria.ModLoader.Config.UI.ConfigElement;
+using TManager = Terraria.ModLoader.Config.ConfigManager;
+
+namespace SpikysLib.Reflection;
+
+[Obsolete("use an Assembly publiciser instead", true)] // v1.4
+public static class ConfigManager {
+    public static readonly StaticMethod<object?> Save = new(typeof(TManager), nameof(Save), typeof(ModConfig));
+    public static readonly StaticMethod<object?> Load = new(typeof(TManager), nameof(Load), typeof(ModConfig));
+    public static readonly StaticMethod<string> GetLocalizedLabel = new(typeof(TManager), nameof(GetLocalizedLabel), typeof(PropertyFieldWrapper));
+    public static readonly StaticMethod<string> GetLocalizedTooltip = new(typeof(TManager), nameof(GetLocalizedTooltip), typeof(PropertyFieldWrapper));
+    public static readonly StaticMethod<object?> RegisterLocalizationKeysForMembers = new(typeof(TManager), nameof(RegisterLocalizationKeysForMembers), typeof(Type));
+    public static readonly StaticMethod<string?> GetConfigKey = new(typeof(TManager), nameof(GetConfigKey), typeof(MemberInfo), typeof(string));
+    public static readonly StaticMethod<string?> GetConfigLabelKey = new(GetConfigKey.MemberInfo.MakeGenericMethod(typeof(LabelKeyAttribute)));
+}
+
+[Obsolete("use an Assembly publiciser instead", true)] // v1.4
+public static class ConfigElement {
+    public static readonly Property<TElement, Func<string>> TextDisplayFunction = new(nameof(TextDisplayFunction));
+    public static readonly Property<TElement, Func<string>> TooltipFunction = new(nameof(TooltipFunction));
+    public static readonly Property<TElement, bool> DrawLabel = new(nameof(DrawLabel));
+    public static readonly Field<TElement, Color> backgroundColor = new(nameof(backgroundColor));
+    public static readonly Method<TElement, object?> DrawSelf = new(nameof(DrawSelf), typeof(SpriteBatch));
+}
+
+[Obsolete("use an Assembly publiciser instead", true)] // v1.4
+public static class UIModConfig {
+    public static readonly Type Type = Main.tModLoader.GetType("Terraria.ModLoader.Config.UI.UIModConfig")!;
+    public static readonly StaticProperty<string> Tooltip = new(Type, nameof(Tooltip));
+    public static readonly StaticMethod<object?> HandleHeader = new(Type, nameof(HandleHeader), typeof(TUIElement), typeof(int).MakeByRefType(), typeof(int).MakeByRefType(), typeof(PropertyFieldWrapper));
+}
+
+[Obsolete("use an Assembly publiciser instead", true)] // v1.4
+public static class ObjectElement {
+    public static readonly Type Type = Main.tModLoader.GetType("Terraria.ModLoader.Config.UI.ObjectElement")!;
+    public static readonly FieldInfo pendingChanges = Type.GetField(nameof(pendingChanges), Member<FieldInfo>.InstanceFlags)!;
+    public static readonly FieldInfo expandButton = Type.GetField(nameof(expandButton), Member<FieldInfo>.InstanceFlags)!;
+    public static readonly FieldInfo expanded = Type.GetField(nameof(expanded), Member<FieldInfo>.InstanceFlags)!;
+}
