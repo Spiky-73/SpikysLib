@@ -21,8 +21,10 @@ public sealed class EntityDefinitionElement : ConfigElement<IEntityDefinition> {
         _values = definition.GetValues();
         _index = _values.IndexOf(definition);
 
-        Func<string> label = TextDisplayFunction;
-        TextDisplayFunction = () => $"{label()}: {(_index == -1 ? Language.GetTextValue($"{Localization.Keys.UI}.None") : _values[_index].DisplayName)}";
+        TextDisplayFunction = () => $"{Label}: {(_index == -1 ? Language.GetTextValue($"{Localization.Keys.UI}.None") : _values[_index].DisplayName)}";
+        if (List != null) {
+            TextDisplayFunction = () => $"{Index + 1}: {(_index == -1 ? Language.GetTextValue($"{Localization.Keys.UI}.None") : _values[_index].DisplayName)}";
+        }
         OnLeftClick += (UIMouseEvent evt, UIElement listeningElement) => {
             if (_expanded) CloseDropDownField(_index);
             else OpenDropDownField();
@@ -40,7 +42,7 @@ public sealed class EntityDefinitionElement : ConfigElement<IEntityDefinition> {
         _expandButton.Left.Set(-30 + 5, 1);
         _expandButton.Top.Set(4, 0);
         _expandButton.OnLeftClick += (_, _) => OpenDropDownField();
-        if(!Value.AllowNull && Value.Type <= 0) OpenDropDownField();
+        if (!Value.AllowNull && Value.Type <= 0) OpenDropDownField();
         else CloseDropDownField(_index);
     }
 
@@ -77,7 +79,7 @@ public sealed class EntityDefinitionElement : ConfigElement<IEntityDefinition> {
 
     private int _index;
     private IList<IEntityDefinition> _values = null!;
-    
+
     public bool Expanded {
         get => _expanded;
         set {

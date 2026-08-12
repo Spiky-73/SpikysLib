@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using SpikysLib.Configs;
 using SpikysLib.CrossMod;
 using Terraria;
 using Terraria.GameContent.UI;
@@ -16,7 +17,7 @@ public static class ItemHelper {
         if (toMove.IsAir) return item;
         if (item.IsAir) {
             transferred = maxStack.HasValue ? Math.Min(maxStack.Value, toMove.stack) : toMove.stack;
-            item = toMove.Clone();
+            item = toMove.Clone(); // TODO see if the equals can be remove and only mutate
             item.stack = 0;
             ItemLoader.SplitStack(item, toMove, transferred);
         } else if (item.type == toMove.type && item.stack < (maxStack ?? item.maxStack)) {
@@ -53,18 +54,14 @@ public static class ItemHelper {
         }
         return total;
     }
+
+    // TODO test SPIC and Better Inventory
     public static long CountCurrency(this Item[] items, int currency, params int[] ignoreSlots) {
         long count;
         switch (currency) {
         case CurrencyHelper.None: return 0L;
         case CurrencyHelper.Coins:
-            count = 0L;
-
-            for (int i = 0; i < items.Length; i++) {
-                if (Array.IndexOf(ignoreSlots, i) == -1 && items[i].IsACoin)
-                    count += (long)items[i].value / 5 * items[i].stack;
-            }
-            return count;
+            return Utils.CoinsCount(out _, items, ignoreSlots);
         default:
             if (!CustomCurrencyManager.TryGetCurrencySystem(currency, out CustomCurrencySystem system)) return 0;
             long cap = system.CurrencyCap;
@@ -114,7 +111,7 @@ public sealed class ItemGuid : GlobalItem {
     }
 
     public override void ModifyTooltips(Item item, List<TooltipLine> tooltips) {
-        if (Configs.DebugInfo.Instance.displayGuids) tooltips.AddLine(new(Mod, "guid", UniqueId.ToString()));
+        if (SpikysLibConfig.Instance.displayGuids) tooltips.AddLine(new(Mod, "guid", UniqueId.ToString()));
     }
 
     private delegate Item TransferWithLimitFn(Item source, int limit);

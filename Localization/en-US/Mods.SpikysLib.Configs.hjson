@@ -15,8 +15,13 @@ Wrapper: {
 	Tooltip: ""
 }
 
-DebugInfo: {
-	DisplayName: Debug Info
+SpikysLibConfig: {
+	DisplayName: Spiky's Lib Config
+
+	disableFixCustomModConfigItemList: {
+		Label: Disable Fix CustomModConfigItem in List
+		Tooltip: Disables a fix for CustomModConfigItem when used with collections
+	}
 
 	displayGuids: {
 		Label: Display Unique Ids

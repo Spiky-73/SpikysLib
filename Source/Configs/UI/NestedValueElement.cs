@@ -15,7 +15,6 @@ public sealed class NestedValueElement : ConfigElement<IKeyValuePair> {
 
         IKeyValuePair value = Value;
 
-
         KeyValueWrapperAttribute? customWrapperAttribute = ConfigManager.GetCustomAttributeFromMemberThenMemberType<KeyValueWrapperAttribute>(MemberInfo, Item, List);
         _wrapper = KeyValueWrapper.CreateWrapper(
             new(() => value.Key, v => value.Key = v), new(() => value.Value, v => value.Value = v),
@@ -47,14 +46,15 @@ public sealed class NestedValueElement : ConfigElement<IKeyValuePair> {
             Append(_expandButton);
         }
 
-        DrawLabel = false;
-        Func<string> parentText = _uiParent.TextDisplayFunction;
-        _uiParent.TextDisplayFunction = () => $"{TextDisplayFunction()}{parentText()[nameof(IKeyValuePair.Key).Length..]}";
+        TextDisplayFunction = () => $"{Label}{_uiParent.TextDisplayFunction()[nameof(IKeyValuePair.Key).Length..]}"; // In case the parent has a custom label with added fluff
+        _uiParent.DrawLabel = false;
+        _uiValue.DrawLabel = false;
         _uiValue.TextDisplayFunction = () => string.Empty;
+
         Func<string> parentTooltip = _uiParent.TooltipFunction;
         Func<string> valueTooltip = _uiValue.TooltipFunction;
-        _uiParent.TooltipFunction = () => ConfigHelper.JoinTooltips(TooltipFunction, parentTooltip);
-        _uiValue.TooltipFunction = () => ConfigHelper.JoinTooltips(TooltipFunction, valueTooltip);
+        _uiParent.TooltipFunction = null;
+        _uiValue.TooltipFunction = null;
 
         _uiParent.backgroundColor = Color.Transparent;
         _uiValue.backgroundColor = Color.Transparent;

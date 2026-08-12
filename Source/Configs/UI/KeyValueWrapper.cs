@@ -71,7 +71,7 @@ public static class KeyValueWrapper {
 [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Class | AttributeTargets.Enum)]
 public class KeyValueWrapperAttribute : Attribute {
     public KeyValueWrapperAttribute(Type type) {
-        if (!type.ImplementsInterface(typeof(IKeyValueWrapper), out _)) throw new ArgumentException($"The type {type} does derive from {nameof(IKeyValueWrapper)}");
+        if (!type.ImplementsInterface(typeof(IKeyValueWrapper), out _)) throw new ArgumentException($"The type {type} does not derive from {nameof(IKeyValueWrapper)}");
         if (type.GetGenericArguments().Length > 2) throw new ArgumentException($"The type {type} can have at most 2 generic arguments");
         Type = type;
     }

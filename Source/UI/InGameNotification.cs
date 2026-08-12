@@ -101,10 +101,10 @@ public class InGameNotification : IInGameNotification {
 
 public sealed class NotificationPlayer : ModPlayer {
     public override void OnEnterWorld() {
-        if (DebugInfo.Instance.lastPlayedVersion.Length != 0 && Mod.Version <= new System.Version(DebugInfo.Instance.lastPlayedVersion)) return;
+        if (SpikysLibConfig.Instance.lastPlayedVersion.Length != 0 && Mod.Version <= new System.Version(SpikysLibConfig.Instance.lastPlayedVersion)) return;
 
-        DebugInfo.Instance.lastPlayedVersion = Mod.Version.ToString();
-        DebugInfo.Instance.Save();
+        SpikysLibConfig.Instance.lastPlayedVersion = Mod.Version.ToString();
+        SpikysLibConfig.Instance.Save();
 
         if (Language.GetText($"{Localization.Keys.Chat}.Summary").Value.Length != 0) {
             InGameNotificationsTracker.AddNotification(new InGameNotification(Mod, new LocalizedLine(Language.GetText($"{Localization.Keys.Chat}.Summary"))) { timeLeft = 15 * 60 });
