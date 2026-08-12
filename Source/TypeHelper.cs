@@ -25,7 +25,7 @@ public static class TypeHelper {
         return false;
     }
 
-    public static object? Retrieve(this object self, string name) => Retrieve(self.GetType(), name, null);
+    public static object? Retrieve(this object self, string name) => Retrieve(self.GetType(), name, self);
     public static object? Retrieve(this Type type, string name) => Retrieve(type, name, null);
     private static object? Retrieve(Type type, string name, object? self = null) => type.InvokeMember(name, BindingFlags.GetField | BindingFlags.GetProperty, null, self, []);
 
