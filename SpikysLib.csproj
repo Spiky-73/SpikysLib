@@ -5,8 +5,7 @@
     <AssemblyName>SpikysLib</AssemblyName>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <NoWarn>IDE0130</NoWarn>
-    <NoWarn>CommonCollisionName</NoWarn> <!-- TODO remove in v1.5 when SpikysLib.Reflection classes are removed -->
+    <NoWarn>IDE0130,CommonCollisionName</NoWarn> <!-- TODO remove in v1.5 when SpikysLib.Reflection classes are removed -->
   </PropertyGroup>
 
   <ItemGroup>
