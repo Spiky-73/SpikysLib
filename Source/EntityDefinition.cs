@@ -42,6 +42,13 @@ public abstract class EntityDefinition<TDefinition, TEntity> : EntityDefinition<
     [JsonIgnore] public abstract TEntity? Entity { get; }
     public override int Type => Entity is null ? -1 : 1;
 
-    [JsonIgnore] public override string DisplayName => Entity?.GetLocalizedValue("DisplayName") ?? base.DisplayName;
-    [JsonIgnore] public override string? Tooltip => Entity?.GetLocalizedValue("Tooltip");
+    [JsonIgnore] public override string DisplayName => Entity?.GetLocalizedValue(nameof(DisplayName)) ?? base.DisplayName;
+    [JsonIgnore]
+    public override string? Tooltip {
+        get {
+            var entity = Entity;
+            if (entity is null || !Language.Exists(entity.GetLocalizationKey(nameof(Tooltip)))) return null;
+            return entity.GetLocalizedValue("Tooltip");
+        }
+    }
 }
