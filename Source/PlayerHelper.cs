@@ -97,15 +97,12 @@ public static class PlayerHelper {
         return count;
     }
     public static long CountCurrency(this Player player, int currency, bool includeBanks = true, bool includeChest = false) {
-        long count = player.whoAmI == Main.myPlayer ?
-            player.inventory.CountCurrency(currency, InventorySlots.Mouse) + new Item[] { Main.mouseItem }.CountCurrency(currency) :
-            player.inventory.CountCurrency(currency);
+        long count = player.inventory.CountCurrency(currency, [InventorySlots.Mouse, .. InventorySlots.Ammo]);
         if (includeBanks) count += player.bank.item.CountCurrency(currency)
                                 + player.bank2.item.CountCurrency(currency)
                                 + player.bank3.item.CountCurrency(currency)
                                 + player.bank4.item.CountCurrency(currency);
-        if (includeChest && player.chest >= 0) count += player.Chest()!.CountCurrency(currency);
-
+        if (includeChest && player.whoAmI == Main.myPlayer && player.chest >= 0) count += player.Chest()!.CountCurrency(currency);
         return count;
     }
 
