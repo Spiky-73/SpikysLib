@@ -11,8 +11,9 @@ namespace SpikysLib.Configs;
 
 public static class ConfigHelper {
 
-    public static void Save(this ModConfig config) => ConfigManager.Save(config);
-    public static void Load(this ModConfig config) => ConfigManager.Load(config); // TODO use the new API
+    [Obsolete($"use {nameof(ModConfig)}.{nameof(ModConfig.SaveChanges)}")]
+    public static void Save(this ModConfig config) => config.SaveChanges();
+    public static void Load(this ModConfig config) => ConfigManager.Load(config);
 
     public static IEnumerable<PropertyFieldWrapper> GetFieldsAndProperties(object item)
         => ConfigManager.GetFieldsAndProperties(item).Where(v => !Attribute.IsDefined(v.MemberInfo, typeof(JsonIgnoreAttribute)) || Attribute.IsDefined(v.MemberInfo, typeof(ShowDespiteJsonIgnoreAttribute)));
@@ -40,7 +41,7 @@ public static class ConfigHelper {
         s_loading = false;
         ApplyMoves(config);
 
-        if (s_saveLoading) config.Save();
+        if (s_saveLoading) config.SaveChanges();
         s_saveLoading = false;
     }
 

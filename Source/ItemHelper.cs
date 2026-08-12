@@ -55,7 +55,6 @@ public static class ItemHelper {
         return total;
     }
 
-    // TODO test SPIC and Better Inventory
     public static long CountCurrency(this Item[] items, int currency, params int[] ignoreSlots) {
         long count;
         switch (currency) {
